@@ -4,10 +4,22 @@ const KEY_FALLBACKS=new Map(Object.entries({
   arrowup:'ArrowUp',arrowleft:'ArrowLeft',arrowdown:'ArrowDown',arrowright:'ArrowRight',
   shift:'ShiftLeft',escape:'Escape',esc:'Escape',home:'Home'
 }));
+const CONTROL_CODES=new Set(['ShiftLeft','ShiftRight','Escape','Home']);
+const LEGACY_CODES=new Map([[87,'KeyW'],[65,'KeyA'],[83,'KeyS'],[68,'KeyD'],[38,'ArrowUp'],[37,'ArrowLeft'],[40,'ArrowDown'],[39,'ArrowRight'],[16,'ShiftLeft'],[27,'Escape'],[36,'Home']]);
 function keyboardCode(event){
-  // Physical positions retain priority, including when the layout changes mid-press.
-  if(event.code&&event.code!=='Unidentified')return event.code;
-  return KEY_FALLBACKS.get(event.key?.toLowerCase())||'';
+  // Prefer recognised physical controls, then the printed key (including remaps).
+  // A non-empty but unrelated/incorrect code must not discard a usable D/В.
+  if(MOVE_CODES.has(event.code)||CONTROL_CODES.has(event.code))return event.code;
+  const key=event.key?.normalize('NFKC').toLowerCase();
+  const mapped=KEY_FALLBACKS.get(key);if(mapped)return mapped;
+  // Older keyboards/remote clients sometimes provide only the numeric value.
+  // Never override a meaningful non-movement letter or an IME composition.
+  if(!key||key==='unidentified')return LEGACY_CODES.get(event.keyCode||event.which)||'';
+  return '';
+}
+function keyIdentity(event,code){
+  if(event.code&&event.code!=='Unidentified')return 'physical:'+event.code;
+  return 'resolved:'+code;
 }
 
 export function movementDirection(keys) {
@@ -24,8 +36,8 @@ export function isTextEntry(target) {
 
 // Listeners share one input state. Physical key codes work with Russian layouts.
 export function createKeyboardInput({eventTarget,onChange,onStop,onHome,canUse=()=>true}) {
-  const keys=new Set();
-  function clear(){if(keys.size){keys.clear();onChange();}}
+  const keys=new Set(),held=new Map();
+  function clear(){held.clear();if(keys.size){keys.clear();onChange();}}
   function down(event){
     const code=keyboardCode(event);
     if(code==='Escape'){clear();onStop();return;}
@@ -33,14 +45,23 @@ export function createKeyboardInput({eventTarget,onChange,onStop,onHome,canUse=(
     if(code==='Home'){event.preventDefault();if(!event.repeat)onHome();return;}
     if(!MOVE_CODES.has(code)&&!code.startsWith('Shift'))return;
     if(MOVE_CODES.has(code))event.preventDefault();
+    held.set(keyIdentity(event,code),code);
     if(!keys.has(code)){keys.add(code);onChange({pressed:code});}
   }
-  function up(event){const code=keyboardCode(event);if(keys.delete(code))onChange({released:code});}
+  function up(event){
+    const resolved=keyboardCode(event),identity=keyIdentity(event,resolved);
+    const code=held.get(identity)||resolved;
+    if(held.has(identity))held.delete(identity);
+    else for(const [id,value] of held)if(value===code)held.delete(id);
+    if(![...held.values()].includes(code)&&keys.delete(code))onChange({released:code});
+  }
   function blur(){clear();onStop();}
   function focus(event){if(isTextEntry(event.target)){clear();onStop();}}
-  eventTarget.addEventListener('keydown',down);eventTarget.addEventListener('keyup',up);
+  // Capture on the window before a focused control can stop bubble propagation.
+  // Editable targets and open panels still explicitly block movement above.
+  eventTarget.addEventListener('keydown',down,true);eventTarget.addEventListener('keyup',up,true);
   eventTarget.addEventListener('blur',blur);eventTarget.addEventListener('focusin',focus);
-  return {keys,clear,dispose(){clear();eventTarget.removeEventListener('keydown',down);eventTarget.removeEventListener('keyup',up);eventTarget.removeEventListener('blur',blur);eventTarget.removeEventListener('focusin',focus);}};
+  return {keys,clear,dispose(){clear();eventTarget.removeEventListener('keydown',down,true);eventTarget.removeEventListener('keyup',up,true);eventTarget.removeEventListener('blur',blur);eventTarget.removeEventListener('focusin',focus);}};
 }
 
 class MinHeap {

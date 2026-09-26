@@ -66,8 +66,58 @@ test('Rightward keys survive mixed presses, layouts and release order',()=>{
   assert.deepEqual(movementDirection(input.keys),{x:1,z:0});
   events.emit('keyup',{code:'ArrowRight',key:'ArrowRight'});
   assert.equal(input.keys.size,0);
-  events.emit('keydown',{code:'KeyB',key:'d'});assert.equal(input.keys.size,0,'A known physical key keeps priority over the printed layout');
+  events.emit('keydown',{code:'KeyA',key:'d'});assert.deepEqual(movementDirection(input.keys),{x:-1,z:0},'Recognised physical WASD positions keep priority over layout');
   input.dispose();
+});
+
+test('D/В are accepted with unrelated, remapped or nonstandard browser codes',()=>{
+  for(const props of [{code:'KeyB',key:'d'},{code:'D',key:'D'},{code:'KeyВ',key:'в'},{code:'Process',key:'В'}]){
+    const {events,input}=keyboard();events.emit('keydown',props);
+    assert.deepEqual(movementDirection(input.keys),{x:1,z:0});
+    events.emit('keyup',props);assert.equal(input.keys.size,0);input.dispose();
+  }
+});
+
+test('Legacy keyboard values work only when the printed key is unavailable',()=>{
+  for(const props of [{key:'Unidentified',keyCode:68},{code:'Unidentified',which:68},{key:'',keyCode:39}]){
+    const {events,input}=keyboard();events.emit('keydown',props);
+    assert.deepEqual(movementDirection(input.keys),{x:1,z:0});
+    events.emit('keyup',props);assert.equal(input.keys.size,0);input.dispose();
+  }
+  const {events,input}=keyboard();events.emit('keydown',{key:'b',code:'KeyB',keyCode:68});
+  assert.equal(input.keys.size,0);events.emit('keydown',{key:'Unidentified',keyCode:68,isComposing:true});
+  assert.equal(input.keys.size,0);input.dispose();
+});
+
+test('A remapped key releases even when the layout changes before keyup',()=>{
+  const {events,input}=keyboard();
+  events.emit('keydown',{code:'KeyB',key:'d'});
+  events.emit('keydown',{code:'KeyD',key:'в'});
+  events.emit('keyup',{code:'KeyB',key:'b'});
+  assert.deepEqual(movementDirection(input.keys),{x:1,z:0},'Physical D is still held');
+  events.emit('keyup',{code:'',key:'D'});
+  assert.equal(input.keys.size,0,'Fallback release cannot leave D stuck');input.dispose();
+});
+
+test('Blocked input also rejects remapped and numeric movement keys',()=>{
+  const {events,input,disable}=keyboard();
+  for(const props of [{target:{closest:()=>({})}},{ctrlKey:true},{altKey:true},{metaKey:true},{isComposing:true}]){
+    events.emit('keydown',{code:'KeyB',key:'d',...props});assert.equal(input.keys.size,0);
+    events.emit('keydown',{keyCode:68,...props});assert.equal(input.keys.size,0);
+  }
+  disable();events.emit('keydown',{code:'KeyB',key:'в'});assert.equal(input.keys.size,0);input.dispose();
+});
+
+test('Movement down/up use matching capture listeners and fully detach',()=>{
+  const calls=[],events=new Events();
+  const add=events.addEventListener.bind(events),remove=events.removeEventListener.bind(events);
+  events.addEventListener=(type,fn,capture)=>{calls.push(['add',type,capture]);add(type,fn);};
+  events.removeEventListener=(type,fn,capture)=>{calls.push(['remove',type,capture]);remove(type,fn);};
+  const input=createKeyboardInput({eventTarget:events,onChange(){},onStop(){},onHome(){}});
+  input.dispose();
+  for(const operation of ['add','remove'])for(const type of ['keydown','keyup'])
+    assert.ok(calls.some(c=>c[0]===operation&&c[1]===type&&c[2]===true));
+  assert.ok([...events.listeners.values()].every(set=>set.size===0));
 });
 test('typing, editable descendants, shortcuts and composing do not move the player',()=>{
   const {events,input}=keyboard();
