@@ -6,6 +6,7 @@ import {createAssetLibrary,assembleFloor} from './assets.js';
 import {doorCollider} from './colliders.js';
 import {findSeatApproach} from './interactions.js';
 import {CAMERA_RIG,followPlayer,cameraRelativeDirection} from './camera.js';
+import {createKeyboardDiagnostics} from './keyboardDiagnostics.js';
 
 export function createOffice(container,callbacks={}){
   let disposed=false,frame=0,last=performance.now(),dirty=true,labelsDirty=true,keyboardEnabled=true,loading=true,loadToken=0;
@@ -21,6 +22,7 @@ export function createOffice(container,callbacks={}){
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   const canvas=renderer.domElement;canvas.tabIndex=0;canvas.dataset.testid='office-canvas';canvas.dataset.engine='Three.js / GLB';
   canvas.setAttribute('aria-label','Трёхмерный офис. WASD или стрелки — ходить, E — взаимодействовать, Home — камера к персонажу.');container.appendChild(canvas);
+  const keyboardDiagnostics=createKeyboardDiagnostics(container.parentElement,canvas);
   const controls=new OrbitControls(camera,canvas);controls.enableRotate=false;controls.enablePan=false;controls.enableDamping=false;
   controls.screenSpacePanning=false;controls.minZoom=.65;controls.maxZoom=2.1;controls.mouseButtons={LEFT:T.MOUSE.PAN,MIDDLE:T.MOUSE.DOLLY,RIGHT:T.MOUSE.PAN};
   const sun=new T.DirectionalLight('#ffe4b5',2.8);sun.position.set(-12,22,-10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
@@ -36,6 +38,7 @@ export function createOffice(container,callbacks={}){
   function setWalking(next){if(walking!==next){walking=next;callbacks.onWalk?.(next);}}
   function stop(){path=[];pathIndex=0;pending=null;destination.visible=false;invalidate();}
   const input=createKeyboardInput({eventTarget:window,canUse:()=>keyboardEnabled&&!loading&&!document.hidden,
+    onInput:keyboardDiagnostics?.input,
     onChange(event){const dir=movementDirection(input.keys);if(!event)pending=null;else if(event.pressed)pending=dir.x||dir.z?dir:null;if(dir.x||dir.z){path=[];pathIndex=0;destination.visible=false;}invalidate();},
     onStop:stop,onHome:reset});
   function reset(){inspectionTarget=null;camera.zoom=1;camera.updateProjectionMatrix();followPlayer(camera,controls.target,player?.position||{x:0,z:0});controls.update();invalidate();}
@@ -162,10 +165,11 @@ export function createOffice(container,callbacks={}){
   function tick(now){
     frame=0;if(disposed||document.hidden)return;
     const dt=Math.min((now-last)/1000,.05);last=now;
-    let moved=false;
+    let moved=false,requestedMovement=false;
     if(player&&!loading){
       let dir=movementDirection(input.keys);const tapped=!(dir.x||dir.z)&&pending;if(tapped)dir=pending;pending=null;
       dir=cameraRelativeDirection(dir);
+      requestedMovement=!!(dir.x||dir.z);
       const x=player.position.x,z=player.position.z;
       if((dir.x||dir.z)&&seated)stand();
       if(!seated&&(dir.x||dir.z)){
@@ -197,6 +201,7 @@ export function createOffice(container,callbacks={}){
     if(dirty||changed){
       if(renderer.shadowMap.needsUpdate)shadowFrames++;
       renderer.render(scene,camera);renderFrames++;dirty=false;
+      if(player)keyboardDiagnostics?.frame({floor:config.id,x:player.position.x,z:player.position.z,moved,blocked:requestedMovement&&!moved,enabled:keyboardEnabled,loading});
       if(moved&&lastActiveTime){activeFrameMs+=now-lastActiveTime;activeFrameCount++;}lastActiveTime=moved?now:0;
       if(import.meta.env.DEV){
         Object.assign(canvas.dataset,{floor:config?.id||'',playerX:player?.position.x.toFixed(3)||'',playerZ:player?.position.z.toFixed(3)||'',cameraTargetX:controls.target.x.toFixed(3),cameraTargetZ:controls.target.z.toFixed(3),seated:seated?.id||'',interaction:hint?.id||'',renderFrames,shadowFrames,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,loadedAssets:library.stats().loaded,assetRequests:library.stats().requests,missingModels:[...library.missing].join(','),openDoors:config?.doors.filter(d=>doorStates[d.id]).map(d=>d.id).join(',')||'',activeFrameCount,activeFrameMs:activeFrameMs.toFixed(1),activeFps:activeFrameMs?(1000*activeFrameCount/activeFrameMs).toFixed(1):'',objects:config?.objects.length||0});
@@ -222,7 +227,7 @@ export function createOffice(container,callbacks={}){
       inspectionTarget=npc;followPlayer(camera,controls.target,npc);controls.update();invalidate();
     },
     dispose(){
-      disposed=true;loadToken++;input.dispose();cancelAnimationFrame(frame);observer.disconnect();controls.removeEventListener('change',cameraChange);controls.dispose();
+      disposed=true;loadToken++;input.dispose();keyboardDiagnostics?.dispose();cancelAnimationFrame(frame);observer.disconnect();controls.removeEventListener('change',cameraChange);controls.dispose();
       window.removeEventListener('keydown',actionKey);document.removeEventListener('visibilitychange',visibility);
       canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointermove',hover);canvas.removeEventListener('webglcontextrestored',restored);
       world?.release();player?.removeFromParent();library.dispose();sun.shadow.dispose();ring.geometry.dispose();ring.material.dispose();destination.geometry.dispose();destination.material.dispose();renderer.dispose();canvas.remove();

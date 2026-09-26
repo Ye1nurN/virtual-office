@@ -134,3 +134,23 @@ test('Home resets the view once, and disposal removes every listener',()=>{
   const {events,calls,input}=keyboard();events.emit('keydown',{code:'Home'});events.emit('keydown',{code:'Home',repeat:true});assert.equal(calls.home,1);
   input.dispose();events.emit('keydown',{code:'KeyW'});assert.equal(input.keys.size,0);assert.ok([...events.listeners.values()].every(set=>set.size===0));
 });
+
+test('Optional keyboard diagnostics explain accepted, unmapped and blocked events without changing input',()=>{
+  const events=new Events(),reports=[];
+  const input=createKeyboardInput({eventTarget:events,onChange(){},onStop(){},onHome(){},onInput:r=>reports.push(r)});
+  events.emit('keydown',{code:'KeyD',key:'в'});
+  assert.deepEqual(movementDirection(input.keys),{x:1,z:0});
+  assert.equal(reports.at(-1).result,'accepted');assert.equal(reports.at(-1).resolved,'KeyD');
+  events.emit('keyup',{code:'KeyD',key:'в'});assert.equal(input.keys.size,0);
+  events.emit('keydown',{code:'KeyB',key:'b'});assert.equal(reports.at(-1).result,'unmapped');
+  events.emit('keydown',{code:'KeyD',key:'d',ctrlKey:true});assert.equal(reports.at(-1).result,'shortcut');assert.equal(input.keys.size,0);
+  input.dispose();
+});
+
+test('Keyboard diagnostics never expose text or key codes from editable fields',()=>{
+  const events=new Events(),reports=[];
+  const input=createKeyboardInput({eventTarget:events,onChange(){},onStop(){},onHome(){},onInput:r=>reports.push(r)});
+  for(const type of ['keydown','keyup'])events.emit(type,{code:'KeyD',key:'private text',target:{closest:()=>({})}});
+  assert.deepEqual(reports,[{phase:'down',result:'text-entry',keys:[]},{phase:'up',result:'text-entry',keys:[]}]);
+  input.dispose();
+});

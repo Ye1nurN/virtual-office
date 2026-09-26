@@ -6,7 +6,7 @@ import {Box3,Vector3,OrthographicCamera,Group} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {followPlayer,cameraRelativeDirection} from '../src/world/camera.js';
 import {objectCollider,doorCollider} from '../src/world/colliders.js';
-import {createNavigation,movementDirection} from '../src/movement.js';
+import {createNavigation,movementDirection,createKeyboardInput} from '../src/movement.js';
 import {findSeatApproach,seatApproaches,seatSegmentClear} from '../src/world/interactions.js';
 const manifest=JSON.parse(readFileSync(new URL('../public/models/manifest.json',import.meta.url)));
 const registry=new Map(manifest.assets.map(a=>[a.id,a]));
@@ -38,6 +38,26 @@ test('Seat interactions include free exit points and reachable approaches',()=>{
     const approach=findSeatApproach(seat,navigation,undefined,obstacles);assert.ok(approach,'Seat exit '+seat.id);
     assert.ok(seatApproaches(seat).some(p=>!navigation.blocked(p.x,p.z)&&navigation.findPath(f.liftSpawn,p).length),'Seat route '+seat.id);
   }}
+});
+test('Holding D/В and ArrowRight follows the same collision-safe route from each floor arrival',()=>{
+  for(const f of FLOORS){
+    const ends=[];
+    for(const [code,key] of [['KeyD','d'],['KeyD','в'],['ArrowRight','ArrowRight']]){
+      const eventTarget=new EventTarget();
+      const input=createKeyboardInput({eventTarget,onChange(){},onStop(){},onHome(){}});
+      const press=new Event('keydown',{cancelable:true});Object.assign(press,{code,key});eventTarget.dispatchEvent(press);
+      const navigation=nav(f,false),start=f.id===1?f.spawn:f.liftSpawn,position={...start};
+      for(let frame=0;frame<90;frame++){
+        const direction=cameraRelativeDirection(movementDirection(input.keys));
+        navigation.move(position,direction.x*2.4/30,direction.z*2.4/30);
+        assert.equal(navigation.blocked(position.x,position.z),false);
+      }
+      assert.ok(Math.hypot(position.x-start.x,position.z-start.z)>4,'No sustained movement on floor '+f.id);
+      const release=new Event('keyup');Object.assign(release,{code,key});eventTarget.dispatchEvent(release);
+      assert.deepEqual(movementDirection(input.keys),{x:0,z:0});ends.push(position);input.dispose();
+    }
+    assert.deepEqual(ends[0],ends[1]);assert.deepEqual(ends[0],ends[2]);
+  }
 });
 test('Sitting can cross its own chair but never a partition or another desk',()=>{
   const seat={id:'chair',x:0,z:0,yaw:0};

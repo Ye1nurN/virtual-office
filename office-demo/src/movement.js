@@ -35,18 +35,27 @@ export function isTextEntry(target) {
 }
 
 // Listeners share one input state. Physical key codes work with Russian layouts.
-export function createKeyboardInput({eventTarget,onChange,onStop,onHome,canUse=()=>true}) {
+export function createKeyboardInput({eventTarget,onChange,onStop,onHome,canUse=()=>true,onInput}) {
   const keys=new Set(),held=new Map();
+  function report(event,phase,result,code){
+    if(!onInput)return;
+    // Never include text entered into search, chat or other editable fields.
+    if(isTextEntry(event.target)){onInput({phase,result:'text-entry',keys:[...keys]});return;}
+    onInput({phase,result,code:event.code||'',key:event.key||'',legacy:event.keyCode||event.which||0,
+      resolved:code,repeat:!!event.repeat,modifiers:['ctrl','alt','meta','shift'].filter(m=>event[m+'Key']),composing:!!event.isComposing,keys:[...keys]});
+  }
   function clear(){held.clear();if(keys.size){keys.clear();onChange();}}
   function down(event){
     const code=keyboardCode(event);
-    if(code==='Escape'){clear();onStop();return;}
-    if(event.ctrlKey||event.metaKey||event.altKey||event.isComposing||isTextEntry(event.target)||!canUse()){clear();return;}
-    if(code==='Home'){event.preventDefault();if(!event.repeat)onHome();return;}
-    if(!MOVE_CODES.has(code)&&!code.startsWith('Shift'))return;
+    if(code==='Escape'){clear();onStop();report(event,'down','stop',code);return;}
+    const blocked=isTextEntry(event.target)?'text-entry':event.isComposing?'composition':event.ctrlKey||event.metaKey||event.altKey?'shortcut':!canUse()?'paused':'';
+    if(blocked){clear();report(event,'down',blocked,code);return;}
+    if(code==='Home'){event.preventDefault();if(!event.repeat)onHome();report(event,'down','camera',code);return;}
+    if(!MOVE_CODES.has(code)&&!code.startsWith('Shift')){report(event,'down','unmapped',code);return;}
     if(MOVE_CODES.has(code))event.preventDefault();
     held.set(keyIdentity(event,code),code);
     if(!keys.has(code)){keys.add(code);onChange({pressed:code});}
+    report(event,'down','accepted',code);
   }
   function up(event){
     const resolved=keyboardCode(event),identity=keyIdentity(event,resolved);
@@ -54,6 +63,7 @@ export function createKeyboardInput({eventTarget,onChange,onStop,onHome,canUse=(
     if(held.has(identity))held.delete(identity);
     else for(const [id,value] of held)if(value===code)held.delete(id);
     if(![...held.values()].includes(code)&&keys.delete(code))onChange({released:code});
+    report(event,'up','released',code);
   }
   function blur(){clear();onStop();}
   function focus(event){if(isTextEntry(event.target)){clear();onStop();}}

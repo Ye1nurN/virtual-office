@@ -1,5 +1,7 @@
 # Prototype Instructions
 
+Recurring production keyboard report (2026-09-26): user reconfirmed D/В fails while ArrowRight works after deployment of 549091b. Do not claim this has been fixed based only on scripted key presses. The opt-in `?keyboard=1` report records input resolution, blocking reasons and movement in this tab, without text-entry contents or telemetry, to obtain the user's actual browser evidence. The public Cloudflare site deploys from GitHub `origin/master`; local commits alone do not update it.
+
 3D-only application (latest user decision): make the four-floor 3D office the default at `/` and remove the image-backed alternate implementation. The old `?view=3d` URL may continue to open the same office. Keep the independent model catalogue and design-reference images. This supersedes all earlier instructions to preserve the raster demo as the default. The recurring D-key issue requires regression checks for D/В, unusual/remapped event codes and reliable release handling; do not describe the user's exact browser cause as reproduced unless it was observed.
 
 Keyboard compatibility (2026-09-26): the user reports D failing everywhere in a regular browser while ArrowRight works. Preserve physical WASD codes; also resolve D/В and the other movement letters from KeyboardEvent.key when code is empty or Unidentified. Use the same resolution for keydown and keyup, without moving while typing or inside blocked UI. The exact user-side failure was not reproduced in IAB; do not describe its cause as confirmed.
