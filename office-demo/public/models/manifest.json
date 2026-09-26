@@ -1,0 +1,2923 @@
+{
+  "version": 2,
+  "reference": "/assets/four-floor-plan.png",
+  "kind": "single-view reconstruction, not original recovered models",
+  "axes": "GLB: Y up; Blender: Z up",
+  "dimensionsOrder": [
+    "width",
+    "depth",
+    "height"
+  ],
+  "assets": [
+    {
+      "id": "chair_task",
+      "title": "Рабочее кресло",
+      "category": "Мебель",
+      "sourceRect": [
+        270,
+        294,
+        64,
+        86
+      ],
+      "description": "Синяя обивка, поясничная подушка, пятилучевая база и парные ролики.",
+      "reference": "/assets/approved-design.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "compatible-base",
+      "file": "chair_task.glb",
+      "dimensions": [
+        0.711,
+        0.592,
+        1.195
+      ],
+      "triangles": 1388,
+      "parts": 37,
+      "renderMeshes": 6,
+      "size": 77556,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "monitor",
+      "title": "Монитор",
+      "category": "Техника",
+      "sourceRect": [
+        265,
+        249,
+        66,
+        66
+      ],
+      "description": "Объёмный корпус со стойкой; графика экрана — переносимые цветные элементы.",
+      "reference": "/assets/approved-design.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "compatible-base",
+      "file": "monitor.glb",
+      "dimensions": [
+        0.58,
+        0.2,
+        0.553
+      ],
+      "triangles": 780,
+      "parts": 45,
+      "renderMeshes": 9,
+      "size": 52076,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "keyboard_mouse",
+      "title": "Клавиатура и мышь",
+      "category": "Техника",
+      "sourceRect": [
+        272,
+        305,
+        48,
+        15
+      ],
+      "description": "Отдельные клавиши, пробел и колесо мыши.",
+      "reference": "/assets/approved-design.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "compatible-base",
+      "file": "keyboard_mouse.glb",
+      "dimensions": [
+        0.585,
+        0.15,
+        0.061
+      ],
+      "triangles": 2476,
+      "parts": 57,
+      "renderMeshes": 6,
+      "size": 150260,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "coffee_mug",
+      "title": "Кружка кофе",
+      "category": "Детали",
+      "sourceRect": [
+        340,
+        297,
+        13,
+        20
+      ],
+      "description": "Полая по виду кромка, поверхность кофе и открытая ручка.",
+      "reference": "/assets/approved-design.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "compatible-base",
+      "file": "coffee_mug.glb",
+      "dimensions": [
+        0.131,
+        0.09,
+        0.102
+      ],
+      "triangles": 264,
+      "parts": 6,
+      "renderMeshes": 3,
+      "size": 16444,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "bookshelf",
+      "title": "Книжный стеллаж",
+      "category": "Мебель",
+      "sourceRect": [
+        895,
+        162,
+        49,
+        102
+      ],
+      "description": "Четыре полки с отдельными корешками и переплётами.",
+      "reference": "/assets/approved-design.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "compatible-base",
+      "file": "bookshelf.glb",
+      "dimensions": [
+        0.81,
+        0.41,
+        1.717
+      ],
+      "triangles": 3980,
+      "parts": 137,
+      "renderMeshes": 9,
+      "size": 232960,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "cabinet_drawers",
+      "title": "Тумба",
+      "category": "Мебель",
+      "sourceRect": [
+        199,
+        289,
+        34,
+        56
+      ],
+      "description": "Три фасада и металлические ручки.",
+      "reference": "/assets/approved-design.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "compatible-base",
+      "file": "cabinet_drawers.glb",
+      "dimensions": [
+        0.46,
+        0.591,
+        0.7
+      ],
+      "triangles": 484,
+      "parts": 11,
+      "renderMeshes": 4,
+      "size": 30488,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "whiteboard",
+      "title": "Доска планирования",
+      "category": "Мебель",
+      "sourceRect": [
+        958,
+        162,
+        99,
+        86
+      ],
+      "description": "Карточки, алюминиевая рамка, маркеры и стойка на роликах.",
+      "reference": "/assets/approved-design.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "compatible-base",
+      "file": "whiteboard.glb",
+      "dimensions": [
+        1.27,
+        0.47,
+        1.74
+      ],
+      "triangles": 1160,
+      "parts": 58,
+      "renderMeshes": 14,
+      "size": 74816,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "tree_atrium",
+      "title": "Дерево атриума",
+      "category": "Растения",
+      "sourceRect": [
+        549,
+        301,
+        212,
+        201
+      ],
+      "description": "Резерв предыдущего дизайна. Ветвистый ствол и объёмная ступенчатая крона; материал без запечённых теней.",
+      "reference": "/assets/approved-design.png",
+      "floors": [],
+      "kit": "reserve",
+      "file": "tree_atrium.glb",
+      "dimensions": [
+        2.325,
+        2.175,
+        2.635
+      ],
+      "triangles": 10012,
+      "parts": 24,
+      "renderMeshes": 6,
+      "size": 544960,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "planter_square",
+      "title": "Каменная клумба",
+      "category": "Архитектура",
+      "sourceRect": [
+        568,
+        462,
+        153,
+        74
+      ],
+      "description": "Резерв предыдущего дизайна. Каменные борта, швы и широкая верхняя кромка.",
+      "reference": "/assets/approved-design.png",
+      "floors": [],
+      "kit": "reserve",
+      "file": "planter_square.glb",
+      "dimensions": [
+        1.767,
+        1.76,
+        0.694
+      ],
+      "triangles": 1900,
+      "parts": 137,
+      "renderMeshes": 8,
+      "size": 114020,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "filing_cabinet",
+      "title": "Металлический шкаф",
+      "category": "Мебель",
+      "sourceRect": [
+        1108,
+        646,
+        48,
+        76
+      ],
+      "description": "Резерв предыдущего дизайна. Серый шкаф с тремя выдвижными ящиками и карточками.",
+      "reference": "/assets/approved-design.png",
+      "floors": [],
+      "kit": "reserve",
+      "file": "filing_cabinet.glb",
+      "dimensions": [
+        0.46,
+        0.582,
+        0.92
+      ],
+      "triangles": 476,
+      "parts": 13,
+      "renderMeshes": 4,
+      "size": 31884,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "wall_module",
+      "title": "Стена · 1,2 м",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Прямой модуль 1,2 × 2,65 м. Цоколь и верхняя металлическая кромка.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "wall_module.glb",
+      "dimensions": [
+        1.2,
+        0.241,
+        2.665
+      ],
+      "triangles": 176,
+      "parts": 4,
+      "renderMeshes": 3,
+      "size": 13016,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "wall_half",
+      "title": "Низкая стена",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Модуль 1,2 × 1,15 м для открытого вида сверху.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "wall_half.glb",
+      "dimensions": [
+        1.2,
+        0.241,
+        1.165
+      ],
+      "triangles": 176,
+      "parts": 4,
+      "renderMeshes": 3,
+      "size": 13012,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "wall_corner",
+      "title": "Угол стены",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Угловое соединение двух плеч по 0,6 м, общая высота 2,65 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "wall_corner.glb",
+      "dimensions": [
+        0.63,
+        0.63,
+        2.665
+      ],
+      "triangles": 264,
+      "parts": 6,
+      "renderMeshes": 3,
+      "size": 17288,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "desk_compact",
+      "title": "Стол · компактный",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Стол 1,25 × 0,66 м, одна тумба. Верх y=0,8025 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "desk_compact.glb",
+      "dimensions": [
+        1.25,
+        0.66,
+        0.808
+      ],
+      "triangles": 892,
+      "parts": 17,
+      "renderMeshes": 5,
+      "size": 54952,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "desk_open",
+      "title": "Стол · без тумбы",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Свободное подстолье и четыре ножки, 1,25 × 0,66 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "desk_open.glb",
+      "dimensions": [
+        1.25,
+        0.66,
+        0.808
+      ],
+      "triangles": 496,
+      "parts": 8,
+      "renderMeshes": 4,
+      "size": 31808,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "desk_oak",
+      "title": "Стол · руководителя",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Стол 1,68 × 0,80 м, две тумбы, общий верх y≈0,802 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "desk_oak.glb",
+      "dimensions": [
+        1.68,
+        0.806,
+        0.802
+      ],
+      "triangles": 1288,
+      "parts": 38,
+      "renderMeshes": 6,
+      "size": 78276,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "chair_task_green",
+      "title": "Рабочее кресло · зелёное",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Пять опор с роликами, регулируемая стойка и мягкие подушки.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "chair_task_green.glb",
+      "dimensions": [
+        0.711,
+        0.592,
+        1.195
+      ],
+      "triangles": 3548,
+      "parts": 37,
+      "renderMeshes": 6,
+      "size": 193252,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "chair_meeting",
+      "title": "Стул переговорной",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Зелёная обивка, отдельная спинка, четыре ножки.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": "Основание стульев малоразличимо: выбрана устойчивая четырёхножная конструкция.",
+      "file": "chair_meeting.glb",
+      "dimensions": [
+        0.612,
+        0.522,
+        0.916
+      ],
+      "triangles": 1408,
+      "parts": 16,
+      "renderMeshes": 4,
+      "size": 78832,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "chair_auditorium",
+      "title": "Стул общего зала",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Зелёная обивка, отдельная спинка, четыре ножки.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": "Основание стульев малоразличимо: выбрана устойчивая четырёхножная конструкция.",
+      "file": "chair_auditorium.glb",
+      "dimensions": [
+        0.51,
+        0.522,
+        0.916
+      ],
+      "triangles": 976,
+      "parts": 12,
+      "renderMeshes": 3,
+      "size": 54584,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "chair_training",
+      "title": "Учебный стул · планшет",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Зелёная обивка, отдельная спинка, четыре ножки. Откидная по назначению рабочая поверхность; статичная модель.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": "Основание стульев малоразличимо: выбрана устойчивая четырёхножная конструкция.",
+      "file": "chair_training.glb",
+      "dimensions": [
+        0.675,
+        0.627,
+        0.916
+      ],
+      "triangles": 1192,
+      "parts": 14,
+      "renderMeshes": 4,
+      "size": 66416,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "sofa_three",
+      "title": "Диван · три места",
+      "category": "Мебель",
+      "sourceRect": [
+        1150,
+        926,
+        135,
+        140
+      ],
+      "description": "Скруглённые подушки, зелёная обивка, деревянные ножки. Высота сиденья 0,515 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "sofa_three.glb",
+      "dimensions": [
+        2.12,
+        0.8,
+        0.94
+      ],
+      "triangles": 2556,
+      "parts": 17,
+      "renderMeshes": 4,
+      "size": 141748,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "sofa_two",
+      "title": "Диван · два места",
+      "category": "Мебель",
+      "sourceRect": [
+        1150,
+        926,
+        135,
+        140
+      ],
+      "description": "Скруглённые подушки, зелёная обивка, деревянные ножки. Высота сиденья 0,515 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "sofa_two.glb",
+      "dimensions": [
+        1.55,
+        0.8,
+        0.94
+      ],
+      "triangles": 1992,
+      "parts": 14,
+      "renderMeshes": 4,
+      "size": 109040,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "armchair_waiting",
+      "title": "Кресло ожидания",
+      "category": "Мебель",
+      "sourceRect": [
+        1150,
+        926,
+        135,
+        140
+      ],
+      "description": "Скруглённые подушки, зелёная обивка, деревянные ножки. Высота сиденья 0,515 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "armchair_waiting.glb",
+      "dimensions": [
+        0.86,
+        0.8,
+        0.94
+      ],
+      "triangles": 1428,
+      "parts": 11,
+      "renderMeshes": 4,
+      "size": 81188,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "sofa_module",
+      "title": "Диванный модуль",
+      "category": "Мебель",
+      "sourceRect": [
+        1150,
+        926,
+        135,
+        140
+      ],
+      "description": "Скруглённые подушки, зелёная обивка, деревянные ножки. Высота сиденья 0,515 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "sofa_module.glb",
+      "dimensions": [
+        0.77,
+        0.8,
+        0.94
+      ],
+      "triangles": 1428,
+      "parts": 11,
+      "renderMeshes": 4,
+      "size": 81144,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "stool_cafe",
+      "title": "Кофейный табурет",
+      "category": "Мебель",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Низкий круглый табурет, мягкая зелёная подушка и четыре ножки.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "stool_cafe.glb",
+      "dimensions": [
+        0.5,
+        0.5,
+        0.495
+      ],
+      "triangles": 392,
+      "parts": 6,
+      "renderMeshes": 3,
+      "size": 22012,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "pouf_round",
+      "title": "Круглый пуф",
+      "category": "Мебель",
+      "sourceRect": [
+        1150,
+        926,
+        135,
+        140
+      ],
+      "description": "Мягкий охристый пуф с радиальными швами, диаметр 0,56 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "pouf_round.glb",
+      "dimensions": [
+        0.56,
+        0.56,
+        0.451
+      ],
+      "triangles": 440,
+      "parts": 10,
+      "renderMeshes": 3,
+      "size": 25568,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "table_round",
+      "title": "Стол · круглая переговорная",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Деревянная круглая столешница с тёмной кромкой и устойчивой опорой.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "table_round.glb",
+      "dimensions": [
+        1.52,
+        1.52,
+        0.743
+      ],
+      "triangles": 340,
+      "parts": 7,
+      "renderMeshes": 3,
+      "size": 17856,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "table_cafe",
+      "title": "Стол · кофейный",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Деревянная круглая столешница с тёмной кромкой и устойчивой опорой.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "table_cafe.glb",
+      "dimensions": [
+        1.02,
+        1.02,
+        0.722
+      ],
+      "triangles": 340,
+      "parts": 7,
+      "renderMeshes": 3,
+      "size": 17844,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "table_coffee",
+      "title": "Стол · журнальный",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Деревянная круглая столешница с тёмной кромкой и устойчивой опорой.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "table_coffee.glb",
+      "dimensions": [
+        0.86,
+        0.86,
+        0.432
+      ],
+      "triangles": 340,
+      "parts": 7,
+      "renderMeshes": 3,
+      "size": 17888,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "table_side",
+      "title": "Столик · приставной",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Деревянная круглая столешница с тёмной кромкой и устойчивой опорой.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "table_side.glb",
+      "dimensions": [
+        0.5,
+        0.5,
+        0.54
+      ],
+      "triangles": 340,
+      "parts": 7,
+      "renderMeshes": 3,
+      "size": 17808,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "table_meeting",
+      "title": "Стол · переговорная",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Самостоятельная геометрия ножек и столешницы; рабочая поверхность y=0,802 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "table_meeting.glb",
+      "dimensions": [
+        2.4,
+        1.02,
+        0.81
+      ],
+      "triangles": 872,
+      "parts": 10,
+      "renderMeshes": 4,
+      "size": 51884,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "table_meeting_small",
+      "title": "Стол · малая переговорная",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Самостоятельная геометрия ножек и столешницы; рабочая поверхность y=0,802 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "table_meeting_small.glb",
+      "dimensions": [
+        1.55,
+        0.9,
+        0.81
+      ],
+      "triangles": 872,
+      "parts": 10,
+      "renderMeshes": 4,
+      "size": 51940,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "table_training",
+      "title": "Стол · обучение",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Самостоятельная геометрия ножек и столешницы; рабочая поверхность y=0,802 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "table_training.glb",
+      "dimensions": [
+        3.4,
+        1.12,
+        0.81
+      ],
+      "triangles": 872,
+      "parts": 10,
+      "renderMeshes": 4,
+      "size": 51912,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "desk_classroom",
+      "title": "Учебный стол",
+      "category": "Мебель",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Небольшой стол 0,65 × 0,48 м для отдельного стула. Альтернатива стулу с планшетом.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": "На плане неразличимо, столики отдельные или соединены со стульями; подготовлены оба варианта.",
+      "file": "desk_classroom.glb",
+      "dimensions": [
+        0.65,
+        0.48,
+        0.74
+      ],
+      "triangles": 344,
+      "parts": 6,
+      "renderMeshes": 3,
+      "size": 21416,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "bookshelf_low",
+      "title": "Низкий книжный стеллаж",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Два яруса и два отделения, высота 0,95 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "bookshelf_low.glb",
+      "dimensions": [
+        1.24,
+        0.385,
+        0.947
+      ],
+      "triangles": 2548,
+      "parts": 87,
+      "renderMeshes": 9,
+      "size": 153500,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "cabinet_low",
+      "title": "Низкий шкаф",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Закрытое хранение с двумя дверцами, верх y=0,925 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "cabinet_low.glb",
+      "dimensions": [
+        1.09,
+        0.504,
+        0.905
+      ],
+      "triangles": 608,
+      "parts": 8,
+      "renderMeshes": 4,
+      "size": 36988,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "wall_shelf",
+      "title": "Настенная полка",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Двухъярусная открытая полка. Начало координат — низ модели, высота монтажа задаётся в сцене.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "wall_shelf.glb",
+      "dimensions": [
+        1.2,
+        0.289,
+        0.455
+      ],
+      "triangles": 528,
+      "parts": 12,
+      "renderMeshes": 6,
+      "size": 34860,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "whiteboard_vertical",
+      "title": "Доска · вертикальная",
+      "category": "Мебель",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Узкая двусторонняя доска 0,62 × 1,70 м, заметная между рабочими группами.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        2,
+        3
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "whiteboard_vertical.glb",
+      "dimensions": [
+        0.62,
+        0.42,
+        1.68
+      ],
+      "triangles": 1552,
+      "parts": 60,
+      "renderMeshes": 9,
+      "size": 92132,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "wall_pier",
+      "title": "Простенок / колонна",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Узкий повторяемый простенок между окнами, ширина 0,28 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "wall_pier.glb",
+      "dimensions": [
+        0.33,
+        0.25,
+        2.665
+      ],
+      "triangles": 264,
+      "parts": 6,
+      "renderMeshes": 3,
+      "size": 18556,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "door_portal",
+      "title": "Дверной портал",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Проём 0,96 × 2,20 м; внешняя ширина 1,20 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "door_portal.glb",
+      "dimensions": [
+        1.2,
+        0.235,
+        2.65
+      ],
+      "triangles": 264,
+      "parts": 6,
+      "renderMeshes": 2,
+      "size": 16748,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "window_section",
+      "title": "Окно · двойная секция",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Две стеклянные панели, оконный цоколь и подоконник. Шаг 1,8 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "window_section.glb",
+      "dimensions": [
+        1.84,
+        0.29,
+        2.635
+      ],
+      "triangles": 484,
+      "parts": 11,
+      "renderMeshes": 5,
+      "size": 32480,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "glass_partition",
+      "title": "Перегородка · стекло",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Рамная перегородка 1,2 × 2,2 м; подходит к дверному модулю.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "glass_partition.glb",
+      "dimensions": [
+        1.218,
+        0.11,
+        2.2
+      ],
+      "triangles": 572,
+      "parts": 13,
+      "renderMeshes": 4,
+      "size": 37840,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "glass_corner_post",
+      "title": "Угловая стойка стекла",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Квадратная угловая стойка 80 × 80 мм, высота 2,2 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "glass_corner_post.glb",
+      "dimensions": [
+        0.1,
+        0.1,
+        2.2
+      ],
+      "triangles": 132,
+      "parts": 3,
+      "renderMeshes": 2,
+      "size": 10000,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "door_interior",
+      "title": "Дверь · непрозрачная",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Коробка и отдельные шарнирные узлы створок; можно открывать поворотом вокруг вертикальной оси.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "door_interior.glb",
+      "dimensions": [
+        1.045,
+        0.178,
+        2.2
+      ],
+      "triangles": 808,
+      "parts": 14,
+      "renderMeshes": 4,
+      "size": 46464,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "glass_door",
+      "title": "Дверь · стеклянная",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Коробка и отдельные шарнирные узлы створок; можно открывать поворотом вокруг вертикальной оси.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "glass_door.glb",
+      "dimensions": [
+        1.045,
+        0.178,
+        2.2
+      ],
+      "triangles": 608,
+      "parts": 16,
+      "renderMeshes": 5,
+      "size": 37088,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "entrance_double_door",
+      "title": "Вход · две створки",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Коробка и отдельные шарнирные узлы створок; можно открывать поворотом вокруг вертикальной оси.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "entrance_double_door.glb",
+      "dimensions": [
+        1.925,
+        0.178,
+        2.2
+      ],
+      "triangles": 1084,
+      "parts": 29,
+      "renderMeshes": 9,
+      "size": 61912,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "elevator_portal",
+      "title": "Лифтовый портал",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Две раздвижные створки, вызов и индикатор. Створки — отдельные узлы. Кабина отдельным объектом.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "elevator_portal.glb",
+      "dimensions": [
+        1.68,
+        0.38,
+        2.65
+      ],
+      "triangles": 624,
+      "parts": 20,
+      "renderMeshes": 9,
+      "size": 41696,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "elevator_cabin",
+      "title": "Лифт · кабина",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Открытая спереди кабина 1,5 × 1,5 м; потолок отдельно не закрывает вид сверху.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "elevator_cabin.glb",
+      "dimensions": [
+        1.5,
+        1.5,
+        2.36
+      ],
+      "triangles": 276,
+      "parts": 7,
+      "renderMeshes": 5,
+      "size": 19736,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "stair_u",
+      "title": "Лестница · два марша",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "18 подъёмов по 0,17 м, ступени 0,28 м, ширина марша 1 м. Высота этажа 3,06 м — проектное допущение.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "stair_u.glb",
+      "dimensions": [
+        2.304,
+        3.825,
+        4.014
+      ],
+      "triangles": 2636,
+      "parts": 73,
+      "renderMeshes": 4,
+      "size": 147652,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "railing_module",
+      "title": "Ограждение · 1,2 м",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Самостоятельное ограждение площадок высотой 1 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "railing_module.glb",
+      "dimensions": [
+        1.232,
+        0.092,
+        1.025
+      ],
+      "triangles": 300,
+      "parts": 9,
+      "renderMeshes": 4,
+      "size": 18076,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "floor_tile",
+      "title": "Пол · синий ковролин",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Модуль 1 × 1 м, толщина 30 мм. Верхняя поверхность y=0,03 м в GLB.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "floor_tile.glb",
+      "dimensions": [
+        1.0,
+        1.0,
+        0.03
+      ],
+      "triangles": 560,
+      "parts": 44,
+      "renderMeshes": 3,
+      "size": 34212,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "floor_light_tile",
+      "title": "Пол · светлая плитка",
+      "category": "Архитектура",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Модуль 1 × 1 м, толщина 30 мм. Верхняя поверхность y=0,03 м в GLB.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "floor_light_tile.glb",
+      "dimensions": [
+        1.0,
+        1.0,
+        0.03
+      ],
+      "triangles": 56,
+      "parts": 2,
+      "renderMeshes": 2,
+      "size": 5416,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "wall_lamp",
+      "title": "Настенный светильник",
+      "category": "Свет",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Корпус, матовый рассеиватель и тёплый эмиссивный материал. Реальный источник света добавляется движком.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "wall_lamp.glb",
+      "dimensions": [
+        0.21,
+        0.13,
+        0.34
+      ],
+      "triangles": 464,
+      "parts": 4,
+      "renderMeshes": 3,
+      "size": 27840,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "light_strip",
+      "title": "Световая планка",
+      "category": "Свет",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Линейный светильник длиной 0,9 м для полок и стен.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "light_strip.glb",
+      "dimensions": [
+        0.9,
+        0.082,
+        0.05
+      ],
+      "triangles": 88,
+      "parts": 2,
+      "renderMeshes": 2,
+      "size": 7132,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "ceiling_light",
+      "title": "Потолочный светильник",
+      "category": "Свет",
+      "sourceRect": [
+        22,
+        117,
+        616,
+        151
+      ],
+      "description": "Плоская панель 0,6 × 0,6 м; дополнительный модуль для полноразмерной сцены.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": "Потолок на плане снят; форма светильника предложена для комплектации.",
+      "file": "ceiling_light.glb",
+      "dimensions": [
+        0.6,
+        0.6,
+        0.052
+      ],
+      "triangles": 88,
+      "parts": 2,
+      "renderMeshes": 2,
+      "size": 7148,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "reception_counter",
+      "title": "Стойка ресепшена",
+      "category": "Мебель",
+      "sourceRect": [
+        222,
+        278,
+        143,
+        85
+      ],
+      "description": "Два уровня: рабочая поверхность 0,78 м, стойка для посетителя 1,02 м. Ширина 2,1 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "reception_counter.glb",
+      "dimensions": [
+        2.14,
+        0.835,
+        1.02
+      ],
+      "triangles": 588,
+      "parts": 9,
+      "renderMeshes": 5,
+      "size": 37628,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "presentation_screen",
+      "title": "Презентационный экран",
+      "category": "Техника",
+      "sourceRect": [
+        889,
+        783,
+        203,
+        139
+      ],
+      "description": "Большой дисплей 1,85 × 1,10 м, две опоры и переносимая графика слайда.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "presentation_screen.glb",
+      "dimensions": [
+        1.85,
+        0.58,
+        1.93
+      ],
+      "triangles": 584,
+      "parts": 14,
+      "renderMeshes": 7,
+      "size": 38472,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "coffee_counter",
+      "title": "Кофейная стойка",
+      "category": "Сервис",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Кухонный модуль 1,8 м: фасады, столешница и фартук. Приборы ставятся отдельно. Верх y=0,92 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "coffee_counter.glb",
+      "dimensions": [
+        1.86,
+        0.699,
+        1.28
+      ],
+      "triangles": 1100,
+      "parts": 13,
+      "renderMeshes": 7,
+      "size": 65772,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "sink_cabinet",
+      "title": "Тумба с мойкой",
+      "category": "Сервис",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Компактная мойка для кофе-зоны или служебной комнаты, ширина 0,64 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "sink_cabinet.glb",
+      "dimensions": [
+        0.64,
+        0.604,
+        1.126
+      ],
+      "triangles": 1040,
+      "parts": 12,
+      "renderMeshes": 6,
+      "size": 59144,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "coffee_machine",
+      "title": "Кофемашина",
+      "category": "Техника",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Корпус, дисплей, два носика, решётка и верхний бункер.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "coffee_machine.glb",
+      "dimensions": [
+        0.29,
+        0.43,
+        0.502
+      ],
+      "triangles": 1020,
+      "parts": 17,
+      "renderMeshes": 6,
+      "size": 58328,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "fridge_small",
+      "title": "Мини-холодильник",
+      "category": "Техника",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Подстольный холодильник, отдельная створка с петлёй.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": "Небольшие приборы кофе-зоны интерпретированы по силуэту.",
+      "file": "fridge_small.glb",
+      "dimensions": [
+        0.53,
+        0.613,
+        0.82
+      ],
+      "triangles": 404,
+      "parts": 3,
+      "renderMeshes": 3,
+      "size": 24032,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "kettle",
+      "title": "Чайник",
+      "category": "Техника",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Гранёный чайник с ручкой, носиком и подставкой.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "kettle.glb",
+      "dimensions": [
+        0.314,
+        0.2,
+        0.23
+      ],
+      "triangles": 292,
+      "parts": 7,
+      "renderMeshes": 3,
+      "size": 16440,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "toilet",
+      "title": "Унитаз",
+      "category": "Сервис",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Напольная сантехника с бачком и открытым кольцом сиденья.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": "Подробности сантехники и точное количество неразличимы на плане.",
+      "file": "toilet.glb",
+      "dimensions": [
+        0.41,
+        0.675,
+        0.808
+      ],
+      "triangles": 1380,
+      "parts": 8,
+      "renderMeshes": 5,
+      "size": 76424,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "washbasin",
+      "title": "Раковина",
+      "category": "Сервис",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Раковина с опорой и смесителем, отдельная от зеркала.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "washbasin.glb",
+      "dimensions": [
+        0.53,
+        0.43,
+        1.056
+      ],
+      "triangles": 924,
+      "parts": 9,
+      "renderMeshes": 4,
+      "size": 51920,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "bathroom_mirror",
+      "title": "Зеркало",
+      "category": "Сервис",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Рамка и отражающая металлическая поверхность. Высота монтажа задаётся при сборке.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "bathroom_mirror.glb",
+      "dimensions": [
+        0.53,
+        0.052,
+        0.72
+      ],
+      "triangles": 232,
+      "parts": 2,
+      "renderMeshes": 2,
+      "size": 14808,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "stall_partition",
+      "title": "Перегородка санузла",
+      "category": "Сервис",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Боковая панель с нижним просветом и ножками.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "stall_partition.glb",
+      "dimensions": [
+        1.225,
+        0.094,
+        1.935
+      ],
+      "triangles": 276,
+      "parts": 7,
+      "renderMeshes": 3,
+      "size": 17604,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "waste_bin",
+      "title": "Корзина для мусора",
+      "category": "Детали",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Небольшая корзина с открытым верхом.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "waste_bin.glb",
+      "dimensions": [
+        0.308,
+        0.308,
+        0.335
+      ],
+      "triangles": 180,
+      "parts": 3,
+      "renderMeshes": 3,
+      "size": 10144,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "coat_rack",
+      "title": "Гардеробная стойка",
+      "category": "Мебель",
+      "sourceRect": [
+        185,
+        124,
+        303,
+        117
+      ],
+      "description": "Рейл с отдельными вешалками. Предположение для нижнего правого помещения первого этажа.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1
+      ],
+      "kit": "four-floor",
+      "assumption": "Назначение этого блока предположительно; рейл включён как опциональная модель.",
+      "file": "coat_rack.glb",
+      "dimensions": [
+        1.42,
+        0.54,
+        1.676
+      ],
+      "triangles": 956,
+      "parts": 33,
+      "renderMeshes": 4,
+      "size": 50708,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "server_rack",
+      "title": "Серверная стойка",
+      "category": "Техника",
+      "sourceRect": [
+        35,
+        927,
+        122,
+        136
+      ],
+      "description": "Шкаф 19-дюймового оборудования: патч-панели, серверы, вентиляция и световые индикаторы.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        3
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "server_rack.glb",
+      "dimensions": [
+        0.62,
+        0.845,
+        1.993
+      ],
+      "triangles": 6216,
+      "parts": 162,
+      "renderMeshes": 5,
+      "size": 359148,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "computer_tower",
+      "title": "Системный блок",
+      "category": "Техника",
+      "sourceRect": [
+        35,
+        927,
+        122,
+        136
+      ],
+      "description": "Фронтальные вентиляционные полосы, кнопка и разъёмы.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "computer_tower.glb",
+      "dimensions": [
+        0.2,
+        0.419,
+        0.44
+      ],
+      "triangles": 444,
+      "parts": 17,
+      "renderMeshes": 5,
+      "size": 29296,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "laptop",
+      "title": "Ноутбук",
+      "category": "Техника",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Открытый ноутбук со слегка наклонённым экраном и отдельным шарниром.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "laptop.glb",
+      "dimensions": [
+        0.32,
+        0.264,
+        0.237
+      ],
+      "triangles": 2616,
+      "parts": 54,
+      "renderMeshes": 7,
+      "size": 155728,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "desk_phone",
+      "title": "Настольный телефон",
+      "category": "Техника",
+      "sourceRect": [
+        222,
+        278,
+        143,
+        85
+      ],
+      "description": "Кнопки, дисплей и трубка, отдельная модель для ресепшена.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "desk_phone.glb",
+      "dimensions": [
+        0.175,
+        0.19,
+        0.098
+      ],
+      "triangles": 816,
+      "parts": 12,
+      "renderMeshes": 4,
+      "size": 49056,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "tablet_device",
+      "title": "Планшет для тестирования",
+      "category": "Техника",
+      "sourceRect": [
+        35,
+        927,
+        122,
+        136
+      ],
+      "description": "Планшет с экраном и подставкой; дополняет оборудование тестирования.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        3
+      ],
+      "kit": "four-floor",
+      "assumption": "Малые устройства на столах не идентифицируются точно; предложен планшет.",
+      "file": "tablet_device.glb",
+      "dimensions": [
+        0.18,
+        0.25,
+        0.029
+      ],
+      "triangles": 364,
+      "parts": 5,
+      "renderMeshes": 3,
+      "size": 22432,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "printer",
+      "title": "Принтер",
+      "category": "Техника",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Компактный принтер, входной лоток, выход бумаги и панель управления.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "printer.glb",
+      "dimensions": [
+        0.41,
+        0.493,
+        0.31
+      ],
+      "triangles": 520,
+      "parts": 6,
+      "renderMeshes": 6,
+      "size": 32920,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "document_stack",
+      "title": "Документы и папка",
+      "category": "Детали",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Небольшая стопка документов с цветной папкой и карандашом.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "document_stack.glb",
+      "dimensions": [
+        0.237,
+        0.31,
+        0.03
+      ],
+      "triangles": 136,
+      "parts": 8,
+      "renderMeshes": 4,
+      "size": 11608,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "binder_set",
+      "title": "Набор папок",
+      "category": "Детали",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Три вертикальные папки для шкафов и рабочих мест.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "binder_set.glb",
+      "dimensions": [
+        0.19,
+        0.262,
+        0.32
+      ],
+      "triangles": 300,
+      "parts": 9,
+      "renderMeshes": 5,
+      "size": 19788,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "notice_frame",
+      "title": "Информационная рамка",
+      "category": "Детали",
+      "sourceRect": [
+        833,
+        815,
+        308,
+        244
+      ],
+      "description": "Сменная табличка с условными строками; надпись можно заменить в интерфейсе.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "notice_frame.glb",
+      "dimensions": [
+        0.29,
+        0.044,
+        0.38
+      ],
+      "triangles": 272,
+      "parts": 8,
+      "renderMeshes": 4,
+      "size": 18896,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "plant_desk",
+      "title": "Растение · настольное",
+      "category": "Растения",
+      "sourceRect": [
+        17,
+        227,
+        605,
+        317
+      ],
+      "description": "Плотная крона из небольших гранёных листьев, ветки, грунт и ободок кашпо.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "plant_desk.glb",
+      "dimensions": [
+        0.262,
+        0.259,
+        0.349
+      ],
+      "triangles": 17440,
+      "parts": 112,
+      "renderMeshes": 8,
+      "size": 964760,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "plant_floor",
+      "title": "Растение · куст",
+      "category": "Растения",
+      "sourceRect": [
+        17,
+        227,
+        605,
+        317
+      ],
+      "description": "Плотная крона из небольших гранёных листьев, ветки, грунт и ободок кашпо.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "plant_floor.glb",
+      "dimensions": [
+        0.747,
+        0.741,
+        1.0
+      ],
+      "triangles": 17440,
+      "parts": 112,
+      "renderMeshes": 8,
+      "size": 964780,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "plant_slender",
+      "title": "Растение · высокое",
+      "category": "Растения",
+      "sourceRect": [
+        17,
+        227,
+        605,
+        317
+      ],
+      "description": "Плотная крона из небольших гранёных листьев, ветки, грунт и ободок кашпо.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "plant_slender.glb",
+      "dimensions": [
+        0.616,
+        0.615,
+        1.494
+      ],
+      "triangles": 14560,
+      "parts": 94,
+      "renderMeshes": 8,
+      "size": 806376,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "plant_broadleaf",
+      "title": "Растение · широкие листья",
+      "category": "Растения",
+      "sourceRect": [
+        17,
+        227,
+        605,
+        317
+      ],
+      "description": "Плотная крона из небольших гранёных листьев, ветки, грунт и ободок кашпо.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "plant_broadleaf.glb",
+      "dimensions": [
+        0.913,
+        0.908,
+        1.224
+      ],
+      "triangles": 8920,
+      "parts": 64,
+      "renderMeshes": 8,
+      "size": 495544,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "plant_small_round",
+      "title": "Растение · маленькое кашпо",
+      "category": "Растения",
+      "sourceRect": [
+        17,
+        227,
+        605,
+        317
+      ],
+      "description": "Плотная крона из небольших гранёных листьев, ветки, грунт и ободок кашпо.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "plant_small_round.glb",
+      "dimensions": [
+        0.172,
+        0.171,
+        0.229
+      ],
+      "triangles": 17440,
+      "parts": 112,
+      "renderMeshes": 8,
+      "size": 964920,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "employee_base",
+      "title": "Сотрудник · стоит",
+      "category": "Персонаж",
+      "sourceRect": [
+        277,
+        278,
+        40,
+        60
+      ],
+      "description": "Мягкий гранёный силуэт. Отдельные узлы головы, рук и ног; без skinning и анимационных клипов.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "employee_base.glb",
+      "dimensions": [
+        0.535,
+        0.385,
+        1.197
+      ],
+      "triangles": 9632,
+      "parts": 52,
+      "renderMeshes": 20,
+      "size": 528832,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "employee_blond",
+      "title": "Сотрудник · светлые волосы",
+      "category": "Персонаж",
+      "sourceRect": [
+        277,
+        278,
+        40,
+        60
+      ],
+      "description": "Мягкий гранёный силуэт. Отдельные узлы головы, рук и ног; без skinning и анимационных клипов.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "employee_blond.glb",
+      "dimensions": [
+        0.535,
+        0.385,
+        1.197
+      ],
+      "triangles": 9632,
+      "parts": 52,
+      "renderMeshes": 20,
+      "size": 528988,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "employee_longhair",
+      "title": "Сотрудник · длинные волосы",
+      "category": "Персонаж",
+      "sourceRect": [
+        277,
+        278,
+        40,
+        60
+      ],
+      "description": "Мягкий гранёный силуэт. Отдельные узлы головы, рук и ног; без skinning и анимационных клипов.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "employee_longhair.glb",
+      "dimensions": [
+        0.535,
+        0.39,
+        1.197
+      ],
+      "triangles": 9820,
+      "parts": 53,
+      "renderMeshes": 20,
+      "size": 539480,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "employee_seated",
+      "title": "Сотрудник · сидит",
+      "category": "Персонаж",
+      "sourceRect": [
+        277,
+        278,
+        40,
+        60
+      ],
+      "description": "Мягкий гранёный силуэт. Отдельные узлы головы, рук и ног; без skinning и анимационных клипов. Контакт с сиденьем y≈0,52 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "employee_seated.glb",
+      "dimensions": [
+        0.535,
+        0.605,
+        1.357
+      ],
+      "triangles": 10008,
+      "parts": 54,
+      "renderMeshes": 18,
+      "size": 548640,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    },
+    {
+      "id": "employee_seated_blond",
+      "title": "Сотрудник · сидит, светлые волосы",
+      "category": "Персонаж",
+      "sourceRect": [
+        277,
+        278,
+        40,
+        60
+      ],
+      "description": "Мягкий гранёный силуэт. Отдельные узлы головы, рук и ног; без skinning и анимационных клипов. Контакт с сиденьем y≈0,52 м.",
+      "reference": "/assets/four-floor-plan.png",
+      "floors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "kit": "four-floor",
+      "assumption": null,
+      "file": "employee_seated_blond.glb",
+      "dimensions": [
+        0.535,
+        0.61,
+        1.357
+      ],
+      "triangles": 10196,
+      "parts": 55,
+      "renderMeshes": 18,
+      "size": 559276,
+      "front": "+Z in glTF",
+      "origin": "ground centre",
+      "units": "metres"
+    }
+  ]
+}

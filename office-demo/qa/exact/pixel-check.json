@@ -1,0 +1,19 @@
+{
+  "source_pixels": [
+    1280,
+    910
+  ],
+  "implementation_pixels": [
+    1280,
+    910
+  ],
+  "source_bytes_unchanged": true,
+  "source_sha256": "7a79277199c16b0aef385d41fd717d2b3ea9081358f55b04d438063499784bab",
+  "capture_format": "JPEG",
+  "mean_absolute_channel_difference": [
+    5.819617101648352,
+    3.957276785714286,
+    6.125821600274725
+  ],
+  "note": "Browser API compresses screenshots as JPEG. Do not interpret this as a lossless pixel comparison."
+}

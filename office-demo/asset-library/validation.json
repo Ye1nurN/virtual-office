@@ -1,0 +1,617 @@
+{
+  "assets": 87,
+  "triangles": 206184,
+  "bytes": 11645516,
+  "checks": "GLB2 header, embedded buffers, finite transforms/vertices, valid triangle indices/materials, unique IDs, required movable nodes, metre bounds, ground origin, geometry counts",
+  "results": [
+    {
+      "id": "chair_task",
+      "triangles": 1388,
+      "meshes": 6,
+      "minimum_y": -0.0,
+      "bytes": 77556
+    },
+    {
+      "id": "monitor",
+      "triangles": 780,
+      "meshes": 9,
+      "minimum_y": 0.0,
+      "bytes": 52076
+    },
+    {
+      "id": "keyboard_mouse",
+      "triangles": 2476,
+      "meshes": 6,
+      "minimum_y": 0.0,
+      "bytes": 150260
+    },
+    {
+      "id": "coffee_mug",
+      "triangles": 264,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 16444
+    },
+    {
+      "id": "bookshelf",
+      "triangles": 3980,
+      "meshes": 9,
+      "minimum_y": 0.0,
+      "bytes": 232960
+    },
+    {
+      "id": "cabinet_drawers",
+      "triangles": 484,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 30488
+    },
+    {
+      "id": "whiteboard",
+      "triangles": 1160,
+      "meshes": 14,
+      "minimum_y": -0.0,
+      "bytes": 74816
+    },
+    {
+      "id": "tree_atrium",
+      "triangles": 10012,
+      "meshes": 6,
+      "minimum_y": -0.0,
+      "bytes": 544960
+    },
+    {
+      "id": "planter_square",
+      "triangles": 1900,
+      "meshes": 8,
+      "minimum_y": 0.0,
+      "bytes": 114020
+    },
+    {
+      "id": "filing_cabinet",
+      "triangles": 476,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 31884
+    },
+    {
+      "id": "wall_module",
+      "triangles": 176,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 13016
+    },
+    {
+      "id": "wall_half",
+      "triangles": 176,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 13012
+    },
+    {
+      "id": "wall_corner",
+      "triangles": 264,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 17288
+    },
+    {
+      "id": "desk_compact",
+      "triangles": 892,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 54952
+    },
+    {
+      "id": "desk_open",
+      "triangles": 496,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 31808
+    },
+    {
+      "id": "desk_oak",
+      "triangles": 1288,
+      "meshes": 6,
+      "minimum_y": 0.0,
+      "bytes": 78276
+    },
+    {
+      "id": "chair_task_green",
+      "triangles": 3548,
+      "meshes": 6,
+      "minimum_y": -0.0,
+      "bytes": 193252
+    },
+    {
+      "id": "chair_meeting",
+      "triangles": 1408,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 78832
+    },
+    {
+      "id": "chair_auditorium",
+      "triangles": 976,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 54584
+    },
+    {
+      "id": "chair_training",
+      "triangles": 1192,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 66416
+    },
+    {
+      "id": "sofa_three",
+      "triangles": 2556,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 141748
+    },
+    {
+      "id": "sofa_two",
+      "triangles": 1992,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 109040
+    },
+    {
+      "id": "armchair_waiting",
+      "triangles": 1428,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 81188
+    },
+    {
+      "id": "sofa_module",
+      "triangles": 1428,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 81144
+    },
+    {
+      "id": "stool_cafe",
+      "triangles": 392,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 22012
+    },
+    {
+      "id": "pouf_round",
+      "triangles": 440,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 25568
+    },
+    {
+      "id": "table_round",
+      "triangles": 340,
+      "meshes": 3,
+      "minimum_y": -0.0,
+      "bytes": 17856
+    },
+    {
+      "id": "table_cafe",
+      "triangles": 340,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 17844
+    },
+    {
+      "id": "table_coffee",
+      "triangles": 340,
+      "meshes": 3,
+      "minimum_y": -0.0,
+      "bytes": 17888
+    },
+    {
+      "id": "table_side",
+      "triangles": 340,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 17808
+    },
+    {
+      "id": "table_meeting",
+      "triangles": 872,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 51884
+    },
+    {
+      "id": "table_meeting_small",
+      "triangles": 872,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 51940
+    },
+    {
+      "id": "table_training",
+      "triangles": 872,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 51912
+    },
+    {
+      "id": "desk_classroom",
+      "triangles": 344,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 21416
+    },
+    {
+      "id": "bookshelf_low",
+      "triangles": 2548,
+      "meshes": 9,
+      "minimum_y": 0.0,
+      "bytes": 153500
+    },
+    {
+      "id": "cabinet_low",
+      "triangles": 608,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 36988
+    },
+    {
+      "id": "wall_shelf",
+      "triangles": 528,
+      "meshes": 6,
+      "minimum_y": 0.0,
+      "bytes": 34860
+    },
+    {
+      "id": "whiteboard_vertical",
+      "triangles": 1552,
+      "meshes": 9,
+      "minimum_y": -0.0,
+      "bytes": 92132
+    },
+    {
+      "id": "wall_pier",
+      "triangles": 264,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 18556
+    },
+    {
+      "id": "door_portal",
+      "triangles": 264,
+      "meshes": 2,
+      "minimum_y": 0.0,
+      "bytes": 16748
+    },
+    {
+      "id": "window_section",
+      "triangles": 484,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 32480
+    },
+    {
+      "id": "glass_partition",
+      "triangles": 572,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 37840
+    },
+    {
+      "id": "glass_corner_post",
+      "triangles": 132,
+      "meshes": 2,
+      "minimum_y": 0.0,
+      "bytes": 10000
+    },
+    {
+      "id": "door_interior",
+      "triangles": 808,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 46464
+    },
+    {
+      "id": "glass_door",
+      "triangles": 608,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 37088
+    },
+    {
+      "id": "entrance_double_door",
+      "triangles": 1084,
+      "meshes": 9,
+      "minimum_y": 0.0,
+      "bytes": 61912
+    },
+    {
+      "id": "elevator_portal",
+      "triangles": 624,
+      "meshes": 9,
+      "minimum_y": 0.0,
+      "bytes": 41696
+    },
+    {
+      "id": "elevator_cabin",
+      "triangles": 276,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 19736
+    },
+    {
+      "id": "stair_u",
+      "triangles": 2636,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 147652
+    },
+    {
+      "id": "railing_module",
+      "triangles": 300,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 18076
+    },
+    {
+      "id": "floor_tile",
+      "triangles": 560,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 34212
+    },
+    {
+      "id": "floor_light_tile",
+      "triangles": 56,
+      "meshes": 2,
+      "minimum_y": 0.0,
+      "bytes": 5416
+    },
+    {
+      "id": "wall_lamp",
+      "triangles": 464,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 27840
+    },
+    {
+      "id": "light_strip",
+      "triangles": 88,
+      "meshes": 2,
+      "minimum_y": 0.0,
+      "bytes": 7132
+    },
+    {
+      "id": "ceiling_light",
+      "triangles": 88,
+      "meshes": 2,
+      "minimum_y": 0.0,
+      "bytes": 7148
+    },
+    {
+      "id": "reception_counter",
+      "triangles": 588,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 37628
+    },
+    {
+      "id": "presentation_screen",
+      "triangles": 584,
+      "meshes": 7,
+      "minimum_y": 0.0,
+      "bytes": 38472
+    },
+    {
+      "id": "coffee_counter",
+      "triangles": 1100,
+      "meshes": 7,
+      "minimum_y": 0.0,
+      "bytes": 65772
+    },
+    {
+      "id": "sink_cabinet",
+      "triangles": 1040,
+      "meshes": 6,
+      "minimum_y": 0.0,
+      "bytes": 59144
+    },
+    {
+      "id": "coffee_machine",
+      "triangles": 1020,
+      "meshes": 6,
+      "minimum_y": 0.0,
+      "bytes": 58328
+    },
+    {
+      "id": "fridge_small",
+      "triangles": 404,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 24032
+    },
+    {
+      "id": "kettle",
+      "triangles": 292,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 16440
+    },
+    {
+      "id": "toilet",
+      "triangles": 1380,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 76424
+    },
+    {
+      "id": "washbasin",
+      "triangles": 924,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 51920
+    },
+    {
+      "id": "bathroom_mirror",
+      "triangles": 232,
+      "meshes": 2,
+      "minimum_y": 0.0,
+      "bytes": 14808
+    },
+    {
+      "id": "stall_partition",
+      "triangles": 276,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 17604
+    },
+    {
+      "id": "waste_bin",
+      "triangles": 180,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 10144
+    },
+    {
+      "id": "coat_rack",
+      "triangles": 956,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 50708
+    },
+    {
+      "id": "server_rack",
+      "triangles": 6216,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 359148
+    },
+    {
+      "id": "computer_tower",
+      "triangles": 444,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 29296
+    },
+    {
+      "id": "laptop",
+      "triangles": 2616,
+      "meshes": 7,
+      "minimum_y": 0.0,
+      "bytes": 155728
+    },
+    {
+      "id": "desk_phone",
+      "triangles": 816,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 49056
+    },
+    {
+      "id": "tablet_device",
+      "triangles": 364,
+      "meshes": 3,
+      "minimum_y": 0.0,
+      "bytes": 22432
+    },
+    {
+      "id": "printer",
+      "triangles": 520,
+      "meshes": 6,
+      "minimum_y": 0.0,
+      "bytes": 32920
+    },
+    {
+      "id": "document_stack",
+      "triangles": 136,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 11608
+    },
+    {
+      "id": "binder_set",
+      "triangles": 300,
+      "meshes": 5,
+      "minimum_y": 0.0,
+      "bytes": 19788
+    },
+    {
+      "id": "notice_frame",
+      "triangles": 272,
+      "meshes": 4,
+      "minimum_y": 0.0,
+      "bytes": 18896
+    },
+    {
+      "id": "plant_desk",
+      "triangles": 17440,
+      "meshes": 8,
+      "minimum_y": 0.0,
+      "bytes": 964760
+    },
+    {
+      "id": "plant_floor",
+      "triangles": 17440,
+      "meshes": 8,
+      "minimum_y": 0.0,
+      "bytes": 964780
+    },
+    {
+      "id": "plant_slender",
+      "triangles": 14560,
+      "meshes": 8,
+      "minimum_y": 0.0,
+      "bytes": 806376
+    },
+    {
+      "id": "plant_broadleaf",
+      "triangles": 8920,
+      "meshes": 8,
+      "minimum_y": 0.0,
+      "bytes": 495544
+    },
+    {
+      "id": "plant_small_round",
+      "triangles": 17440,
+      "meshes": 8,
+      "minimum_y": 0.0,
+      "bytes": 964920
+    },
+    {
+      "id": "employee_base",
+      "triangles": 9632,
+      "meshes": 20,
+      "minimum_y": 0.0,
+      "bytes": 528832
+    },
+    {
+      "id": "employee_blond",
+      "triangles": 9632,
+      "meshes": 20,
+      "minimum_y": 0.0,
+      "bytes": 528988
+    },
+    {
+      "id": "employee_longhair",
+      "triangles": 9820,
+      "meshes": 20,
+      "minimum_y": 0.0,
+      "bytes": 539480
+    },
+    {
+      "id": "employee_seated",
+      "triangles": 10008,
+      "meshes": 18,
+      "minimum_y": 0.0,
+      "bytes": 548640
+    },
+    {
+      "id": "employee_seated_blond",
+      "triangles": 10196,
+      "meshes": 18,
+      "minimum_y": 0.0,
+      "bytes": 559276
+    }
+  ]
+}
