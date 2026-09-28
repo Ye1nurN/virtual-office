@@ -1,0 +1,57 @@
+/* Measured from the user's approved 1280 × 910 reference.
+   This layer changes the chrome only. It does not stand in for the 3D world. */
+.avatar-reference {
+  background-image: url('/assets/approved-design.png');
+  background-repeat: no-repeat;
+  background-size: calc(var(--avatar-size) * 40) calc(var(--avatar-size) * 28.4375);
+  background-position: calc(var(--avatar-size) * -12.75) calc(var(--avatar-size) * -26.125);
+}
+.search kbd { display: none; }
+.help-button { display: none; }
+@media (min-width: 961px) {
+  .office-app { --du: calc(100vw / 1280); }
+  .topbar { top: calc(16 * var(--du)); left: calc(17 * var(--du)); right: calc(17 * var(--du)); gap: 0; }
+  .top-left { gap: calc(30 * var(--du)); }
+  .top-right { gap: calc(12 * var(--du)); }
+  .topbar .floating { border-radius: calc(13 * var(--du)); border-color: #dde3e7; box-shadow: 0 2px 5px #1d2a3410, 0 5px 11px #2130471c; background: #fffefd; }
+  .company { width: calc(219 * var(--du)); min-width: 0; height: calc(42 * var(--du)); padding: 0 calc(12 * var(--du)); gap: calc(8 * var(--du)); justify-content: initial; }
+  .company>svg:first-child { width: calc(21 * var(--du)); height: calc(21 * var(--du)); }
+  .company strong { display: block; font-size: calc(14 * var(--du)); font-weight: 650; letter-spacing: -.35px; }
+  .company>svg:nth-of-type(2) { width: calc(12 * var(--du)); height: calc(12 * var(--du)); }
+  .demo-badge { display: block; margin-left: auto; font-size: calc(10 * var(--du)); border-radius: calc(4 * var(--du)); padding: calc(4 * var(--du)) calc(8 * var(--du)); background: #e4e7ec; }
+  .navigation { width: calc(279 * var(--du)); min-width: 0; height: calc(42 * var(--du)); padding: calc(4 * var(--du)); gap: calc(2 * var(--du)); }
+  .navigation button { flex: 1; padding: 0; border-radius: calc(8 * var(--du)); font-size: calc(11.5 * var(--du)); font-weight: 600; }
+  .navigation button.selected { background: #d7faef; color: #172942; }
+  .search { height: calc(42 * var(--du)); width: calc(238 * var(--du)); padding: 0 calc(12 * var(--du)); gap: calc(10 * var(--du)); }
+  .search svg { width: calc(18 * var(--du)); height: calc(18 * var(--du)); }
+  .search input { font-size: calc(11.5 * var(--du)); }
+  .search input::placeholder { color: #79839b; }
+  .notification-button { height: calc(42 * var(--du)); width: calc(42 * var(--du)); }
+  .notification-button svg { width: calc(20 * var(--du)); height: calc(20 * var(--du)); }
+  .notification-button i { width: calc(9 * var(--du)); height: calc(9 * var(--du)); top: calc(8 * var(--du)); right: calc(10 * var(--du)); background: #fa6877; }
+  .profile-menu { width: calc(70 * var(--du)); height: calc(42 * var(--du)); padding: 0 calc(7 * var(--du)); gap: calc(9 * var(--du)); }
+  .profile-menu .avatar { --avatar-size: calc(29 * var(--du)) !important; width: var(--avatar-size) !important; height: var(--avatar-size) !important; }
+  .profile-menu>svg { width: calc(13 * var(--du)); }
+  .bottom-dock { width: calc(494 * var(--du)); height: calc(57 * var(--du)); bottom: calc(27 * var(--du)); border-radius: calc(15 * var(--du)); padding: 0 calc(12 * var(--du)); gap: 0; background: #fffefd; box-shadow: 0 3px 8px #1b24363b; }
+  .dock-profile { min-width: calc(132 * var(--du)); gap: calc(9 * var(--du)); padding: 0; }
+  .dock-profile .avatar { --avatar-size: calc(32 * var(--du)) !important; width: var(--avatar-size) !important; height: var(--avatar-size) !important; }
+  .dock-profile strong { font-size: calc(12 * var(--du)); font-weight: 600; gap: calc(6 * var(--du)); }
+  .dock-profile small { font-size: calc(9 * var(--du)); margin-top: calc(3 * var(--du)); color: #808b9e; }
+  .status-control { width: calc(113 * var(--du)); flex-shrink: 0; }
+  .status-button { font-size: calc(11 * var(--du)); padding: calc(10 * var(--du)) calc(12 * var(--du)); gap: calc(8 * var(--du)); }
+  .status-button .status-dot { width: calc(9 * var(--du)); height: calc(9 * var(--du)); }
+  .dock-divider { height: calc(28 * var(--du)); margin: 0 calc(9 * var(--du)) 0 0; flex-shrink: 0; }
+  .bottom-dock>.icon-button { width: calc(54 * var(--du)); height: calc(40 * var(--du)); }
+  .bottom-dock>.icon-button svg { width: calc(20 * var(--du)); height: calc(20 * var(--du)); }
+  .bottom-dock .muted-control { color: #ff5968; }
+  .view-controls { right: calc(17 * var(--du)); bottom: calc(27 * var(--du)); gap: calc(12 * var(--du)); }
+  .zoom-control { width: calc(121 * var(--du)); min-width: 0; height: calc(42 * var(--du)); padding: calc(3 * var(--du)) calc(5 * var(--du)); border-radius: calc(12 * var(--du)); }
+  .zoom-control .icon-button { width: calc(26 * var(--du)); height: calc(31 * var(--du)); }
+  .zoom-value { font-size: calc(11.5 * var(--du)); min-width: calc(35 * var(--du)); }
+  .center-control { width: calc(42 * var(--du)); height: calc(42 * var(--du)); border-radius: calc(12 * var(--du)); }
+  .center-control svg { width: calc(20 * var(--du)); height: calc(20 * var(--du)); }
+  .search-results { top: calc(68 * var(--du)); right: calc(141 * var(--du)); }
+  .company-dropdown,.profile-dropdown { top: calc(68 * var(--du)); }
+  .room-label { font-size: calc(12 * var(--du)); padding: calc(7 * var(--du)) calc(14 * var(--du)); background: #213046ee; border-radius: calc(6 * var(--du)); }
+  .self-label { font-size: calc(11 * var(--du)); padding: calc(6 * var(--du)) calc(9 * var(--du)); }
+}

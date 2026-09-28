@@ -1,0 +1,9 @@
+Generated using the built-in image_gen tool.
+Reference: ../../design/approved-city.png (art direction only).
+Output: paving-albedo.png, 1254 x 1254, RGB PNG.
+
+Prompt:
+Use case: stylized-concept. Asset type: seamless square 2D albedo texture for a Three.js ground material, NOT a scene or concept art. Primary request: a strictly orthographic top-down seamless flat square swatch of regular offset rectangular sandstone paving, approximately twelve rectangular pavers across and eighteen rows, warm pale cream and limestone grey, restrained peach/beige variations, fine pixel-painterly stone grain and worn edges, thin muted grey grout joints. The provided reference city is ONLY an art-direction reference for its paving palette and illustrated pixel style. Output ONLY the paving surface filling every pixel. No city, no objects, no greenery, no buildings, no border, no text. Even diffuse lighting, no perspective, no cast shadows, no highlight gradient, no vignette. Opposite edges must tile seamlessly both horizontally and vertically. High-quality crisp subtle painted pixel texture with subtle natural wear, approximately 1024 square. Do not add directional light or any object silhouettes.
+
+Inspection:
+Flat illustrated paving, no objects or cast shadows. Generated around eight pavers across; a four-metre repeat gives approximately half-metre pavers. Edge matching is approximate; verify repetition in the rendered scene.

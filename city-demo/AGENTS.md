@@ -1,0 +1,15 @@
+# Portfolio city
+
+Independent application created at the user's explicit request on 2026-09-27. Do not modify `../office-demo` while developing this city. On 2026-09-28 the user requested replacing the office on `yelnur.pages.dev` with this city, then chose to configure Cloudflare personally; prepare the source/build and follow `CLOUDFLARE.md` for that handoff.
+
+- Actual walkable Three.js 3D, daytime voxel style. Target `design/approved-city.png` for the district and `design/office-ui-reference.png` for the floating interface.
+- Keep the copied office's entire four-floor implementation and model catalogue accessible. The office is one destination in the city.
+- Reuse the office's floating navigation, search, profile/status dock, zoom, panels and keyboard compatibility. WASD/ЦФЫВ, arrows, Shift, E/У, click-to-walk. Typing or opening a panel must pause movement.
+- One growing city: office north, pharmacy west, ARGUS east, plaza center, entry south; four corner plots reserved. Expand via `src/city/catalog.js`; portal/collision logic must not depend on mesh names.
+- Local pharmacy and ARGUS interactions are clearly labelled demonstrations. Do not invent real users, working remote services, personal biography, business results or contact details.
+- Building GLB replacement is configured by `exteriorAsset`, `exteriorScale`, and `exteriorYaw`; retain procedural fallback and independent colliders.
+- Run tests/build and inspect movement, portals and overlays in browser. Preserve truthful distinction between a functional 3D interpretation and exact visual parity with generated artwork.
+- Visual revision 2026-09-27: `design/user-target.png` is the user's explicit target; `design/user-before.png` is the old scene. Keep real 3D geometry, frontal 39.1° overview, textured brick/grass/stone, fine irregular foliage, warm windows, detailed roofs, readable facade signs, border flower gardens and the original office UI. The follow camera remains at the office's 30° azimuth.
+- Exterior geometry lives in `exterior.js`, `buildings.js` and `sceneKit.js`. `districtLayout.js` is the shared source for solid street objects and navigation footprints; tests must keep all doors and plot signs reachable.
+- Paving, grass and brick raster albedos in `public/textures` were generated for this reference. GTAO and subtle bloom are rendered only on wider viewports; cap resolution and retain render-on-demand. Do not claim that an illustrative render has been reproduced pixel for pixel.
+- Pharmacy revision 2026-09-28: the user selected `design/pharmacy-reference.png` for the interior and its compact CRM UI. Keep this UI scoped to `pharmacy-stage`; the city/office chrome remains unchanged. `pharmacy.js` builds the room; `pharmacyLayout.js` owns fixture footprints, spawn, exit and the slightly clamped perspective camera. Shelf metadata refers to stable fixture IDs, with independent free approach points. Preserve local-demo booking and keyboard/click movement; verify all shelf-to-shelf routes when moving furniture.

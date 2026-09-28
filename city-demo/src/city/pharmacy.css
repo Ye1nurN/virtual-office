@@ -1,0 +1,45 @@
+.pharmacy-stage .topbar,.pharmacy-stage .bottom-dock,.pharmacy-stage .city-location,.pharmacy-stage .city-help{display:none}
+.pharmacy-stage .scene{background:#cbd4ca}
+.pharmacy-header{position:absolute;left:26px;top:22px;z-index:25;display:flex;align-items:center;gap:18px;padding:12px 14px 12px 17px;border-radius:18px;background:#fffffffa;box-shadow:0 5px 25px #334b3820}
+.pharmacy-header button{display:flex;align-items:center;gap:15px;padding:2px;color:#152641;font-size:18px}
+.pharmacy-header>span{font-size:12px;font-weight:600;background:#d9faf1;color:#305e62;padding:9px 13px;border-radius:10px}
+.shelf-preview{position:absolute;right:28px;bottom:72px;width:318px;z-index:22;padding:24px;border-radius:19px;background:#fffffff5;box-shadow:0 14px 40px #22383425;color:#233950}
+.shelf-preview-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.shelf-preview h1{font-size:23px;font-weight:750;letter-spacing:-.6px;margin:0;line-height:1.3}
+.shelf-preview-heading svg{color:#6baf91}
+.shelf-preview p{font-size:14px;line-height:1.55;color:#536880;margin:14px 0}
+.shelf-availability{display:flex;align-items:center;gap:10px;color:#388c82;font-size:14px;margin:16px 0 20px}
+.shelf-availability i{width:11px;height:11px;border-radius:50%;background:#2dac93}
+.shelf-price{font-size:14px;font-weight:600;color:#4a6380;margin-bottom:20px}
+.shelf-price span{font-weight:400}
+.shelf-select{display:flex;width:100%;justify-content:center;align-items:center;gap:12px;background:#35e6bd;color:#0c3438;min-height:54px;border-radius:13px;font-size:16px;font-weight:700;transition:background .15s,transform .15s}
+.shelf-select:hover{background:#1cd7ab;transform:translateY(-1px)}
+.shelf-switcher{display:flex;gap:6px;margin-top:14px;justify-content:center}
+.shelf-switcher button{font-size:11px;padding:6px 13px;border-radius:7px;color:#6d7e86}
+.shelf-switcher button[aria-pressed=true]{background:#e0f7ee;color:#27634e;font-weight:700}
+.pharmacy-keys{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:28px;padding:12px 24px;z-index:20;background:#fffffff5;border-radius:25px;color:#4d637f;white-space:nowrap;font-size:12px}
+.pharmacy-keys kbd{font-family:inherit;font-weight:700;font-size:12px;border:0;background:none;box-shadow:none;padding:0}
+.pharmacy-stage .city-marker{background:#c9fff0;color:#174744;border:1px solid #f0fff9;padding:10px 17px;border-radius:10px;font-size:13px;box-shadow:0 4px 16px #30654a22}
+.pharmacy-stage .interaction-hint{bottom:78px;font-size:12px;z-index:23;max-width:calc(100% - 48px)}
+.pharmacy-stage .view-controls{top:22px;bottom:auto;right:26px}
+.pharmacy-stage .view-controls .center-control{display:none}
+.pharmacy-stage .zoom-control{border-radius:15px;background:#fffffff2}
+.pharmacy-stage .side-panel{top:92px;right:28px;bottom:22px;max-height:calc(100% - 114px);border-radius:19px;background:#fffffff7}
+.pharmacy-stage .toast{bottom:22px}
+@media(max-width:900px){.shelf-preview{right:16px;bottom:75px;width:275px;padding:19px}.pharmacy-header{left:16px;top:16px}.pharmacy-header button{font-size:15px}.pharmacy-stage .view-controls{right:16px;top:16px}.pharmacy-keys{left:22px;transform:none;gap:16px;padding:12px 18px}.pharmacy-stage .interaction-hint{left:22px;transform:none;bottom:75px;max-width:calc(100% - 320px)}}
+@media(max-width:620px){
+ .pharmacy-stage .scene{height:calc(100% - 223px)}
+ .pharmacy-header{top:12px;left:12px;padding:10px 12px;gap:10px;border-radius:14px}.pharmacy-header button{font-size:14px;gap:10px}.pharmacy-header>span{font-size:10px;padding:6px 8px}
+ .pharmacy-stage .view-controls{top:auto;bottom:239px;right:12px}.pharmacy-stage .zoom-control{height:35px}.pharmacy-stage .zoom-value{font-size:10px;min-width:33px}.pharmacy-stage .zoom-control .icon-button{width:28px;height:32px}
+ .shelf-preview{left:12px;right:12px;bottom:12px;width:auto;padding:16px;border-radius:17px;display:grid;grid-template-columns:1fr 1fr;gap:9px 14px}
+ .shelf-preview-heading{grid-column:1/-1}.shelf-preview h1{font-size:19px}.shelf-preview-heading svg{width:25px;height:25px}
+ .shelf-preview p{font-size:12px;margin:0}.shelf-availability{font-size:12px;margin:0;justify-self:end;align-self:center}.shelf-availability i{width:8px;height:8px}
+ .shelf-price{font-size:12px;margin:0;grid-column:1/-1}.shelf-select{min-height:43px;font-size:14px;grid-column:1/-1;border-radius:10px}
+ .shelf-switcher{margin:0;grid-column:1/-1}.shelf-switcher button{padding:4px 16px}
+ .pharmacy-keys{display:none}.pharmacy-stage .city-marker{font-size:10px;padding:6px 9px}
+ .pharmacy-stage .interaction-hint{left:12px;bottom:330px;max-width:calc(100% - 24px);padding:9px 12px}
+ .pharmacy-stage .side-panel{top:78px;left:12px;right:12px;bottom:12px;max-height:calc(100% - 90px);width:auto}
+ .pharmacy-stage .city-touch{bottom:242px;left:12px;grid-template-columns:repeat(3,35px);gap:4px}.pharmacy-stage .city-touch button{width:35px;height:35px;font-size:17px}
+ .pharmacy-stage .toast{bottom:240px}
+}
+@media(prefers-reduced-motion:reduce){.shelf-select{transition:none}}

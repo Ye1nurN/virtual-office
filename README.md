@@ -1,4 +1,8 @@
-# Виртуальный офис
+# Город проектов и виртуальный офис
+
+Новый город с офисом, аптекой и ARGUS находится в [`city-demo/`](city-demo/). Для публикации города на `yelnur.pages.dev` используйте [`city-demo/CLOUDFLARE.md`](city-demo/CLOUDFLARE.md): Root directory — `city-demo`, Build command — `npm run build`, Build output directory — `dist/client`.
+
+## Исходный офис
 
 Браузерный офис компании: четыре этажа, персонаж с управлением WASD, двери, лифт, карточки сотрудников и отделов. Проект также содержит исходное кликабельное демо, каталог из 87 GLB-моделей и редактируемую библиотеку Blender.
 
