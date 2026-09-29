@@ -2,13 +2,15 @@ import {createSceneKit,noise} from './sceneKit.js';
 import {buildProjectBuilding} from './buildings.js';
 import {PROJECTS,RESERVE_PLOTS,exteriorPortals} from './catalog.js';
 import {buildingBackGarden} from './buildingFrame.js';
+import {buildCityBoundary,CITY_PAVING_SIZE} from './cityBoundary.js';
 
 import {districtFurniture,districtObstacles} from './districtLayout.js';
 
 export function buildExterior(templates,albedos={}){
   const k=createSceneKit(templates,albedos),interactions=exteriorPortals(),markers=[];
-  k.box(0,-.31,0,500,.4,500,'#668740');
-  k.plane(0,-.025,0,100,100,k.surface('paving',100,100,5,'#f5edda'));
+  k.box(0,-.61,0,500,.4,500,'#768e55');
+  k.box(0,-.23,0,CITY_PAVING_SIZE,.32,CITY_PAVING_SIZE,'#a99e86');
+  k.plane(0,-.025,0,CITY_PAVING_SIZE,CITY_PAVING_SIZE,k.surface('paving',CITY_PAVING_SIZE,CITY_PAVING_SIZE,5,'#f5edda'));
   // Distinct brick gutters subdivide the tile field into streets and sidewalks.
   for(const x of [-35,-13.1,-10.9,10.9,13.1,35]){
     k.box(x,.004,0,.62,.06,76,'#bd997b');
@@ -83,9 +85,7 @@ export function buildExterior(templates,albedos={}){
       for(const dy of [-.28,0,.28])for(const dx of [-.23,.23])k.box(x+dx,2.4+dy,z+.26,.3,.14,.03,'#dfdca9',0,0,dx<0?-.55:.55);
     }
   }
-  // Green outside edges make the district feel continuous, with clear expansion axes.
-  for(const x of [-43,43])for(let z=-42;z<=42;z+=1.3)if(Math.abs(z)>4)k.bush(x,z,1.7,z,.08);
-  for(const z of [-42,42])for(let x=-42;x<=42;x+=1.3)if(Math.abs(x)>5)k.bush(x,z,1.6,x,.08);
+  buildCityBoundary(k);
   const people=[['employee_blond',-6.3,-5.5,.7],['employee_base',1,-14.5,0],['employee_blond',27,9.4,.6],['employee_base',-21,9.3,.8],['employee_blond',6.6,6.6,-1],['employee_base',.7,28,Math.PI]];
   for(const [id,x,z,yaw] of people)k.model(id,x,z,2.3,yaw);
   k.model('employee_seated',7.05,1.4,1.35,-Math.PI/2,.16);

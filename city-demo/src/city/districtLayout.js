@@ -1,5 +1,6 @@
 import {PROJECTS,RESERVE_PLOTS,CITY_OBSTACLES} from './catalog.js';
 import {buildingPoint,rotatedFootprint,buildingBackGarden} from './buildingFrame.js';
+import {cityBoundaryObstacles} from './cityBoundary.js';
 
 // A plan records visible furniture and its collision footprint together. Tests use the
 // same obstacle list that the renderer returns, including plants and street furniture.
@@ -34,8 +35,8 @@ export function districtFurniture(){
   for(const x of [-10.5,10.5])for(const z of [-32.9,-11.4,11.4,33])add('lamp',x,z,.75,.75,{s:1});
   for(const x of [-34.4,34.4])for(const z of [-32.9,-11.4,11.4,33])add('lamp',x,z,.75,.75,{s:1});
   for(const x of [-4.5,4.5])add('banner',x,21.5,.7,.7);
-  for(const x of [-39,39])for(let z=-39;z<=39;z+=5.4)add('tree',x,z,2.6,2.6,{s:1.06,seed:Math.abs(z),planter:true});
+  for(const x of [-39,39])for(let z=-39;z<=39;z+=5.4)if(Math.abs(z)>7)add('tree',x,z,2.6,2.6,{s:1.06,seed:Math.abs(z),planter:true});
   for(const z of [-38.5,38.5])for(let x=-34;x<=34;x+=5.4)if(Math.abs(x)>8)add('tree',x,z,2.6,2.6,{s:1.01,seed:Math.abs(x),planter:true});
   return items;
 }
-export function districtObstacles(){return [...CITY_OBSTACLES,...districtFurniture().map(({x,z,w,d})=>({x,z,w,d}))];}
+export function districtObstacles(){return [...CITY_OBSTACLES,...districtFurniture().map(({x,z,w,d})=>({x,z,w,d})),...cityBoundaryObstacles()];}

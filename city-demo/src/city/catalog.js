@@ -1,4 +1,5 @@
 import {buildingEntrance,buildingFootprint} from './buildingFrame.js';
+export {CITY_BOUNDS} from './cityBoundary.js';
 
 export const PROJECTS = [
   {id:'office',name:'Мой офис',tag:'Виртуальное пространство',description:'Четыре этажа, сотрудники, отделы и взаимодействия в настоящем 3D.',stack:['React','Three.js','GLB'],x:0,z:-21.4,parcelZ:-23,w:15,d:8.8,h:9.84,heightScale:1.2,color:'#aa6644',exteriorAsset:null,exteriorScale:[1,1,1],exteriorYaw:0},
@@ -8,7 +9,6 @@ export const PROJECTS = [
 export const RESERVE_PLOTS = [
   {id:'04',x:-24,z:-23},{id:'05',x:24,z:-23},{id:'06',x:-24,z:23},{id:'07',x:24,z:23},
 ];
-export const CITY_BOUNDS={minX:-41,maxX:41,minZ:-41,maxZ:41,cellSize:.6,radius:.38};
 export const CITY_SPAWN={x:0,z:17};
 export const INTERIOR_BOUNDS={minX:-8.55,maxX:8.55,minZ:-6.6,maxZ:6.6,cellSize:.3,radius:.35};
 export const CITY_OBSTACLES=PROJECTS.map(buildingFootprint);
