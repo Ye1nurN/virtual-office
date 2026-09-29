@@ -14,3 +14,5 @@ Validation used the isolated `city-facing-plaza` worktree with the previously ve
 - Browser console: no JavaScript errors. Missing-model list empty.
 
 Screenshots: [whole quarter](city-boundaries-overview.jpg), [main gate](city-boundaries-gate.jpg). These are captures of the running 3D application.
+
+Integration check: the portfolio interface (`7775749`) arrived while this task was being verified. The exact committed source at `698fe2d`, including that interface, was then exported into the same isolated preview and rebuilt: **66/66 tests passed**, production build passed, and the current portfolio view displayed the perimeter without JavaScript errors. The overview screenshot was refreshed from this combined build; the gate close-up records the earlier movement check with unchanged scene and navigation code.
