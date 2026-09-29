@@ -59,11 +59,12 @@ export function readPortfolioRoute(href, compact = false) {
   return {mode, project:CASES.some(p => p.id === id) ? id : null};
 }
 
-export function portfolioUrl(href, {mode, project = null}) {
+export function portfolioUrl(href, {mode, project = null, section = null}) {
   const url = new URL(href);
   url.searchParams.delete('place');
   url.searchParams.set('view', mode === 'resume' ? 'resume' : 'city');
   if (CASES.some(p => p.id === project)) url.searchParams.set('project', project);
   else url.searchParams.delete('project');
+  url.hash=['projects','experience','skills','about','contact'].includes(section)?'pf-'+section:'';
   return url;
 }

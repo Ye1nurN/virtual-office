@@ -1,0 +1,45 @@
+.project-frame{--project-top:150px;position:fixed;inset:0;background:#f4f5ef}
+.project-chrome.pf-app{background:transparent;pointer-events:none;z-index:40}
+.project-chrome .pf-header,.project-chrome .pf-skip,.project-context{pointer-events:auto}
+.project-context{position:absolute;left:24px;right:24px;top:100px;display:flex;align-items:center;gap:13px;height:40px;color:#64736e;font-size:11px}
+.project-context button{display:inline-flex;align-items:center;gap:7px;padding:8px 10px;border-radius:8px;background:#e8eee5;font-size:11px;white-space:nowrap}
+.project-context-title{border-left:1px solid #d4ddd3;padding-left:13px;color:#243e39;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.project-demo-badge{font-size:9px;letter-spacing:.6px;text-transform:uppercase;border:1px solid #d4ddd3;border-radius:5px;padding:2px 6px}
+.project-context .project-about{margin-left:auto;background:transparent;color:#287d68}
+.project-viewport{position:absolute;inset:var(--project-top) 0 0;overflow:hidden;border-top:1px solid #dce3dc;isolation:isolate}
+.project-viewport>.engine-stage,.project-viewport>.city-office-destination,.project-viewport .office-app{width:100%;height:100%;min-height:0}
+.project-viewport .floating{background:#fffef9f5;border-color:#dce3dc;box-shadow:0 4px 18px #243e3914}
+.office-demo-tools{position:absolute;z-index:30;top:12px;left:20px;right:20px;display:flex;align-items:center;gap:7px;pointer-events:none}
+.office-demo-tools>*{pointer-events:auto}
+.office-demo-tools button,.office-demo-tools select{font:inherit;font-size:11px;color:#37584c;background:#fffef9;border:1px solid #dce3dc;border-radius:9px;min-height:40px;padding:8px 12px;display:inline-flex;align-items:center;gap:7px}
+.office-demo-tools button[aria-pressed=true]{background:#e4eee5;color:#235e4d}
+.office-demo-tools select{max-width:210px}
+.office-demo-tools .search{margin-left:auto;height:40px;width:235px;flex:0 0 235px;border-radius:9px;background:#fffef9}
+.office-demo-tools .search input{font-size:11px}
+.project-frame-office .side-panel{top:66px;bottom:78px}
+.project-frame-office .search-results{top:62px;right:20px}
+.project-frame-office .company-dropdown{top:62px}
+.project-frame-office .help-button,.project-viewport .city-help{background:#fffef9;color:#37584c;border:1px solid #dce3dc}
+.project-frame-office .view-controls{bottom:20px}
+.project-frame-office .primary,.project-viewport .shelf-select{background:#287d68;color:white}
+.project-frame-office .primary:hover,.project-viewport .shelf-select:hover{background:#216c5b}
+.project-viewport .pharmacy-hud .pharmacy-header,.project-viewport .argus-topline header{display:none}
+.project-viewport .pharmacy-topline{grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:'role zoom'}
+.project-viewport .pharmacy-role{grid-area:role}
+.project-viewport .pharmacy-hud .view-controls{grid-area:zoom}
+.project-viewport .pharmacy-hud,.project-viewport .argus-hud{top:12px}
+.project-viewport .pharmacy-stage .campaign-panel{top:128px}
+.project-viewport .city-location{display:none}
+@media(min-width:1500px){.project-context{left:30px;right:30px;top:106px}.project-frame{--project-top:156px}}
+@media(max-width:1100px){.project-frame{--project-top:191px}.project-context{top:143px;left:16px;right:16px}}
+@media(max-width:900px){.office-demo-tools{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,auto);left:12px;right:12px;gap:5px}.office-demo-tools .search{grid-column:1/-1;width:100%;order:2;margin:0}.office-demo-tools select{width:100%;max-width:none;min-width:0}.project-frame-office .side-panel{top:105px}.project-frame-office .search-results{top:105px;left:12px;right:12px;width:auto}.project-frame-office .company-dropdown{top:105px}}
+@media(max-width:620px){
+  .project-frame{--project-top:214px}
+  .project-context{top:169px;left:10px;right:10px;gap:7px;font-size:10px}
+  .project-context-title{padding-left:7px}.project-context button{padding:7px;font-size:10px}.project-demo-badge{display:none}
+  .office-demo-tools button,.office-demo-tools select{font-size:10px;min-height:36px;padding:7px 8px}.office-demo-tools .search{height:36px}
+  .project-viewport .pharmacy-stage .campaign-panel{top:112px;bottom:12px}
+  .project-viewport .pharmacy-role label{display:none}
+  .project-frame-office .side-panel{left:10px;right:10px;width:auto;top:96px;bottom:64px}
+  .project-frame-office .search-results{top:96px;max-height:calc(100% - 112px)}
+}

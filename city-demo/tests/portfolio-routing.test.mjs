@@ -23,3 +23,15 @@ test('Invalid projects never become a modal or an external navigation target', (
     assert.equal(readPortfolioRoute('https://portfolio.example/?project='+encodeURIComponent(id)).project,null);
   }
 });
+
+test('Leaving an interior opens a valid resume section and clears the building route', () => {
+  for (const place of ['office','pharmacy','argus']) for (const section of ['projects','experience','skills','about','contact']) {
+    const url=portfolioUrl(`https://portfolio.example/?place=${place}&project=office#old`,{mode:'resume',section});
+    assert.equal(url.searchParams.get('place'),null);
+    assert.equal(url.searchParams.get('project'),null);
+    assert.equal(url.hash,'#pf-'+section);
+    assert.equal(readPortfolioRoute(url.href).mode,'resume');
+  }
+  assert.equal(portfolioUrl('https://portfolio.example/#pf-skills',{mode:'city'}).hash,'');
+  assert.equal(portfolioUrl('https://portfolio.example/',{mode:'resume',section:'unknown'}).hash,'');
+});
