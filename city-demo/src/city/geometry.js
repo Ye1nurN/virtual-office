@@ -1,5 +1,6 @@
 import {createSceneKit as kit} from './sceneKit.js';
 import {createRoomEnvelope} from '../world/firstPerson.js';
+import {createEntranceOutlook} from './entranceOutlook.js';
 import {buildPharmacy} from './pharmacy.js';
 export {buildExterior} from './exterior.js';
 export const COMMON_ASSETS=['employee_base','employee_blond','employee_seated','employee_seated_blond','tree_atrium','planter_square','plant_floor','plant_desk','bookshelf','reception_counter','monitor','desk_oak','chair_task','sofa_two','server_rack','table_coffee','coffee_mug'];
@@ -29,6 +30,7 @@ export function buildInterior(kind,templates){
     markers.push({id:'console',name:'Мониторинг сети',x:0,y:2.2,z:-1.6});
     k.box(-6,.08,1.9,1.8,.07,3.4,'#688f94');k.box(6,.08,1.9,1.8,.07,3.4,'#688f94');
   }
-  const built=k.finish(),envelope=createRoomEnvelope({width:17.8,depth:13.8,height:3.6,front:true});built.root.add(envelope.root);
-  return {...built,obstacles,markers,interactions,setFirstPerson:value=>{envelope.root.visible=value;}};
+  const built=k.finish(),envelope=createRoomEnvelope({width:17.8,depth:13.8,height:3.6,front:{width:17.55,z:6.9,baseHeight:1.1,doorWidth:3.2,doorHeight:2.4,wallColor:'#546b76',frameColor:'#365365'}});built.root.add(envelope.root);
+  const street=createEntranceOutlook({frontZ:6.9});built.root.add(street);
+  return {...built,obstacles,markers,interactions,setFirstPerson:value=>{envelope.root.visible=street.visible=value;}};
 }

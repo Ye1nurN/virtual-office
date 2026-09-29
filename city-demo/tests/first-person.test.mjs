@@ -54,3 +54,30 @@ test('Interior enclosure leaves the entrance open and can be removed without dis
   ray.set(new T.Vector3(0,EYE_HEIGHT,0),new T.Vector3(0,1,0));assert.ok(ray.intersectObjects(envelope.root.children,false).length>0);
   envelope.dispose();assert.equal(envelope.root.parent,null);
 });
+
+test('Front wall infill meets its parapet, preserves a human-height doorway and disappears in cutaway view',()=>{
+  for(const f of [
+    {width:17.55,z:6.9,baseHeight:1.1,doorWidth:3.2,doorHeight:2.4,height:3.6},
+    {width:17.72,z:6.85,baseHeight:1.375,doorWidth:4,doorHeight:3.27,windowTop:5.15,height:5.55,scale:.72},
+    {width:17.55,z:6.8,baseHeight:.96,doorWidth:3.2,doorHeight:2.4,height:4.3},
+  ]){
+    const envelope=createRoomEnvelope({width:18,depth:14,height:f.height,front:f});
+    const {root}=envelope,scale=f.scale??1;root.scale.y=scale;root.updateMatrixWorld(true);
+    const frontMeshes=root.children.filter(m=>Math.abs(m.position.z-f.z)<.01);
+    for(const mesh of frontMeshes){
+      const bounds=new T.Box3().setFromObject(mesh);
+      assert.ok(bounds.min.x>=-f.width/2-1e-6&&bounds.max.x<=f.width/2+1e-6,'Infill stays inside the side-wall inner faces');
+      if(mesh.material.transparent)assert.ok(bounds.min.y>=f.baseHeight*scale,'No glass overlaps the opaque parapet');
+    }
+    const ray=new T.Raycaster();
+    function hits(x,y){const visible=[];root.traverseVisible(o=>{if(o.isMesh)visible.push(o);});ray.set(new T.Vector3(x,y,f.z-1),new T.Vector3(0,0,1));ray.far=2;return ray.intersectObjects(visible,false);}
+    for(let i=0;i<3;i++){
+      root.visible=true;
+      for(const x of [-1.35,0,1.35])assert.equal(hits(x,EYE_HEIGHT).length,0,'Entrance stays clear at eye height');
+      assert.ok(hits(0,(f.doorHeight+.2)*scale).length,'A lintel closes the gap above the door');
+      assert.ok(hits(5,(f.baseHeight+.3)*scale).length,'Side window fills the wall above the parapet');
+      root.visible=false;assert.equal(hits(5,(f.baseHeight+.3)*scale).length,0,'Cutaway does not keep an invisible wall');
+    }
+    envelope.dispose();
+  }
+});

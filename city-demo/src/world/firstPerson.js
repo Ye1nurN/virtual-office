@@ -60,10 +60,29 @@ export function createRoomEnvelope({width,depth,height,front=false,doorWidth=4})
   box(0,height+.06,0,width,.12,depth,ceiling);
   for(const x of [-width*.28,width*.28])for(const z of [-depth*.28,0,depth*.28])box(x,height-.02,z,1.2,.025,.45,glow);
   if(front){
+    // Complete the existing parapet, rather than placing a floor-to-ceiling
+    // pane over it. Each interior supplies its actual opening and wall plane.
+    const f=typeof front==='object'?front:{};
+    const span=f.width??width,z=f.z??depth/2,opening=f.doorWidth??doorWidth;
+    const bottom=f.baseHeight??1.1,doorTop=f.doorHeight??2.4;
+    const windowTop=f.windowTop??Math.min(height-.45,doorTop+.2),thickness=f.thickness??.2;
+    const infill=new T.MeshStandardMaterial({color:f.wallColor??'#546b76',roughness:.85});
+    const frame=new T.MeshStandardMaterial({color:f.frameColor??'#365365',roughness:.65});
     const glass=new T.MeshStandardMaterial({color:'#bfdddc',transparent:true,opacity:.2,roughness:.3,depthWrite:false});
-    for(const sign of [-1,1])box(sign*(width+doorWidth)/4,height/2,depth/2,(width-doorWidth)/2,height,.08,glass);
-    box(0,height-.13,depth/2,width,.26,.2,wall);
-    for(const x of [-doorWidth/2,doorWidth/2])box(x,height/2,depth/2,.16,height,.18,wall);
+    const sideWidth=(span-opening)/2,jamb=.16,rail=.10;
+    for(const sign of [-1,1]){
+      const x=sign*(opening+sideWidth)/2;
+      box(x,(windowTop+height)/2,z,sideWidth,height-windowTop,thickness,infill);
+      for(const edge of [-1,1])box(x+edge*(sideWidth-jamb)/2,(bottom+windowTop)/2,z,jamb,windowTop-bottom,thickness,frame);
+      for(const y of [bottom+rail/2,windowTop-rail/2])box(x,y,z,sideWidth-2*jamb,rail,thickness,frame);
+      box(x,(bottom+windowTop)/2,z,jamb,windowTop-bottom-2*rail,thickness,frame);
+      const paneWidth=(sideWidth-3*jamb)/2;
+      for(const pane of [-1,1])box(x+pane*(paneWidth+jamb)/2,(bottom+windowTop)/2,z,paneWidth,windowTop-bottom-2*rail,.045,glass);
+    }
+    // Door frame sits outside the traversable opening, with a real lintel.
+    box(0,(doorTop+height)/2,z,opening,height-doorTop,thickness,infill);
+    box(0,doorTop+rail/2,z,opening,rail,thickness+.035,frame);
+    for(const sign of [-1,1])box(sign*(opening+jamb)/2,doorTop/2,z,jamb,doorTop,thickness+.035,frame);
   }
   root.visible=false;
   return {root,box,wall,dispose(){geometry.dispose();for(const m of new Set(root.children.map(c=>c.material)))m.dispose();root.removeFromParent();}};
