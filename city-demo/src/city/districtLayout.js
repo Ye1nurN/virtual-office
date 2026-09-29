@@ -26,8 +26,8 @@ export function districtFurniture(){
   add('tree',2,-1.2,4.1,4.1,{s:1.55,seed:100,planter:true});
   add('flowers',2,-1.2,4.8,4.8,{seed:32,central:true});
   add('bench',-6.7,-1.7,1.4,3.3,{yaw:Math.PI/2,s:1.22});
-  add('bench',6.8,1.4,1.4,3.3,{yaw:-Math.PI/2,s:1.22});
-  add('bench',2,-6.8,3.3,1.4,{yaw:Math.PI,s:1.22});
+  add('bench',6.8,1.4,1.4,3.3,{id:'plaza-east-bench',yaw:-Math.PI/2,s:1.22});
+  add('bench',2,-6.8,3.3,1.4,{id:'plaza-north-bench',yaw:0,s:1.22});
   add('map',-3.6,-2,3.4,.6);
   for(const x of [-7.8,7.8])for(const z of [-7.8,7.8])add('potted-tree',x,z,1.5,1.5,{s:.72,seed:x+z});
   for(const x of [-6.5,6.5])for(const z of [15,22,29])add('potted-tree',x,z,1.65,1.65,{s:.91,seed:z});
@@ -39,4 +39,28 @@ export function districtFurniture(){
   for(const z of [-38.5,38.5])for(let x=-34;x<=34;x+=5.4)if(Math.abs(x)>8)add('tree',x,z,2.6,2.6,{s:1.01,seed:Math.abs(x),planter:true});
   return items;
 }
-export function districtObstacles(){return [...CITY_OBSTACLES,...districtFurniture().map(({x,z,w,d})=>({x,z,w,d})),...cityBoundaryObstacles()];}
+// People at project entrances use the same local frame as the facade. Never
+// leave a world-space NPC behind when a building is moved or turned.
+export function districtPeople(){
+  const standing=(id,assetId,x,z,yaw,extra={})=>({id,assetId,x,z,yaw,s:2.3,y:.085,...extra});
+  const people=PROJECTS.map(p=>{
+    const point=buildingPoint(p,p.id==='pharmacy'?-2.3:2.3,p.d/2+3.65);
+    return standing(p.id+'-visitor',p.id==='argus'?'employee_blond':'employee_base',point.x,point.z,p.yaw||0,{project:p.id});
+  });
+  people.push(standing('plaza-west-visitor','employee_blond',-6.3,-5.5,.7),
+    standing('plaza-east-visitor','employee_blond',5.6,5.5,-1),
+    standing('entry-visitor','employee_base',1.2,28,Math.PI));
+  for(const bench of districtFurniture().filter(i=>i.id?.endsWith('-bench'))){
+    const s=1.65,yaw=bench.yaw||0;
+    // GLB seat contact is local y=.53; the slatted bench top is .8 * its scale.
+    // This also leaves the feet just above the plaza paving instead of floating.
+    people.push({id:bench.id+'-reader',assetId:bench.id==='plaza-east-bench'?'employee_seated':'employee_seated_blond',
+      x:bench.x+Math.sin(yaw)*.02*bench.s,z:bench.z+Math.cos(yaw)*.02*bench.s,
+      y:.8*bench.s-.53*s,s,yaw,seat:bench.id});
+  }
+  return people;
+}
+export function standingPersonFootprint(person){
+  return {x:person.x,z:person.z,...rotatedFootprint(.535*person.s+.2,.4*person.s+.2,person.yaw)};
+}
+export function districtObstacles(){return [...CITY_OBSTACLES,...districtFurniture().map(({x,z,w,d})=>({x,z,w,d})),...cityBoundaryObstacles(),...districtPeople().filter(p=>!p.seat).map(standingPersonFootprint)];}

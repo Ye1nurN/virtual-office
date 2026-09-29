@@ -4,7 +4,7 @@ import {PROJECTS,RESERVE_PLOTS,exteriorPortals} from './catalog.js';
 import {buildingBackGarden} from './buildingFrame.js';
 import {buildCityBoundary,CITY_PAVING_SIZE} from './cityBoundary.js';
 
-import {districtFurniture,districtObstacles} from './districtLayout.js';
+import {districtFurniture,districtPeople,districtObstacles} from './districtLayout.js';
 
 export function buildExterior(templates,albedos={}){
   const k=createSceneKit(templates,albedos),interactions=exteriorPortals(),markers=[];
@@ -86,9 +86,6 @@ export function buildExterior(templates,albedos={}){
     }
   }
   buildCityBoundary(k);
-  const people=[['employee_blond',-6.3,-5.5,.7],['employee_base',1,-14.5,0],['employee_blond',27,9.4,.6],['employee_base',-21,9.3,.8],['employee_blond',6.6,6.6,-1],['employee_base',.7,28,Math.PI]];
-  for(const [id,x,z,yaw] of people)k.model(id,x,z,2.3,yaw);
-  k.model('employee_seated',7.05,1.4,1.35,-Math.PI/2,.16);
-  k.model('employee_seated_blond',2,-7,1.35,Math.PI,.16);
+  for(const {assetId,x,z,s,yaw,y} of districtPeople())k.model(assetId,x,z,s,yaw,y);
   return {...k.finish(),obstacles:districtObstacles(),markers,interactions};
 }
