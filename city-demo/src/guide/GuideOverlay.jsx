@@ -17,9 +17,9 @@ export function GuideOverlay(){
   const tour=state.tour,p=projectFacts(tour?.project),inside=tour?.phase==='inside',arrived=tour?.phase==='arrived',outside=state.location!=='city';
   return <div className="guide-layer">
     {!state.open&&<button className="guide-launcher" aria-label="Поговорить с гидом" onClick={()=>guide.open()}><Portrait/><span><strong>Гид по городу</strong><small>Поговорим?</small></span><ChatCircleText size={22}/></button>}
-    {tour&&!state.open&&<section className="guide-route" aria-label="Маршрут с гидом"><span className="guide-route-icon"><Footprints size={21}/></span><div>
+    {tour&&!state.open&&<section className="guide-route" aria-label="Маршрут с гидом"><span className="guide-route-icon">{arrived?<ChatCircleText size={21}/>:<Footprints size={21}/>}</span><div>
       <small>{tour.index!==null?`ЭКСКУРСИЯ · ${tour.index+1} / 3`:'ГИД ПОКАЖЕТ ДОРОГУ'}</small><strong>{p.name}</strong>
-      <p role="status">{inside?'Ты внутри. Расскажу, что попробовать.':outside?'Гид снаружи. Выйдите в город, когда будете готовы продолжить.':arrived?(tour.nearby?'Вы у входа. Можно заходить.':'Гид ждёт у входа. Подойдите, когда захотите.'):tour.phase==='paused'?'Гид остановился. Вы можете свободно гулять.':tour.phase==='walking'?'Гид идёт к зданию. Следовать за ним или гулять дальше — решать вам.':'Гид готовится показать дорогу…'}</p>
+      <p role="status">{inside?'Расскажу, что здесь можно попробовать.':outside?'Встретимся снаружи.':arrived?p.arrival:tour.phase==='paused'?'Подожду здесь.':p.invitation}</p>
       {state.error&&<p role="status">{state.error}</p>}<div className="guide-route-actions">
         {inside?<button onClick={()=>guide.open()}>Что попробовать?</button>:outside?null:arrived?(tour.nearby&&<button onClick={()=>guide.act({type:'enter',project:p.id})}>Войти<ArrowRight size={15}/></button>):tour.phase==='paused'?<button onClick={()=>guide.resume()}><Play size={14}/>Продолжить путь гида</button>:<button onClick={()=>guide.pause()}><Pause size={14}/>Остановить гида</button>}
         {tour.index!==null&&<button onClick={()=>guide.next()}>{tour.index===2?'Завершить':'Следующий проект'}</button>}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cleanReply,localReply,GUIDE_POSITION} from '../src/guide/knowledge.js';
+import {cleanReply,localReply,GUIDE_POSITION,projectFacts} from '../src/guide/knowledge.js';
 import {createGuideStore} from '../src/guide/guideStore.js';
 import {handleGuide,validatePayload} from '../server/guideHandler.mjs';
 import {createNavigation} from '../src/movement.js';
@@ -67,7 +67,7 @@ test('tour moves only the guide and gates entering on the visitor reaching the e
   store.position({x:9,z:3,phase:'walking',canEnter:false});assert.equal(store.getSnapshot().tour.phase,'walking');
   store.position({x:12,z:3,phase:'arrived',canEnter:false});assert.equal(store.getSnapshot().tour.phase,'arrived');store.act({type:'enter',project:'pharmacy'});assert.equal(destination,null);
   store.position({x:12,z:3,phase:'arrived',canEnter:true});assert.equal(store.getSnapshot().tour.nearby,true);store.act({type:'enter',project:'pharmacy'});assert.equal(destination,'pharmacy');
-  store.setLocation('pharmacy');assert.equal(store.getSnapshot().tour.phase,'inside');assert.equal(store.getSnapshot().messages.length,2);
+  store.setLocation('pharmacy');assert.equal(store.getSnapshot().tour.phase,'inside');assert.equal(store.getSnapshot().messages.length,3);
   store.next();assert.equal(store.getSnapshot().tour.phase,'away');assert.equal(store.getSnapshot().tour.project,'argus');assert.equal(destination,'pharmacy','Choosing the next stop never ejects the visitor');
 });
 test('pause, conversation and cancellation affect only the NPC and preserve its position on scene changes',()=>{
@@ -80,4 +80,26 @@ test('starting from resume reveals the city, but starting inside a project never
   const store=createGuideStore();let switched=0,visited=null;store.setNavigator(id=>visited=id);store.setCityMode(()=>switched++);
   store.startRoute('argus');assert.equal(switched,1);store.setLocation('pharmacy');store.startRoute('office');assert.equal(visited,null);assert.equal(store.getSnapshot().tour.phase,'away');assert.equal(switched,1);
   store.setLocation('city');assert.equal(store.getSnapshot().tour.phase,'starting');
+});
+
+test('arrival introduces each project once without opening chat or moving the visitor',()=>{
+  const store=createGuideStore(),scene=guideScene();scene.ready();let detach=store.attachScene(scene.engine,'city');
+  store.setNavigator(()=>assert.fail('Arrival must not enter a project'));
+  for(const project of PROJECTS){
+    store.startRoute(project.id);store.beginRoute();
+    const before=store.getSnapshot().messages.length;
+    const arrived={x:12,z:3,phase:'arrived',canEnter:false};
+    scene.pose(arrived);store.position(arrived);
+    assert.equal(store.getSnapshot().messages.length,before+1);
+    assert.equal(store.getSnapshot().messages.at(-1).text,projectFacts(project.id).arrival);
+    assert.equal(store.getSnapshot().open,false);
+    assert.equal(store.getSnapshot().tour.nearby,false);
+    store.position(arrived);store.position({...arrived,canEnter:true});
+    store.open();store.close();store.pause();store.resume();store.beginRoute();store.position(arrived);
+    detach();detach=store.attachScene(scene.engine,'city');store.beginRoute();store.position(arrived);
+    store.setLocation('pharmacy');store.setLocation('city');store.beginRoute();store.position(arrived);
+    assert.equal(store.getSnapshot().messages.filter(m=>m.text===projectFacts(project.id).arrival).length,1,'Arrival frames, pause/resume and scene remounts must not repeat the introduction');
+  }
+  store.clear();store.startRoute('office');store.beginRoute();store.position({phase:'arrived',canEnter:false});
+  assert.equal(store.getSnapshot().messages.length,2,'A new conversation can introduce the project again');
 });

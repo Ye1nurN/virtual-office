@@ -51,13 +51,13 @@ export function createGuideStore(){
       if(!validAction(action))return;
       if(action.type==='about'){append({role:'assistant',...localReply('Расскажи об авторе')});return;}
       if(action.type==='project'){update({project:action.project});append({role:'assistant',...detailReply(action.project)});return;}
-      if(action.type==='enter'){if(state.tour?.project===action.project&&state.location==='city'&&!state.tour.nearby){update({error:'Подойдите ко входу самостоятельно. Гид покажет дорогу и подождёт.'});return;}cancel();update({open:false,project:action.project});navigate?.(action.project);return;}
+      if(action.type==='enter'){if(state.tour?.project===action.project&&state.location==='city'&&!state.tour.nearby){update({error:'Подойди ко входу, чтобы зайти.'});return;}cancel();update({open:false,project:action.project});navigate?.(action.project);return;}
       const project=action.type==='tour'?TOUR_ORDER[0]:action.project;
       this.startRoute(project,action.type==='tour'?0:null);
     },
     startRoute(project,index=null){
       if(!projectFacts(project))return;
-      cancel();stopGuide();update({open:false,project,tour:{project,index,phase:state.location==='city'?'starting':'away',nearby:false}});
+      cancel();stopGuide();update({open:false,project,tour:{project,index,phase:state.location==='city'?'starting':'away',nearby:false,introduced:false}});
       if(state.location==='city')cityMode?.();
     },
     beginRoute(){
@@ -69,10 +69,14 @@ export function createGuideStore(){
       if(!pose)return;guidePose=pose;
       if(!state.tour||!['walking','arrived'].includes(state.tour.phase))return;
       const phase=['walking','arrived','paused'].includes(pose.phase)?pose.phase:state.tour.phase,nearby=phase==='arrived'&&!!pose.canEnter;
-      if(phase!==state.tour.phase||nearby!==state.tour.nearby)update({tour:{...state.tour,phase,nearby}});
+      const introduce=phase==='arrived'&&!state.tour.introduced;
+      if(phase!==state.tour.phase||nearby!==state.tour.nearby||introduce){
+        const tour={...state.tour,phase,nearby,introduced:state.tour.introduced||introduce};
+        update({tour,...(introduce?{messages:[...state.messages,{role:'assistant',text:projectFacts(tour.project).arrival,actions:[{type:'project',project:tour.project}],sources:[tour.project]}].slice(-40)}:{})});
+      }
     },
     pause(){stopGuide();if(state.tour)update({tour:{...state.tour,phase:'paused',nearby:false}});},
-    resume(){if(state.tour)this.startRoute(state.tour.project,state.tour.index);},
+    resume(){if(!state.tour)return;cancel();update({open:false,error:'',tour:{...state.tour,phase:state.location==='city'?'starting':'away',nearby:false}});if(state.location==='city')cityMode?.();},
     next(){const index=(state.tour?.index??-1)+1;if(index>=TOUR_ORDER.length){this.stopTour();this.open();append({role:'assistant',text:'Экскурсия завершена. Что обсудим подробнее?',actions:[],sources:[]});}else this.startRoute(TOUR_ORDER[index],index);},
     stopTour(){stopGuide();update({tour:null,error:''});},
   };
