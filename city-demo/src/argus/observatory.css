@@ -1,0 +1,68 @@
+.observatory{position:relative;width:100%;height:100%;overflow:hidden;color:#183048;background:#d5ddd2;font-family:Inter,Arial,sans-serif;font-size:14px}
+.observatory *{box-sizing:border-box}
+.observatory button,.observatory a{font:inherit;-webkit-tap-highlight-color:transparent}
+.observatory button{border:0;cursor:pointer;color:inherit}
+.observatory button:disabled{cursor:default;opacity:.42}
+.observatory button:focus-visible,.observatory a:focus-visible,.observatory input:focus-visible{outline:3px solid #249d87;outline-offset:3px}
+.observatory-scene{position:absolute;inset:0}.observatory-scene canvas{display:block;width:100%;height:100%;outline:none;touch-action:none}
+.project-frame-argus:has(.observatory[data-expanded=true]) .project-chrome{display:none}
+.project-frame-argus:has(.observatory[data-expanded=true]) .project-viewport{inset:0;border:0}
+.ob-header{position:absolute;z-index:5;top:20px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;pointer-events:none}
+.ob-header>div{pointer-events:auto}
+.ob-title,.ob-controls>button,.ob-zoom,.ob-keys,.ob-task,.ob-assistant button,.ob-world-action{background:#fffefbfa;border:1px solid #e2e8e2;box-shadow:0 6px 22px #253e4320;border-radius:13px}
+.ob-title{display:flex;align-items:center;gap:17px;min-height:56px;padding:8px 16px}
+.ob-title>button{display:flex;align-items:center;gap:12px;background:transparent;padding:7px 0}
+.ob-title strong{font-size:20px;letter-spacing:1px}.ob-badge{font-size:12px;padding:8px 11px;background:#d8f3ed;border-radius:7px;white-space:nowrap;color:#285b5d}
+.ob-heading{padding-left:17px;border-left:1px solid #cdd8d8;font-size:14px;font-weight:650;white-space:nowrap}
+.ob-controls{display:flex;gap:9px;align-items:center}.ob-controls>button{height:54px;width:49px;display:grid;place-items:center}.ob-controls>button[aria-pressed=true]{color:#238974}
+.ob-zoom{display:flex;height:54px;align-items:center;padding:0 4px}.ob-zoom button{min-width:35px;height:44px;background:transparent;display:grid;place-items:center}.ob-zoom button:nth-child(2){min-width:48px;font-size:13px;font-weight:650}
+.ob-controls button:hover,.ob-title>button:hover{color:#14816c;background:#eff9f3}
+.ob-assistant{position:absolute;right:25px;bottom:103px;z-index:4}.ob-assistant button{display:flex;align-items:center;gap:8px;padding:12px 15px;color:#486652;font-size:12px}
+.ob-task{position:absolute;z-index:5;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:18px;width:max-content;max-width:calc(100% - 48px);padding:13px 15px 13px 22px;min-height:77px}
+.ob-task-icon{display:grid;place-items:center;color:#36546b}.ob-task-icon.solved{color:#219f80}
+.ob-task>div{display:grid;gap:5px;max-width:365px}.ob-task small{font-size:9px;letter-spacing:1.3px;color:#6d857e;font-weight:700}
+.ob-task strong{font-size:13px;line-height:1.5;font-weight:650}
+.observatory .ob-primary{background:#98e5d1;border:1px solid #82d6c0;color:#143e41;padding:13px 19px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;gap:11px;min-height:46px;font-weight:650;font-size:13px}
+.observatory .ob-primary:hover{background:#7bd8bf}.ob-primary.full{width:100%;margin-top:15px}
+.ob-keys{position:absolute;z-index:4;bottom:25px;left:24px;padding:10px 12px;display:flex;align-items:center;gap:8px;font-size:10px;color:#48615e}
+.ob-keys button{background:transparent;display:flex;padding:0}
+.ob-world-action{position:absolute;z-index:4;bottom:158px;left:50%;transform:translateX(-50%);padding:9px 13px;display:flex;align-items:center;gap:9px;font-size:12px}
+.ob-world-action kbd{font:inherit;padding:3px 6px;border:1px solid #a7daca;border-radius:5px;background:#e3f7ee;color:#278e76}
+.ob-touch{display:none}.ob-notice{position:absolute;top:100px;left:50%;transform:translateX(-50%);z-index:12;background:#203c43;color:#fff;max-width:90%;padding:14px 20px;border-radius:11px;font-size:13px}
+.ob-loading{position:absolute;z-index:6;top:50%;left:50%;transform:translate(-50%,-50%);background:#fffefb;border-radius:18px;padding:26px;display:grid;justify-items:center;gap:14px;max-width:420px}
+.ob-loading h2{font-size:19px;margin:0}.ob-loading progress{accent-color:#45b49b;width:220px}
+.ob-modal-layer{position:absolute;inset:0;z-index:15;display:flex;justify-content:flex-end;padding:89px 24px 24px;pointer-events:none}
+.ob-backdrop{position:absolute;inset:0;background:#152d3d22;pointer-events:auto}
+.ob-dialog{position:relative;pointer-events:auto;background:#fffefb;border:1px solid #e0e7df;box-shadow:0 15px 60px #142b3e33;border-radius:18px;width:450px;max-width:100%;max-height:100%;display:flex;flex-direction:column;outline:none}
+.ob-dialog-head{padding:25px 25px 18px;display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #e7eae3}
+.ob-dialog-head small{font-size:9px;font-weight:700;letter-spacing:1.4px;color:#6c8b80}
+.ob-dialog-head h1{font-size:24px;line-height:1.25;margin:9px 0 0;font-weight:700;letter-spacing:-.6px}
+.ob-dialog-head>button{background:#f0f3ed;border-radius:8px;display:grid;place-items:center;width:34px;height:34px;flex-shrink:0}
+.ob-dialog-content{overflow:auto;overscroll-behavior:contain;padding:21px 25px 24px}
+.ob-dialog p{font-size:13px;line-height:1.75;color:#586d74;margin:0 0 18px}.ob-dialog h2{font-size:18px;letter-spacing:-.3px;line-height:1.4;margin:0 0 9px}
+.ob-node-list{display:grid}.ob-node-list>button{display:flex;align-items:center;gap:12px;border-bottom:1px solid #e7ebe5;background:transparent;padding:18px 0;text-align:left}
+.ob-node-list>button:hover{background:#f2f8f2}.ob-node-list>button>span:nth-child(2){flex:1;display:grid;gap:5px}.ob-node-list strong{font-size:13px}.ob-node-list small{font-size:11px;color:#708078}
+.ob-node-icon{color:#367867;background:#edf4ed;border-radius:10px;padding:10px;display:flex}.ob-node-icon.suspect{background:#fcf0da;color:#ac7024}
+.ob-node-state{font-size:10px;color:#438268;white-space:nowrap}.ob-node-state.suspect{color:#ac7024}
+.ob-explanation{display:flex;align-items:flex-start;gap:12px;margin-top:22px;background:#eff5ed;padding:16px;border-radius:10px;color:#598c71}.ob-explanation svg{flex-shrink:0;margin-top:2px}.ob-explanation p{margin:0!important;font-size:12px}
+.ob-status{display:inline-flex;font-size:11px;font-weight:600;color:#28735a;background:#e9f4ec;padding:6px 9px;border-radius:6px;margin-bottom:8px}.ob-status.suspect{color:#9e621b;background:#fff0d7}
+.ob-inspect-intro p{font-size:11px;margin-bottom:22px}
+.ob-message-table{margin-top:19px;border:1px solid #dce5df;border-radius:9px;overflow:hidden;font-variant-numeric:tabular-nums}
+.ob-table-labels,.ob-message-table label{display:grid;grid-template-columns:28px 1fr 1.25fr .7fr;align-items:center;gap:8px;padding:14px}
+.ob-table-labels{font-size:11px;color:#6e807b;background:#f3f5ef}.ob-message-table label{border-top:1px solid #e2e8e0;font-size:13px;cursor:pointer;min-height:52px}
+.ob-message-table label:hover{background:#f5f8f1}.ob-message-table label.selected{background:#fff0d1;color:#865e23}
+.ob-message-table input{width:16px;height:16px;accent-color:#368f78;margin:0}
+.ob-table-caption{display:block;font-size:10px;color:#859187;margin:9px 0}
+.ob-text-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:20px}
+.ob-text-actions button,.ob-text-actions a{display:inline-flex;align-items:center;gap:6px;color:#347964;background:transparent;font-size:11px;padding:5px 0;text-decoration:none}
+.ob-dialog .ob-feedback{padding:13px;border-radius:8px;font-size:12px;margin:16px 0 0}.ob-feedback.error{background:#fff0e4;color:#985633}.ob-feedback.normal{background:#eaf4ec;color:#407457}
+.ob-success{display:grid;justify-items:start;gap:12px;color:#338b6e;margin-bottom:20px}.ob-success span{font-size:12px;font-weight:600}
+.ob-result-evidence{display:grid;gap:7px;padding:17px 0;border-top:1px solid #e2e8df;border-bottom:1px solid #e2e8df}
+.ob-result-evidence span{font-size:11px;color:#7b8c80}.ob-result-evidence strong{font-size:13px;margin-bottom:10px}.ob-result-evidence strong:last-child{margin:0}
+.ob-help-list{padding-left:20px;margin:20px 0}.ob-help-list li{padding-left:5px;margin:14px 0;color:#287b67}.ob-help-list strong{display:block;font-size:13px;color:#26484b}.ob-help-list span{display:block;font-size:12px;line-height:1.65;color:#62766b;margin-top:4px}
+.ob-dialog .ob-disclosure{font-size:11px;background:#f4f4ed;padding:12px;border-radius:8px}
+@media(max-width:1150px){.ob-heading{display:none}.ob-keys>span{display:none}.ob-task{max-width:calc(100% - 160px)}.ob-task>div{max-width:290px}.ob-task strong{font-size:12px}.ob-controls>button{width:43px}.ob-assistant{bottom:112px}}
+@media(max-width:650px){.ob-header{top:10px;left:10px;right:10px;gap:7px;flex-wrap:wrap}.ob-title{gap:9px;padding:6px 11px;min-height:43px}.ob-title strong{font-size:16px}.ob-title>button{gap:8px}.ob-badge{font-size:10px;padding:6px}.ob-controls{gap:5px;margin-left:auto}.ob-controls>button{width:37px;height:39px;border-radius:9px}.ob-zoom{height:39px}.ob-zoom button{min-width:24px;height:34px}.ob-zoom button:nth-child(2){min-width:36px;font-size:10px}.ob-task{left:10px;right:10px;bottom:12px;transform:none;width:auto;max-width:none;gap:10px;padding:12px;border-radius:12px}.ob-task-icon{display:none}.ob-task>div{flex:1;min-width:0;max-width:none}.ob-task strong{font-size:11px;line-height:1.45}.ob-task small{font-size:8px}.observatory .ob-primary{font-size:12px;padding:12px;min-height:43px;gap:6px}.ob-task .ob-primary svg{display:none}.ob-keys{display:none}.ob-assistant{right:10px;bottom:110px}.ob-assistant button{font-size:10px;padding:10px}.ob-world-action{bottom:166px;font-size:11px;white-space:nowrap}.ob-touch{position:absolute;left:10px;bottom:111px;z-index:4;display:grid;grid-template-columns:repeat(3,35px);gap:4px}.ob-touch button{width:35px;height:35px;display:grid;place-items:center;background:#fffefbee;border-radius:8px;touch-action:none}.ob-touch button:first-child{grid-column:2}.ob-touch button:nth-child(2){grid-column:1}.ob-modal-layer{padding:108px 8px 8px}.ob-dialog{width:100%;border-radius:14px}.ob-dialog-head{padding:19px 19px 14px}.ob-dialog-head h1{font-size:22px}.ob-dialog-content{padding:16px 19px 20px}.ob-table-labels,.ob-message-table label{padding:12px 10px}.ob-node-list>button{gap:8px}.ob-node-state{font-size:9px}.ob-notice{top:115px;font-size:12px;width:90%}}
+@media(prefers-reduced-motion:reduce){.observatory *{scroll-behavior:auto}}
+
+body:has(.observatory[data-expanded=true]) .guide-launcher,body:has(.observatory[data-expanded=true]) .guide-route{display:none}

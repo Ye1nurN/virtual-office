@@ -18,6 +18,7 @@ import './pharmacy.css';
 import './pharmacy-demo.css';
 import './pharmacy-bots.css';
 
+const ArgusObservatory=lazy(()=>import('../argus/ArgusObservatory.jsx'));
 const Office=lazy(()=>import('../App.jsx').then(m=>({default:m.App})));
 const validPlaces=new Set(['city','office','pharmacy','argus']);
 const iconFor={office:Buildings,pharmacy:FirstAid,argus:ShieldCheck};
@@ -81,6 +82,7 @@ export function CityApp(){
   function send(e){e.preventDefault();const text=draft.trim();if(!text)return;const q=text.toLowerCase();const answer=q.includes('аптек')?'Аптека — зелёное здание слева от площади. Войдите и выберите полку: появится демонстрация бронирования.':q.includes('argus')||q.includes('безопас')?'ARGUS находится справа от площади. Внутри есть консоль с учебным сценарием сетевых событий.':q.includes('офис')?'Офис находится севернее площади. Внутри доступны четыре этажа и исходные взаимодействия.':'Выберите «Проекты», чтобы открыть здание сразу или построить путь ко входу. WASD — движение, E — действие рядом с объектом.';setMessages(old=>[...old,{text,mine:true},{text:answer,mine:false}]);setDraft('');}
   function toPortfolio(target){close();setSpawn(spawnOutside(place));setStartOverview(false);history.pushState({},'',portfolioUrl(window.location.href,target));setPlace('city');}
   if(place==='city')return <PortfolioCity onVisit={visit} spawn={spawn} overview={startOverview} cameraMode={cameraMode} onCameraMode={changeCameraMode}/>;
+  if(place==='argus')return <ProjectFrame projectId={place} onLeave={leave} onPortfolio={toPortfolio}><Suspense fallback={<div className="world-loading floating" role="status">Открываем ARGUS…</div>}><ArgusObservatory onLeave={leave} cameraMode={cameraMode} onCameraMode={changeCameraMode}/></Suspense></ProjectFrame>;
   if(place==='office')return <ProjectFrame projectId={place} onLeave={leave} onPortfolio={toPortfolio}><Suspense fallback={<div className="office-app"><div className="world-loading floating" role="status">Открываем офис…</div></div>}><Office cameraMode={cameraMode} onCameraMode={changeCameraMode} embedded/></Suspense></ProjectFrame>;
   return <ProjectFrame projectId={place} onLeave={leave} onPortfolio={toPortfolio}><div className={'engine-stage city-stage'+(pharmacy?' pharmacy-stage':'')+(cameraMode==='first-person'?' first-person-stage':'')}><main className="office-app">
     <CityScene cameraMode={cameraMode} onCameraMode={changeCameraMode} key={place} api={api} location={place} spawn={spawn} overview={startOverview} status={status} inputEnabled={!panel&&!menu&&!search} onAction={action} onProject={marker} onNotice={notice} onWalk={setWalk} onView={onView} selectedShelf={selectedShelf} onShelfFocus={setSelectedShelf} pharmacyDemo={pharmacyDemo} onNearShelf={setNearShelf} director={director.current} onBotEvent={dispatchPharmacy} onBotView={setBotView}/>
