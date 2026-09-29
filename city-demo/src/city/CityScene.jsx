@@ -2,7 +2,6 @@ import React,{useRef,useState,useEffect} from 'react';
 import {createCityWorld} from './cityWorld.js';
 import {guide} from '../guide/guideStore.js';
 import {useGuide} from '../guide/GuideOverlay.jsx';
-import {getProject} from './catalog.js';
 export function CityScene({api,cameraMode,onCameraMode,location,spawn,overview,inputEnabled,status,onAction,onProject,onNotice,onWalk,onView,onShelfFocus,selectedShelf,pharmacyDemo,onNearShelf,director,onBotEvent,onBotView}){
   const host=useRef(null),cb=useRef({}),labelNodes=useRef(new Map()),self=useRef(null),latest=useRef(null);
   const guideState=useGuide();
@@ -16,7 +15,7 @@ export function CityScene({api,cameraMode,onCameraMode,location,spawn,overview,i
     try{engine=createCityWorld(host.current,{location,spawn,overview,cameraMode,onCameraMode:m=>cb.current.onCameraMode?.(m),director,onBotEvent:e=>cb.current.onBotEvent?.(e),onBotView:v=>cb.current.onBotView?.(v),onLoading:setProgress,onError:setError,onHint:h=>{setHint(h);cb.current.onNearShelf?.(h?.type==='shelf'?h.shelf:null);},
       onAction:a=>a.type==='guide'?guide.open():cb.current.onAction(a),onNotice:t=>cb.current.onNotice(t),onWalk:v=>cb.current.onWalk(v),
       onShelfFocus:id=>cb.current.onShelfFocus?.(id),
-      onLabels:l=>{guide.beginRoute();guide.position(engine?.getPosition?.(),getProject(guide.getSnapshot().tour?.project)?.entry);latest.current=l;for(const m of l.markers)place(labelNodes.current.get(m.id),m);place(self.current,l.me);setMarkers(old=>old.map(m=>m.id+m.name).join(',')===l.markers.map(m=>m.id+m.name).join(',')?old:l.markers);cb.current.onView({zoom:l.zoom,overview:l.overview});}
+      onLabels:l=>{guide.beginRoute();guide.position(engine?.getGuidePosition?.());latest.current=l;for(const m of l.markers)place(labelNodes.current.get(m.id),m);place(self.current,l.me);setMarkers(old=>old.map(m=>m.id+m.name).join(',')===l.markers.map(m=>m.id+m.name).join(',')?old:l.markers);cb.current.onView({zoom:l.zoom,overview:l.overview});}
     });api.current=engine;detachGuide=guide.attachScene(engine,location);engine.setKeyboardEnabled(cb.current.inputEnabled);}catch(e){setError(e.message);setProgress(null);}
     return()=>{detachGuide?.();engine?.dispose();if(api.current===engine)api.current=null;};
   },[]);

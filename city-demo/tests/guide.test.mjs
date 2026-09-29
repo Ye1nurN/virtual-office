@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {cleanReply,localReply,GUIDE_POSITION} from '../src/guide/knowledge.js';
-import {createGuideStore,routeProgress} from '../src/guide/guideStore.js';
+import {createGuideStore} from '../src/guide/guideStore.js';
 import {handleGuide,validatePayload} from '../server/guideHandler.mjs';
 import {createNavigation} from '../src/movement.js';
 import {districtObstacles} from '../src/city/districtLayout.js';
@@ -54,14 +54,30 @@ test('cancelled response cannot overwrite a new conversation',async()=>{
   const store=createGuideStore();let resolve;const waiting=store.send('привет',()=>new Promise(r=>resolve=r));assert.equal(store.getSnapshot().busy,true);store.clear();resolve(Response.json({mode:'ai',reply:{text:'late',actions:[],sources:[]}}));await waiting;
   assert.equal(store.getSnapshot().messages.length,1);assert.equal(store.getSnapshot().busy,false);
 });
-test('tour waits for a ready scene, pauses, arrives and retains history across buildings',()=>{
-  const store=createGuideStore();let ready=false,walked=0,stopped=0;store.attachScene({stop(){stopped++;},getPosition:()=>ready?{x:0,z:0}:null,goToProject:id=>{assert.equal(id,'pharmacy');walked++;return true;}},'city');
-  store.act({type:'tour',project:null});store.beginRoute();assert.equal(walked,0);ready=true;store.beginRoute();assert.equal(walked,1);assert.equal(store.getSnapshot().tour.phase,'walking');
-  store.position({x:0,z:0,navigating:false},{x:5,z:0});assert.equal(store.getSnapshot().tour.phase,'paused');store.resume();store.beginRoute();store.position({x:5,z:0,navigating:false},{x:5,z:0});assert.equal(store.getSnapshot().tour.phase,'arrived');
-  store.setLocation('pharmacy');assert.equal(store.getSnapshot().tour.phase,'inside');assert.equal(store.getSnapshot().messages.length,2);store.setLocation('city');assert.equal(store.getSnapshot().messages.length,2);assert.equal(store.getSnapshot().tour.phase,'paused');store.stopTour();assert.equal(store.getSnapshot().tour,null);assert.ok(stopped>0);
+
+function guideScene(){
+  let ready=false,pose={x:GUIDE_POSITION.x,z:GUIDE_POSITION.z,yaw:0,phase:'idle',canEnter:false},walked=0,stopped=0,restored=null;
+  return {get walked(){return walked;},get stopped(){return stopped;},get restored(){return restored;},ready(){ready=true;},pose(next){pose={...pose,...next};},
+    engine:{getGuidePosition:()=>ready?{...pose}:null,walkGuideTo:()=>{walked++;pose.phase='walking';return true;},pauseGuide(){stopped++;if(pose.phase==='walking')pose.phase='paused';},restoreGuide(value){restored=value;},
+      stop(){assert.fail('The guide must not stop the visitor');},goToProject(){assert.fail('The guide must not walk the visitor');},getPosition(){assert.fail('Visitor movement must not control the guide route');}}};
+}
+test('tour moves only the guide and gates entering on the visitor reaching the entrance',()=>{
+  const store=createGuideStore(),scene=guideScene();let destination=null;store.setNavigator(id=>destination=id);store.attachScene(scene.engine,'city');
+  store.act({type:'tour',project:null});store.beginRoute();assert.equal(scene.walked,0);scene.ready();store.beginRoute();assert.equal(scene.walked,1);assert.equal(store.getSnapshot().tour.phase,'walking');
+  store.position({x:9,z:3,phase:'walking',canEnter:false});assert.equal(store.getSnapshot().tour.phase,'walking');
+  store.position({x:12,z:3,phase:'arrived',canEnter:false});assert.equal(store.getSnapshot().tour.phase,'arrived');store.act({type:'enter',project:'pharmacy'});assert.equal(destination,null);
+  store.position({x:12,z:3,phase:'arrived',canEnter:true});assert.equal(store.getSnapshot().tour.nearby,true);store.act({type:'enter',project:'pharmacy'});assert.equal(destination,'pharmacy');
+  store.setLocation('pharmacy');assert.equal(store.getSnapshot().tour.phase,'inside');assert.equal(store.getSnapshot().messages.length,2);
+  store.next();assert.equal(store.getSnapshot().tour.phase,'away');assert.equal(store.getSnapshot().tour.project,'argus');assert.equal(destination,'pharmacy','Choosing the next stop never ejects the visitor');
 });
-test('tour switches resume into the walkable city and survives returning from an interior',()=>{
-  const store=createGuideStore();let switched=0,visited=null;store.setNavigator(id=>visited=id);const detach=store.setCityMode(()=>switched++);
-  store.startRoute('argus');assert.equal(switched,1);detach();store.setLocation('pharmacy');store.startRoute('office');assert.equal(visited,'city');store.setCityMode(()=>switched++);assert.equal(switched,2);
+test('pause, conversation and cancellation affect only the NPC and preserve its position on scene changes',()=>{
+  const store=createGuideStore(),scene=guideScene();scene.ready();const detach=store.attachScene(scene.engine,'city');store.startRoute('argus');store.beginRoute();
+  scene.pose({x:8,z:4});store.open();assert.equal(store.getSnapshot().tour.phase,'paused');store.close();store.beginRoute();assert.equal(scene.walked,1);
+  store.resume();store.beginRoute();assert.equal(scene.walked,2);detach();const next=guideScene();next.ready();store.attachScene(next.engine,'city');assert.equal(next.restored.x,8);assert.equal(next.restored.z,4);store.beginRoute();assert.equal(next.walked,1);
+  store.pause();store.setLocation('pharmacy');store.setLocation('city');store.beginRoute();assert.equal(next.walked,1,'An explicitly paused guide does not restart on return');store.stopTour();assert.equal(store.getSnapshot().tour,null);assert.ok(next.stopped>0);
 });
-test('route progress distinguishes manual interruption from arriving',()=>{assert.equal(routeProgress(null,{x:0,z:0}),'loading');assert.equal(routeProgress({x:10,z:0,navigating:false},{x:0,z:0}),'paused');assert.equal(routeProgress({x:0,z:0,navigating:false},{x:0,z:0}),'arrived');});
+test('starting from resume reveals the city, but starting inside a project never teleports the visitor',()=>{
+  const store=createGuideStore();let switched=0,visited=null;store.setNavigator(id=>visited=id);store.setCityMode(()=>switched++);
+  store.startRoute('argus');assert.equal(switched,1);store.setLocation('pharmacy');store.startRoute('office');assert.equal(visited,null);assert.equal(store.getSnapshot().tour.phase,'away');assert.equal(switched,1);
+  store.setLocation('city');assert.equal(store.getSnapshot().tour.phase,'starting');
+});

@@ -13,11 +13,14 @@ import {buildExterior,buildInterior,COMMON_ASSETS} from './geometry.js';
 import {PROJECTS,CITY_SPAWN,CITY_BOUNDS,INTERIOR_BOUNDS,getProject} from './catalog.js';
 import {loadExteriorSurfaces} from './surfaces.js';
 import {createGuideActor} from '../guide/guideActor.js';
+import {createGuideWalker,guideMeetingPoint} from '../guide/guideWalker.js';
+import {GUIDE_POSITION} from '../guide/knowledge.js';
 import {PHARMACY_CAMERA,PHARMACY_SPAWN,pharmacyDirection} from './pharmacyLayout.js';
 import {createPharmacyActors} from './pharmacyActors.js';
 
 export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,overview=true,cameraMode='overview',director,...callbacks}={}){
   let disposed=false,ready=false,enabled=true,frame=0,last=performance.now(),dirty=true,walking=false;
+  let guideActor=null,guideWalker=null,guideProject=null,guideRestore=null;
   let player=null,world=null,navigation=null,path=[],pending=null,manual={x:0,z:0},hint=null;
   let width=1,height=1,showOverview=location==='city'&&overview,zoom=1,pointerStart=null;
   let activeFrameCount=0,activeFrameMs=0;
@@ -94,7 +97,13 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   }
   const lookInput=createLookInput(canvas,{canUse:()=>enabled&&ready&&!document.hidden,isFirstPerson:()=>firstPerson,onToggle:()=>setCameraMode(firstPerson?'overview':'first-person'),onLook:look,onStart:()=>{path=[];destination.visible=false;invalidate();}});
   function project(x,y,z){const p=new T.Vector3(x,y,z).project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2,visible:p.z>-1&&p.z<1&&Math.abs(p.x)<.95&&Math.abs(p.y)<.9};}
+  function getGuidePosition(){
+    if(!ready||!guideWalker)return null;
+    const entry=getProject(guideProject)?.entry;
+    return {...guideWalker.snapshot(),canEnter:!!entry&&Math.hypot(player.position.x-entry.x,player.position.z-entry.z)<2.7&&navigation.clearSegment(player.position,entry)};
+  }
   function publish(){
+    if(guideWalker){const pose=guideWalker.snapshot();Object.assign(canvas.dataset,{guideX:pose.x.toFixed(3),guideZ:pose.z.toFixed(3),guideMoving:String(pose.moving),guidePhase:pose.phase});}
     const bot=botResult?.actors.find(a=>a.id===botResult.view.actor);
     const bubbles=isPharmacy&&bot&&pharmacyDemo?.request&&pharmacyDemo.automation.mode==='auto'&&botResult.view.phase!=='complete'?[{id:'bot-'+bot.id,kind:'bot',name:bot.name+' · '+(pharmacyDemo.automation.paused?'Пауза':botResult.view.text),x:bot.x,y:2.65*PHARMACY_HEIGHT_SCALE,z:bot.z}]:[];
     const markers=[...world.markers,...bubbles].map(m=>{const screen=project(m.x,m.y,m.z);return {...m,...screen,visible:screen.visible&&!(showOverview&&location==='city')};});
@@ -130,7 +139,12 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   function tick(now){
     frame=0;if(disposed||document.hidden)return;
     const interval=now-last,dt=Math.min(.04,interval/1000);last=now;
-    let moved=false;
+    let moved=false,guideActive=false;
+    if(ready&&guideWalker){
+      const wasMoving=guideWalker.snapshot().moving,pose=guideWalker.update(dt);
+      guideActor.update(pose,now/1000);guideActive=pose.moving;
+      if(wasMoving||guideActive)dirty=true;
+    }
     if(ready&&isPharmacy&&director){
       botResult=director.update(pharmacyDemo,Math.min(interval/1000,1));botVisuals.update(botResult,pharmacyDemo);
       const key=JSON.stringify([botResult.view.phase,botResult.view.text,botResult.view.actor]);
@@ -165,7 +179,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     }
     if(ready){ring.position.x=player.position.x;ring.position.z=player.position.z;follow(Math.min(interval/1000,.1));}
     if(dirty){renderer.info.reset();composer.render();dirty=false;if(ready)publish();}
-    if(moved||path.length||botResult?.active||cameraMoving||(enabled&&(input.keys.size||manual.x||manual.z)))invalidate();
+    if(guideActive||moved||path.length||botResult?.active||cameraMoving||(enabled&&(input.keys.size||manual.x||manual.z)))invalidate();
   }
   function visibility(){input.clear();stop();if(document.hidden){cancelAnimationFrame(frame);frame=0;}else{last=performance.now();invalidate(true);}}
   const observer=new ResizeObserver(resize);observer.observe(container);resize();
@@ -177,10 +191,11 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   ]).then(([templates,albedos])=>{
     if(disposed){Object.values(albedos).forEach(t=>t.dispose());return;}
     world=location==='city'?buildExterior(templates,albedos):buildInterior(location,templates);scene.add(world.root);
-    if(location==='city'){const guideActor=createGuideActor(templates);scene.add(guideActor.root);world.interactions.push(guideActor.interaction);world.markers.push(guideActor.marker);}
+    if(location==='city'){guideActor=createGuideActor(templates);scene.add(guideActor.root);world.interactions.push(guideActor.interaction);world.markers.push(guideActor.marker);}
     if(isPharmacy){botVisuals=createPharmacyActors(templates);botVisuals.root.scale.y=PHARMACY_HEIGHT_SCALE;scene.add(botVisuals.root);}
     world.setFirstPerson?.(firstPerson);world.setCampaign?.(pharmacyDemo);world.selectShelf?.(selectedShelf);
     navigation=createNavigation(world.obstacles,location==='city'?CITY_BOUNDS:INTERIOR_BOUNDS);
+    if(guideActor){guideWalker=createGuideWalker(navigation,GUIDE_POSITION);guideWalker.restore(guideRestore);guideActor.update(guideWalker.snapshot(),0);}
     player=new T.Group();const figure=templates.get('employee_base').clone(true);figure.scale.setScalar(location==='city'?2.4:isPharmacy?2.0:1.5);if(isPharmacy)figure.scale.y*=PHARMACY_HEIGHT_SCALE;player.add(figure);
     figure.traverse(node=>{if(/^(leg_|arm_)[LR]/.test(node.name))limbs.push({node,base:node.rotation.x,side:node.name.includes('_L')?'L':'R',arm:node.name.startsWith('arm')});});
     const start=location==='city'?spawn:isPharmacy?PHARMACY_SPAWN:{x:0,z:4.4};player.position.set(start.x,.08,start.z);player.rotation.y=Math.PI;scene.add(player);
@@ -207,6 +222,10 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
       }finally{renderer.setRenderTarget(previous);photoTarget.dispose();world.root.visible=frameVisible;player.visible=playerVisible;ring.visible=ringVisible;destination.visible=destinationVisible;if(botVisuals)botVisuals.root.visible=true;invalidate(true);}
   }
   return {
+    getGuidePosition,
+    restoreGuide(pose){guideRestore=pose;if(guideWalker){guideWalker.restore(pose);guideActor.update(guideWalker.snapshot(),0);invalidate();}},
+    walkGuideTo(id){const project=getProject(id);if(!ready||!guideWalker||!project)return false;guideProject=id;const ok=guideWalker.goTo(guideMeetingPoint(project,navigation),project.yaw||0);invalidate();return ok;},
+    pauseGuide(){guideWalker?.pause();if(guideWalker)guideActor.update(guideWalker.snapshot(),0);invalidate();},
     stop,getPosition:()=>player?{x:player.position.x,z:player.position.z,navigating:path.length>0}:null,
     interact,reset,setCameraMode,look,overview:overviewMap,zoom:zoomBy,navigate,captureShelf,
     selectShelf(id){selectedShelf=id;world?.selectShelf?.(id);invalidate();},

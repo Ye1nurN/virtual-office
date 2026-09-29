@@ -12,7 +12,7 @@ export const GUIDE_FACTS={
 export const projectFacts=id=>GUIDE_FACTS.projects.find(p=>p.id===id);
 export const INTRO='Привет! Я гид по городу проектов Елнура. Помогу выбрать, что посмотреть, объясню технологии и подскажу, с чего начать. Что тебе интересно?';
 export const STARTERS=['Покажи самое интересное','Хочу посмотреть backend','Расскажи об авторе','Как устроен этот город?'];
-export const actionLabel=a=>a.type==='walk'?'Пройти к зданию':a.type==='enter'?'Войти в '+(projectFacts(a.project)?.name||'проект'):a.type==='project'?'Подробнее о проекте':a.type==='tour'?'Начать экскурсию':'Об авторе';
+export const actionLabel=a=>a.type==='walk'?'Гид, покажи дорогу':a.type==='enter'?'Войти в '+(projectFacts(a.project)?.name||'проект'):a.type==='project'?'Подробнее о проекте':a.type==='tour'?'Начать экскурсию':'Об авторе';
 export function validAction(a){return !!a&&(['walk','enter','project'].includes(a.type)?!!projectFacts(a.project):['about','tour'].includes(a.type)&&a.project===null);}
 export function cleanReply(value){
   if(!value||typeof value.text!=='string'||!value.text.trim())return null;
@@ -35,7 +35,7 @@ export function localReply(message,{location='city',project=null}={},history=[])
   if(id&&/стек|технолог|почему|решени|архитект/.test(q)){const p=projectFacts(id);if(p)return {text:`В описании «${p.name}» указан стек: ${p.stack.join(', ')}. Причины выбора и подробные авторские решения пока не описаны. Я могу показать известные возможности проекта, но не буду выдавать предположения за слова Елнура.`,actions:[{type:'project',project:id}],sources:[id]};}
   if(id&&(mentioned||/это|здесь|что|попроб|покажи|расскажи|веди|пойд[её]м|туда|давай/.test(q)))return detailReply(id);
   if(/спасибо|круто|понятно/.test(q))return {text:'Пожалуйста! Можем продолжить знакомство с проектами или разобрать, что ты только что попробовал.',actions:[{type:'tour',project:null}],sources:[]};
-  if(/привет|здравств|кто ты|как дела/.test(q))return {text:'Привет! Я помощник Елнура и проводник по этому городу. Сейчас у меня режим готовых ответов: могу рассказать о проектах, объяснить несколько базовых понятий и построить маршрут. Для свободной беседы нужно подключить AI.',actions:[{type:'tour',project:null},{type:'about',project:null}],sources:[]};
+  if(/привет|здравств|кто ты|как дела/.test(q))return {text:'Привет! Я помощник Елнура и проводник по этому городу. Сейчас у меня режим готовых ответов: могу рассказать о проектах, объяснить несколько базовых понятий и показать дорогу к зданию. Следовать за мной или нет — решать тебе. Для свободной беседы нужно подключить AI.',actions:[{type:'tour',project:null},{type:'about',project:null}],sources:[]};
   if(/управлен|ходить|клавиш/.test(q))return {text:'WASD, ЦФЫВ или стрелки — движение. E или У — действие рядом с объектом. Можно нажать на свободную дорожку. Во время разговора движение приостановлено; закрой диалог, чтобы продолжить.',actions:[],sources:[]};
   return {text:'В режиме готовых ответов я пока не умею свободно обсуждать этот вопрос. Могу рассказать об аптечной CRM, ARGUS, офисе, backend или управлении городом. С какого направления начнём?',actions:[{type:'tour',project:null}],sources:[]};
 }
