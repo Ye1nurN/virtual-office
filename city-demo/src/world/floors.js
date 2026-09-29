@@ -16,12 +16,13 @@ function buildFloor(id){
   };
   const solid=(asset,x,z,yaw=0,opts={})=>add(asset,x,z,0,yaw,{solid:true,...opts});
   const plant=(x,z,big=false)=>solid(big?'plant_broadleaf':'plant_slender',x,z,0,{collider:[.42,.42]});
-  const wall=(x,z,length,yaw=0,full=false)=>add(full?'wall_module':'wall_half',x,z,0,yaw,{scale:[length/1.2,1,1],collider:rotatedFootprint(0,0,length,.22,yaw),solid:true,worldCollider:true});
+  const wall=(x,z,length,yaw=0,full=false)=>add(full?'wall_module':'wall_half',x,z,0,yaw,{scale:[length/1.2,1,1],collider:rotatedFootprint(0,0,length,.241,yaw),solid:true,worldCollider:true});
   const glass=(x,z,length,yaw=0)=>add('glass_partition',x,z,0,yaw,{scale:[length/1.218,1,1],solid:true,collider:rotatedFootprint(0,0,length,.12,yaw),worldCollider:true});
   const line=(x1,z1,x2,z2,full=false)=>wall((x1+x2)/2,(z1+z2)/2,Math.hypot(x2-x1,z2-z1),Math.abs(z2-z1)>.01?Math.PI/2:0,full);
   const door=(x,z,yaw=0,title='Дверь')=>{
     const o=add('glass_door',x,z,0,yaw,{dynamic:true,scale:[1.42,1,1.42]});
-    doors.push({id:o.id,x,z,yaw,width:1.49,title});return o;
+    // Scaled GLB hinge/handle footprint, verified against the opened model in tests.
+    doors.push({id:o.id,x,z,yaw,width:1.49,title,leaf:{hingeX:-.46*1.42,centerZ:.451*1.42,thickness:.178*1.42,depth:.938*1.42}});return o;
   };
   const room=(roomId,name,x,z,department=roomId,description='Пространство для встреч и совместной работы.')=>rooms.push({id:roomId,name,x,z,department,description});
   const splitRoom=(side,z1,z2,roomId,name,doorZ,department=roomId)=>{
@@ -33,7 +34,7 @@ function buildFloor(id){
   };
   function npc(personId,asset,x,z,yaw=0){const o=add(asset,x,z,0,yaw,{dynamic:true,personId});npcs.push({id:personId,x,z,objectId:o.id});return o;}
   function seat(asset,x,z,yaw=0,occupied=false){
-    const o=solid(asset,x,z,yaw,{collider:asset.startsWith('sofa')?[asset==='sofa_three'?2.05:1.5,.68]:[.56,.48]});
+    const o=solid(asset,x,z,yaw);
     if(!occupied){const dx=Math.sin(yaw),dz=Math.cos(yaw);interactions.push({id:o.id,type:'seat',title:'Сесть',x,z,yaw,exit:{x:x+dx*1.1,z:z+dz*1.1},radius:1.65});}
     return o;
   }
@@ -51,12 +52,12 @@ function buildFloor(id){
       const clearance=round?1.15:1;
       seat('chair_meeting',x+dx,z+clearance,Math.PI);seat('chair_meeting',x+dx,z-clearance,0);
     }
-    solid('presentation_screen',x,Math.max(-3.4,z-2.6));plant(x+2.4,z-1.9);plant(x-2.4,z+1.9);
+    solid('presentation_screen',small&&!round?x+2.65:x,small&&!round?z:Math.max(-3.4,z-2.6),small&&!round?-Math.PI/2:0);plant(x+2.4,z-1.9);plant(x-2.4,z+1.9);
   }
   function lounge(x,z){
-    seat('sofa_three',x,z-1.1,0);seat('sofa_two',x+1.5,z, -Math.PI/2);
-    solid('table_coffee',x,z+.3);add('plant_small_round',x,z+.3,.432);
-    solid('bookshelf',x+2.1,z-1.4);plant(x+2.3,z+1.7);plant(x-2.2,z+1.7);
+    seat('sofa_three',x,z-1.4,0);seat('sofa_two',x+1.8,z+.2, -Math.PI/2);
+    solid('table_coffee',x-.45,z+.75);add('plant_small_round',x-.45,z+.75,.432);
+    solid('bookshelf',x-1.9,z-1.4,0);plant(x+2.3,z+1.7);plant(x-2.2,z+1.7);
   }
   // Repeated GLB floor modules are batched by geometry/material by the renderer.
   for(let x=-11.5;x<12;x++)for(let z=-9.5;z<10;z++)
@@ -76,21 +77,22 @@ function buildFloor(id){
   const entrance=id===1?add('entrance_double_door',0,9.88,0,0,{dynamic:true,entrance:true}):null;
   // Back service strip: stair / facilities / lift / kitchen / stair.
   for(const side of [-1,1]){
-    solid('stair_u',side*10,-7.9,0,{collider:[2.5,3.85],scale:[.9,.78,.9]});
+    // GLB origin is offset from its footprint; keep the landing inside the rear service bay.
+    solid('stair_u',side*10,-7.5,0,{scale:[.9,.78,.85]});
     line(side*8.35,-9.88,side*8.35,-5.8);
     line(side*11.88,-5.8,side*10.1,-5.8);line(side*8.35,-5.8,side*8.8,-5.8);
     interactions.push({id:'stairs-'+side,type:'stairs',title:'Выбрать этаж',x:side*9.45,z:-5.1,radius:1.8});
   }
   line(-8.35,-5.8,-6.842,-5.8);line(-5.358,-5.8,-3.3,-5.8);line(-3.3,-9.88,-3.3,-5.8);
-  door(-6.1,-5.8,0,'Санузлы');
-  for(const x of [-7.4,-4.4]){solid('toilet',x,-8.8,Math.PI);solid('washbasin',x,-6.5,0);add('bathroom_mirror',x,-6.5,1.2);}
+  door(-6.1,-5.8,Math.PI,'Санузлы');
+  for(const x of [-7.4,-4.4]){solid('toilet',x,-9.25,0);solid('washbasin',x,-6.22,Math.PI);add('bathroom_mirror',x,-5.95,1.2,Math.PI);}
   glass(-5.9,-8.9,2,Math.PI/2);
   solid('elevator_cabin',-1.35,-7.6,0,{collider:[1.65,1.8]});
   add('elevator_portal',-1.35,-6.7,0,0,{dynamic:true});
   interactions.push({id:'lift',type:'lift',title:'Выбрать этаж',x:-1.35,z:-5.55,radius:1.7});
   room('lift-label','Лифт',-1.35,-6.55,'lift');
   solid('coffee_counter',3.6,-8.9);solid('fridge_small',5.1,-8.9);add('coffee_machine',3.1,-8.85,.92);add('kettle',4,-8.85,.92);
-  solid('table_cafe',4,-6.65);for(const x of [3.1,4.9])seat('stool_cafe',x,-6.65,x<4?Math.PI/2:-Math.PI/2);
+  solid('table_cafe',4.2,-7.05);for(const x of [3,5.4])seat('stool_cafe',x,-7.05,x<4.2?Math.PI/2:-Math.PI/2);
   plant(7.45,-8.85);plant(6.9,-6.3);
   room('kitchen-'+id,id===1?'Кофе-зона':'Кухня',4,-8.35,'kitchen-'+id);
   rooms.at(-1).bounds={minX:1,maxX:8.35,minZ:-10,maxZ:-5.8};
@@ -102,8 +104,8 @@ function buildFloor(id){
     splitRoom(1,-4,5,'events','Общий зал',.3,'events');
     solid('presentation_screen',8.7,-2.9);
     for(const z of [-.9,.5,1.9,3.3])for(const x of [6.9,8.2,9.5,10.8])seat('chair_auditorium',x,z,Math.PI);
-    plant(6.35,-2.6);plant(11.1,-2.6);
-    splitRoom(1,5,9.85,'welcome','Онбординг',7,'welcome');solid('coat_rack',10.7,8.4);solid('cabinet_low',8.2,8.4);add('notice_frame',8.2,8.4,1.2);seat('armchair_waiting',7.1,8.4);
+    plant(6.35,-2.6);
+    splitRoom(1,5,9.85,'welcome','Онбординг',7,'welcome');solid('coat_rack',10.7,8.4);solid('cabinet_low',8.2,9.3,Math.PI);add('notice_frame',8.2,9.72,1.2,Math.PI);seat('armchair_waiting',7.1,8.4,Math.PI);
     solid('reception_counter',0,-.3,0,{collider:[2.2,.9]});add('monitor',.45,-.55,.782,Math.PI);add('desk_phone',-.65,-.15,1.021);add('plant_desk',.8,-.15,1.021);
     seat('chair_task_green',0,-1.25,0,true);npc('sofia','employee_seated_blond',0,-1.25);
     room('reception','Ресепшен',0,-.55,'reception');interactions.push({id:'reception',type:'reception',title:'Карта компании',x:0,z:1.05,radius:1.9});
@@ -113,9 +115,9 @@ function buildFloor(id){
       plant(side*4.45,4.55);plant(side*4.45,8.55);
     }
     plant(-2.5,-.3);plant(2.5,-.3);
-    for(const x of [-10.8,-7]){solid('bookshelf',x,-3.6);solid('cabinet_drawers',x,8.7);add('plant_desk',x,8.7,.7);}
-    solid('bookshelf_low',10.7,4.4);add('plant_desk',10.7,4.4,.947);
-    add('notice_frame',-4.8,3.1,1.0,Math.PI/2);add('notice_frame',4.8,3.1,1.0,-Math.PI/2);
+    for(const x of [-10.8,-7]){solid('bookshelf',x,-3.6);solid('cabinet_drawers',x,8.7,Math.PI);add('plant_desk',x,8.7,.7);}
+    solid('bookshelf_low',11.3,-2.65,-Math.PI/2);add('plant_desk',11.3,-2.65,.947);
+    add('notice_frame',-5.36,3.1,1.0,Math.PI/2);add('notice_frame',5.36,3.1,1.0,-Math.PI/2);
 
   }else if(id===2||id===3){
     const engineering=id===3;
@@ -127,13 +129,13 @@ function buildFloor(id){
       for(const x of [-10.6,-9.4,-8.2])solid('server_rack',x,1.4);
       solid('cabinet_low',-10.5,3.6);
       splitRoom(-1,4.4,9.85,'it','ИТ-поддержка',7.3);
-      desk(-9.9,6.3,'nikita');desk(-7.2,6.3);plant(-11,8.6);
+      desk(-9.9,6.3,'nikita');desk(-7.55,6.3);plant(-11,8.6);
     }else{
       splitRoom(-1,2.4,9.85,'sales','Продажи',5.1);
       desk(-9.9,4.6,'ilya');desk(-7.55,4.6);plant(-11,8.6);solid('table_cafe',-8.6,7.7);seat('armchair_waiting',-10.1,7.7,Math.PI/2);seat('armchair_waiting',-7.1,7.7,-Math.PI/2);
     }
     if(engineering){
-      splitRoom(1,-4,1.3,'design','Дизайн',-1.6);desk(7.2,-2.1,'anna');desk(9.8,-2.1);solid('whiteboard_vertical',10.9,.3);plant(6.2,.3);
+      splitRoom(1,-4,1.3,'design','Дизайн',-1.6);desk(7.2,-2.1,'anna');desk(9.8,-2.1);solid('whiteboard_vertical',10.9,.3,Math.PI);plant(6.2,.3);
     }else{
       splitRoom(1,-4,1.3,'meeting-'+id,'Переговорная',-1.6);meeting(8.65,-1.5,true);
     }
@@ -147,13 +149,13 @@ function buildFloor(id){
       for(const dx of [-.7,.7])for(const side of [-1,1]){
         desk(cx+dx,cz+side*.4,persons[occupied++]||null,side>0?0:Math.PI);
       }
-      solid('whiteboard_vertical',cx,cz-2.2);
+      solid('whiteboard_vertical',cx,cz-2.2,Math.PI);
       plant(cx,cz+2.2);
     }
     room(engineering?'engineering':'support',engineering?'Разработка':'Поддержка',-2.8,-2.1,engineering?'engineering':'support');
     if(!engineering)room('client-team','Клиентская команда',2.8,-2.1,'support');
   }else{
-    splitRoom(-1,-4,3,'finance','Финансы',-1.6);desk(-9.8,-2);desk(-7.2,-2);solid('filing_cabinet',-11,1.8);plant(-6.5,1.8);
+    splitRoom(-1,-4,3,'finance','Финансы',-1.6);desk(-9.8,-2);desk(-7.55,-2);solid('filing_cabinet',-11,1.8);plant(-6.5,1.8);
     splitRoom(-1,3,9.85,'people','Люди и культура',6.5);desk(-9.8,5.2);desk(-7.55,5.2);plant(-11,8.7);
     splitRoom(1,-4,.3,'director','Руководитель',-1.6);desk(8.7,-2,'artem');plant(11,-2.7);
     splitRoom(1,.3,4.4,'legal','Юристы',2.3);desk(7.2,1.6);desk(9.8,1.6);

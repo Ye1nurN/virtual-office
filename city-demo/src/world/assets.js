@@ -79,7 +79,7 @@ export function assembleFloor(config,templates,doorStates){
   for(const o of config.objects){
     const template=templates.get(o.assetId);if(!template)continue;
     const node=template.clone(true);node.position.fromArray(o.position);node.rotation.y=o.yaw;node.scale.fromArray(o.scale);node.updateMatrixWorld(true);
-    const collider=objectCollider(o,assetRegistry);if(collider)obstacles.push(collider);
+    const collider=objectCollider(o,assetRegistry,template.userData.bounds);if(collider)obstacles.push(collider);
     if(o.dynamic){
       node.userData.objectId=o.id;root.add(node);dynamic.set(o.id,node);
       if(o.personId)node.traverse(m=>{if(m.isMesh){m.userData.personId=o.personId;pickables.push(m);}});

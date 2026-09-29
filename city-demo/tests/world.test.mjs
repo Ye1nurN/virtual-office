@@ -10,6 +10,12 @@ import {createNavigation,movementDirection,createKeyboardInput} from '../src/mov
 import {findSeatApproach,seatApproaches,seatSegmentClear} from '../src/world/interactions.js';
 const manifest=JSON.parse(readFileSync(new URL('../public/models/manifest.json',import.meta.url)));
 const registry=new Map(manifest.assets.map(a=>[a.id,a]));
+// Use the same loaded GLB bounds as assembleFloor, not centred manifest dimensions.
+const loader=new GLTFLoader();
+for(const id of new Set(FLOORS.flatMap(f=>f.objects.filter(o=>o.solid).map(o=>o.assetId)))){
+  const bytes=readFileSync(new URL('../public/models/'+registry.get(id).file,import.meta.url));
+  registry.get(id).bounds=new Box3().setFromObject((await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'')).scene);
+}
 function nav(f,open=true){return createNavigation([...f.objects.map(o=>objectCollider(o,registry)).filter(Boolean),...f.doors.map(d=>doorCollider(d,open))],NAV_BOUNDS);}
 test('Every placed asset exists and has finite transforms and unique instance IDs',()=>{
   for(const f of FLOORS){
@@ -36,7 +42,7 @@ test('Every room doorway is traversable when open and blocks when closed',()=>{
 test('Seat interactions include free exit points and reachable approaches',()=>{
   for(const f of FLOORS){const navigation=nav(f),obstacles=[...f.objects.map(o=>objectCollider(o,registry)).filter(Boolean),...f.doors.map(d=>doorCollider(d,true))];for(const seat of f.interactions.filter(i=>i.type==='seat')){
     const approach=findSeatApproach(seat,navigation,undefined,obstacles);assert.ok(approach,'Seat exit '+seat.id);
-    assert.ok(seatApproaches(seat).some(p=>!navigation.blocked(p.x,p.z)&&navigation.findPath(f.liftSpawn,p).length),'Seat route '+seat.id);
+    assert.ok(seatApproaches(seat).some(p=>!navigation.blocked(p.x,p.z)&&seatSegmentClear(seat,p,obstacles)&&navigation.findPath(f.liftSpawn,p).length),'Seat route '+seat.id);
   }}
 });
 test('Holding D/В and ArrowRight follows the same collision-safe route from each floor arrival',()=>{
