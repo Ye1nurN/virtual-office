@@ -2,6 +2,8 @@
 
 Independent application created at the user's explicit request on 2026-09-27. Do not modify `../office-demo` while developing this city. On 2026-09-28 the user requested replacing the office on `yelnur.pages.dev` with this city, then chose to configure Cloudflare personally; prepare the source/build and follow `CLOUDFLARE.md` for that handoff.
 
+Git workflow update (2026-09-29): follow the repository-root `../AGENTS.md` rule to commit and push completed, verified task changes automatically. The earlier Cloudflare handoff does not restrict saving finished source changes to GitHub. Preserve unrelated local work.
+
 - Actual walkable Three.js 3D, daytime voxel style. Target `design/approved-city.png` for the district and `design/office-ui-reference.png` for the floating interface.
 - Keep the copied office's entire four-floor implementation and model catalogue accessible. The office is one destination in the city.
 - Reuse the office's floating navigation, search, profile/status dock, zoom, panels and keyboard compatibility. WASD/ЦФЫВ, arrows, Shift, E/У, click-to-walk. Typing or opening a panel must pause movement.
