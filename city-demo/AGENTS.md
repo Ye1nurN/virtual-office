@@ -8,6 +8,7 @@ Git workflow update (2026-09-29): follow the repository-root `../AGENTS.md` rule
 - Keep the copied office's entire four-floor implementation and model catalogue accessible. The office is one destination in the city.
 - Reuse the office's floating navigation, search, profile/status dock, zoom, panels and keyboard compatibility. WASD/ЦФЫВ, arrows, Shift, E/У, click-to-walk. Typing or opening a panel must pause movement.
 - One growing city: office north, pharmacy west, ARGUS east, plaza center, entry south; four corner plots reserved. Expand via `src/city/catalog.js`; portal/collision logic must not depend on mesh names.
+- Buildings face the central plaza (2026-09-29): office south, pharmacy east, ARGUS west. `yaw` rotates the whole building; `exteriorYaw` only calibrates replacement GLBs. `buildingFrame.js` defines entrances, world footprints and rotated landscaping. Keep parcel centres fixed, derive exterior return points along the facade normal, and preserve clear approaches when changing direction.
 - Local pharmacy and ARGUS interactions are clearly labelled demonstrations. Do not invent real users, working remote services, personal biography, business results or contact details.
 - Building GLB replacement is configured by `exteriorAsset`, `exteriorScale`, and `exteriorYaw`; retain procedural fallback and independent colliders.
 - Run tests/build and inspect movement, portals and overlays in browser. Preserve truthful distinction between a functional 3D interpretation and exact visual parity with generated artwork.

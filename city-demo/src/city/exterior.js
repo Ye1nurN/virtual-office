@@ -1,6 +1,7 @@
 import {createSceneKit,noise} from './sceneKit.js';
 import {buildProjectBuilding} from './buildings.js';
-import {PROJECTS,RESERVE_PLOTS,CITY_OBSTACLES,exteriorPortals} from './catalog.js';
+import {PROJECTS,RESERVE_PLOTS,exteriorPortals} from './catalog.js';
+import {buildingBackGarden} from './buildingFrame.js';
 
 import {districtFurniture,districtObstacles} from './districtLayout.js';
 
@@ -32,12 +33,12 @@ export function buildExterior(templates,albedos={}){
     interactions.push({id:'plot-'+p.id,type:'plot',title:'Участок '+p.id,x:p.x,z:p.z+3.1,radius:2.3,plot:p.id});
   }
   for(const p of PROJECTS){
-    const parcelZ=p.parcelZ??p.z;
-    k.box(p.x,.005,parcelZ,19.3,.08,18.6,'#aea088');
-    k.plane(p.x,.061,parcelZ,18.9,18.2,k.surface('paving',18.9,18.2,5,'#e1d7ba'));
-    for(const dx of [-9.55,9.55])k.curb(p.x+dx,parcelZ,.35,18.5);
-    for(const dz of [-9.25,9.25])k.curb(p.x,parcelZ+dz,19.3,.35);
-    k.flowerbed(p.x,parcelZ-8.2,13.8,1.2,12);
+    const parcelX=p.parcelX??p.x,parcelZ=p.parcelZ??p.z,garden=buildingBackGarden(p);
+    k.box(parcelX,.005,parcelZ,19.3,.08,18.6,'#aea088');
+    k.plane(parcelX,.061,parcelZ,18.9,18.2,k.surface('paving',18.9,18.2,5,'#e1d7ba'));
+    for(const dx of [-9.55,9.55])k.curb(parcelX+dx,parcelZ,.35,18.5);
+    for(const dz of [-9.25,9.25])k.curb(parcelX,parcelZ+dz,19.3,.35);
+    k.flowerbed(garden.x,garden.z,garden.w-.2,garden.d-.2,12);
     buildProjectBuilding(k,p);
     markers.push({id:p.id,name:p.name,x:p.x,y:p.h+2,z:p.z});
   }

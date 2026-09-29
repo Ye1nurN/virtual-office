@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createNavigation} from '../src/movement.js';
 import {PROJECTS,CITY_OBSTACLES,CITY_BOUNDS,CITY_SPAWN,RESERVE_PLOTS,exteriorPortals,spawnOutside} from '../src/city/catalog.js';
 import {districtObstacles,districtFurniture} from '../src/city/districtLayout.js';
+import {buildingFootprint} from '../src/city/buildingFrame.js';
 
 test('Detailed landscaping keeps every building entrance and every reserve sign reachable',()=>{
   const navigation=createNavigation(districtObstacles(),CITY_BOUNDS);
@@ -45,11 +46,17 @@ test('Adding a configured project creates a portal with its own stable destinati
 test('Reserved plots remain distinct and avoid project buildings',()=>{
   assert.equal(new Set(RESERVE_PLOTS.map(p=>p.id)).size,4);
   for(const plot of RESERVE_PLOTS)for(const project of PROJECTS){
-    assert.ok(Math.abs(plot.x-project.x)>project.w/2+8||Math.abs(plot.z-project.z)>project.d/2+8);
+    const footprint=buildingFootprint(project);
+    assert.ok(Math.abs(plot.x-project.x)>footprint.w/2+8||Math.abs(plot.z-project.z)>footprint.d/2+8);
   }
 });
 test('A quick dash cannot cross a city building or leave the district',()=>{
   const navigation=createNavigation(CITY_OBSTACLES,CITY_BOUNDS);
-  for(const project of PROJECTS){const position={...project.entry};navigation.move(position,0,-25);assert.ok(position.z>project.z+project.d/2);}
+  for(const project of PROJECTS){
+    const position={...project.entry},yaw=project.yaw||0;
+    navigation.move(position,-Math.sin(yaw)*25,-Math.cos(yaw)*25);
+    const distanceFromFacade=(position.x-project.x)*Math.sin(yaw)+(position.z-project.z)*Math.cos(yaw);
+    assert.ok(distanceFromFacade>project.d/2,project.id+' stops at its rotated facade');
+  }
   const position={x:40,z:38};navigation.move(position,20,20);assert.ok(position.x<=41&&position.z<=41);
 });

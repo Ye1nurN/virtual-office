@@ -1,7 +1,29 @@
+import {Euler,Quaternion,Vector3} from 'three';
+import {buildingPoint,rotatedFootprint} from './buildingFrame.js';
+
+// Rotate authoring coordinates before batching, keeping both scene-kit renderers usable.
+function facingKit(raw,p){
+  const yaw=p.yaw||0;
+  if(!yaw)return raw;
+  const turn=new Quaternion().setFromAxisAngle(new Vector3(0,1,0),yaw),q=new Quaternion(),euler=new Euler();
+  const point=(x,z)=>buildingPoint(p,x-p.x,z-p.z);
+  return {...raw,
+    box(x,y,z,w,h,d,color,angle=0,rx=0,rz=0){
+      const at=point(x,z);q.setFromEuler(euler.set(rx,angle,rz)).premultiply(turn);euler.setFromQuaternion(q);
+      return raw.box(at.x,y,at.z,w,h,d,color,euler.y,euler.x,euler.z);
+    },
+    plane(x,y,z,w,d,mat){const at=point(x,z),mesh=raw.plane(at.x,y,at.z,w,d,mat);mesh.quaternion.premultiply(turn);return mesh;},
+    sign(text,x,y,z,w,h,options={}){const at=point(x,z);return raw.sign(text,at.x,y,at.z,w,h,{...options,yaw:yaw+(options.yaw||0)});},
+    model(id,x,z,s=1,angle=0,y=0){const at=point(x,z);return raw.model(id,at.x,at.z,s,yaw+angle,y);},
+    bush(x,z,s,seed,y){const at=point(x,z);return raw.bush(at.x,at.z,s,seed,y);},
+    flowerbed(x,z,w,d,seed,y){const at=point(x,z),size=rotatedFootprint(w,d,yaw);return raw.flowerbed(at.x,at.z,size.w,size.d,seed,y);},
+  };
+}
+
 // Authored modular facades. All pieces have real depth and remain replaceable by one GLB.
 export function buildProjectBuilding(k,p){
-  if(p.exteriorAsset){k.model(p.exteriorAsset,p.x,p.z,p.exteriorScale,p.exteriorYaw);return;}
-  const raw=k,ys=p.heightScale||1;
+  if(p.exteriorAsset){k.model(p.exteriorAsset,p.x,p.z,p.exteriorScale,(p.yaw||0)+(p.exteriorYaw||0));return;}
+  const raw=facingKit(k,p),ys=p.heightScale||1;
   k={...raw,box:(x,y,z,w,h,d,...rest)=>raw.box(x,y*ys,z,w,h*ys,d,...rest),
     plane:(x,y,z,w,d,mat)=>raw.plane(x,y*ys,z,w,d,mat),
     sign:(text,x,y,z,w,h,opt)=>raw.sign(text,x,y*ys,z,w,h*ys,opt),

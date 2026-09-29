@@ -1,4 +1,5 @@
 import {PROJECTS,RESERVE_PLOTS,CITY_OBSTACLES} from './catalog.js';
+import {buildingPoint,rotatedFootprint,buildingBackGarden} from './buildingFrame.js';
 
 // A plan records visible furniture and its collision footprint together. Tests use the
 // same obstacle list that the renderer returns, including plants and street furniture.
@@ -14,11 +15,12 @@ export function districtFurniture(){
     for(const dz of [-8.1,8.1])for(const dx of [-6,-3,3,6])add('flowers',p.x+dx,p.z+dz,2.4,1.1,{seed:seed+dx});
   }
   for(const p of PROJECTS){
-    const front=p.z+p.d/2;
-    add('back-garden',p.x,(p.parcelZ??p.z)-8.2,14,1.4);
-    for(const dx of [-5,5])add('building-flowers',p.x+dx,front+2.45,3.33,.97);
-    for(const dx of [-6.4,6.4])add('building-pot',p.x+dx,front+1.28,1.1,1.1);
-    for(const dx of [-8.7,8.7])for(const dz of [-4,0,4])add('potted-tree',p.x+dx,p.z+dz,1.2,1.2,{s:.61,seed:dx+dz});
+    const front=p.d/2,garden=buildingBackGarden(p);
+    const local=(type,x,z,w,d,options={})=>{const at=buildingPoint(p,x,z),size=rotatedFootprint(w,d,p.yaw);add(type,at.x,at.z,size.w,size.d,options);};
+    add('back-garden',garden.x,garden.z,garden.w,garden.d);
+    for(const dx of [-5,5])local('building-flowers',dx,front+2.45,3.33,.97);
+    for(const dx of [-6.4,6.4])local('building-pot',dx,front+1.28,1.1,1.1);
+    for(const dx of [-8.7,8.7])for(const dz of [-4,0,4])local('potted-tree',dx,dz,1.2,1.2,{s:.61,seed:dx+dz});
   }
   add('tree',2,-1.2,4.1,4.1,{s:1.55,seed:100,planter:true});
   add('flowers',2,-1.2,4.8,4.8,{seed:32,central:true});
