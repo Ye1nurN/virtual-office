@@ -31,7 +31,7 @@ export function movementDirection(keys) {
 }
 
 export function isTextEntry(target) {
-  return !!target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]');
+  return !!target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"],dialog[open]');
 }
 
 // Listeners share one input state. Physical key codes work with Russian layouts.

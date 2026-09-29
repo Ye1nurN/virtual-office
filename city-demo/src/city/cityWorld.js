@@ -12,6 +12,7 @@ import {disposeScene} from '../rendering.js';
 import {buildExterior,buildInterior,COMMON_ASSETS} from './geometry.js';
 import {PROJECTS,CITY_SPAWN,CITY_BOUNDS,INTERIOR_BOUNDS,getProject} from './catalog.js';
 import {loadExteriorSurfaces} from './surfaces.js';
+import {createGuideActor} from '../guide/guideActor.js';
 import {PHARMACY_CAMERA,PHARMACY_SPAWN,pharmacyDirection} from './pharmacyLayout.js';
 import {createPharmacyActors} from './pharmacyActors.js';
 
@@ -176,6 +177,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   ]).then(([templates,albedos])=>{
     if(disposed){Object.values(albedos).forEach(t=>t.dispose());return;}
     world=location==='city'?buildExterior(templates,albedos):buildInterior(location,templates);scene.add(world.root);
+    if(location==='city'){const guideActor=createGuideActor(templates);scene.add(guideActor.root);world.interactions.push(guideActor.interaction);world.markers.push(guideActor.marker);}
     if(isPharmacy){botVisuals=createPharmacyActors(templates);botVisuals.root.scale.y=PHARMACY_HEIGHT_SCALE;scene.add(botVisuals.root);}
     world.setFirstPerson?.(firstPerson);world.setCampaign?.(pharmacyDemo);world.selectShelf?.(selectedShelf);
     navigation=createNavigation(world.obstacles,location==='city'?CITY_BOUNDS:INTERIOR_BOUNDS);
@@ -205,6 +207,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
       }finally{renderer.setRenderTarget(previous);photoTarget.dispose();world.root.visible=frameVisible;player.visible=playerVisible;ring.visible=ringVisible;destination.visible=destinationVisible;if(botVisuals)botVisuals.root.visible=true;invalidate(true);}
   }
   return {
+    stop,getPosition:()=>player?{x:player.position.x,z:player.position.z,navigating:path.length>0}:null,
     interact,reset,setCameraMode,look,overview:overviewMap,zoom:zoomBy,navigate,captureShelf,
     selectShelf(id){selectedShelf=id;world?.selectShelf?.(id);invalidate();},
     setPharmacyDemo(state){if(firstPerson&&state?.automation.follow&&!pharmacyDemo?.automation.follow)setCameraMode('overview');const changed=pharmacyDemo?.installed!==state?.installed;pharmacyDemo=state;world?.setCampaign?.(state);if(isPharmacy){last=performance.now();invalidate(changed);}},

@@ -1,4 +1,5 @@
 import React,{useEffect,useRef,useState,useReducer,Suspense,lazy} from 'react';
+import {guide} from '../guide/guideStore.js';
 import {PortfolioCity} from '../portfolio/PortfolioCity.jsx';
 import {Buildings,CaretDown,MagnifyingGlass,Bell,Microphone,MicrophoneSlash,VideoCamera,VideoCameraSlash,ChatCircleText,MonitorArrowUp,Minus,Plus,Crosshair,X,ArrowUpRight,ArrowLeft,ArrowRight,Check,MapTrifold,Keyboard,Tree,FirstAid,ShieldCheck,PaperPlaneTilt,Sun,Info,GithubLogo,Footprints} from '@phosphor-icons/react';
 import {CameraToggle,FirstPersonGuide} from '../world/CameraControls.jsx';
@@ -50,7 +51,8 @@ export function CityApp(){
   const close=()=>{setPanel(null);setMenu(null);setSearch(false);};
   function visit(id){if(!validPlaces.has(id))return;close();setWalk(false);setDemoStep(0);setSelectedShelf(pharmacyDemo.request?.shelf||'A-02');setPlace(id);const url=new URL(window.location.href);id==='city'?url.searchParams.delete('place'):url.searchParams.set('place',id);history.pushState({place:id},'',url);}
   function leave(){setSpawn(spawnOutside(place));setStartOverview(false);visit('city');}
-  function open(type,id){setPanel({type,id});setMenu(null);setSearch(false);setQuery('');}
+  function open(type,id){if(type==='chat'){close();guide.open();return;}setPanel({type,id});setMenu(null);setSearch(false);setQuery('');}
+  useEffect(()=>{guide.setLocation(place);return guide.setNavigator(visit);});
   function action(a){
     if(a.type==='enter')visit(a.project);
     else if(a.type==='exit')leave();

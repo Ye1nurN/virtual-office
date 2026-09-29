@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ArrowRight, ArrowUpRight, ArrowLeft, Buildings, FirstAid, ShieldCheck, GithubLogo, MapTrifold, FileText, X, Plus, Minus, Crosshair, Keyboard, Footprints, LinkSimple, Check, EnvelopeSimple, PaperPlaneTilt, Cube, MagnifyingGlass, Eye} from '@phosphor-icons/react';
 import {CASES, PROFILE, SKILLS, portfolioUrl, readPortfolioRoute} from './content.js';
 import './portfolio.css';
+import {guide} from '../guide/guideStore.js';
 
 import {CityScene as Scene} from '../city/CityScene.jsx';
 import {FirstPersonGuide} from '../world/CameraControls.jsx';
@@ -56,6 +57,7 @@ export function PortfolioCity({onVisit, spawn, overview, cameraMode='overview', 
   function open(type,id) {setQuery('');setPanel({type,id});writeRoute(mode,type==='project'?id:null);}
   function close() {setPanel(null);writeRoute(mode);}
   function selectMode(next) {setPanel(null);setMode(next);setIntro(next==='city');writeRoute(next,null,true);}
+  useEffect(()=>guide.setCityMode(()=>{setMode('city');setPanel(null);setIntro(false);writeRoute('city');}),[]);
   function visit(id) {setPanel(null);writeRoute('city');onVisit(id);}
   function showSection(type) {
     if(mode==='resume'){setPanel(null);writeRoute(mode);requestAnimationFrame(()=>document.getElementById('pf-'+type)?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'}));}

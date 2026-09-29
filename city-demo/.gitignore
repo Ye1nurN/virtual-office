@@ -8,6 +8,8 @@ dist/
 .env.*
 !.env.example
 !.env.sample
+.dev.vars
+.dev.vars.*
 __pycache__/
 *.py[cod]
 .vite/
