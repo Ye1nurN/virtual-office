@@ -9,7 +9,10 @@ export function buildInterior(kind,templates){
   for(let x=-8.5;x<9;x+=1)for(let z=-6.5;z<7;z+=1)k.box(x,.004,z,.96,.018,.96,(Math.round(x+z)%2)?'#d5d0b9':'#e0dac4');
   for(const x of [-8.9,8.9])k.box(x,1.8,0,.25,3.6,14,'#546b76');
   k.box(0,1.8,-6.9,18,3.6,.25,'#546b76');
-  for(const x of [-5.3,5.3])k.box(x,.55,6.9,7.4,1.1,.2,'#8eaa9c');
+  // Butt the parapets against the inner side-wall faces. Extending them into
+  // the walls puts both front faces at z=7 and causes flickering corner strips.
+  const halfEntrance=1.6,frontWidth=(8.9-.25/2)-halfEntrance;
+  for(const side of [-1,1])k.box(side*(halfEntrance+frontWidth/2),.55,6.9,frontWidth,1.1,.2,'#8eaa9c');
   for(const x of [-7.7,7.7])k.model('plant_floor',x,5,1.5);
   k.sign('В ГОРОД  →',-5.3,.6,7.04,2.8,.6,{bg:'#eee7d2',fg:'#38524c'});
   {
