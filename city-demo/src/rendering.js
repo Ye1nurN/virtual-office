@@ -20,6 +20,19 @@ export function mergeCharacter(root,material,recursive=true){
   return mesh;
 }
 
+// Work on a clone. The library keeps original materials (including shirt names)
+// for role customisation; only this instance owns the new geometry/material.
+export function compactCharacter(root,{animated=true,castShadow=false}={}){
+  const limbs=[];
+  if(animated)root.traverse(node=>{if(/^(arm_|leg_)[LR]/.test(node.name))limbs.push({node,parent:node.parent});});
+  const material=new T.MeshStandardMaterial({vertexColors:true,roughness:.9});
+  limbs.forEach(({node})=>node.removeFromParent());
+  mergeCharacter(root,material);
+  for(const {node,parent} of limbs){mergeCharacter(node,material);parent.add(node);}
+  root.traverse(node=>{if(node.isMesh)node.castShadow=castShadow;});
+  return root;
+}
+
 export function disposeScene(scene,extraMaterials=[],textures=[]){
   const geometries=new Set(),materials=new Set(extraMaterials),lights=[];
   scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m));if(o.shadow)lights.push(o);if(o.isInstancedMesh)o.dispose();});

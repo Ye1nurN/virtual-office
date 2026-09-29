@@ -1,16 +1,19 @@
 import * as T from 'three';
 import {assembleFloor} from '../world/assets.js';
+import {compactCharacter,disposeScene} from '../rendering.js';
+import {createVoxelBatches} from './voxelBatches.js';
 
 // A shared set of small solid meshes, not sprites: paths and portals remain independent.
 export const noise=(n)=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
 export function createSceneKit(templates,albedos={}){
-  const root=new T.Group(),batches=new Map(),materials=new Map(),objects=[],textures=[...Object.values(albedos)];
+  const root=new T.Group(),materials=new Map(),objects=[],textures=[...Object.values(albedos)];
   const cube=new T.BoxGeometry(1,1,1),matrix=new T.Matrix4(),position=new T.Vector3(),scale=new T.Vector3(),rotation=new T.Quaternion(),euler=new T.Euler();
+  const batches=createVoxelBatches(cube);
   let serial=0;
   const foliage=['#245529','#367229','#518d29','#73a32c','#92b532','#b0c440'];
   function material(color){
     if(color?.isMaterial)return color;
-    if(!materials.has(color))materials.set(color,new T.MeshStandardMaterial({color,roughness:.88}));
+    if(!materials.has(color)){const mat=new T.MeshStandardMaterial({color,roughness:.88});mat.userData.voxelTint=true;materials.set(color,mat);}
     return materials.get(color);
   }
   function glow(color,intensity=.6){
@@ -28,9 +31,9 @@ export function createSceneKit(templates,albedos={}){
     return materials.get(key);
   }
   function box(x,y,z,w,h,d,color,yaw=0,rx=0,rz=0){
-    const mat=material(color);if(!batches.has(mat))batches.set(mat,[]);
+    const mat=material(color);
     position.set(x,y,z);scale.set(w,h,d);rotation.setFromEuler(euler.set(rx,yaw,rz));
-    matrix.compose(position,rotation,scale);batches.get(mat).push(matrix.clone());
+    matrix.compose(position,rotation,scale);batches.add(matrix,mat);
   }
   function model(assetId,x,z,s=1,yaw=0,y=0){objects.push({id:'city-model-'+serial++,assetId,position:[x,y,z],scale:Array.isArray(s)?s:[s,s,s],yaw,collidable:false,dynamic:false});}
   function plane(x,y,z,w,d,mat){
@@ -109,9 +112,16 @@ export function createSceneKit(templates,albedos={}){
     else for(let dz=-d/2+.36;dz<d/2;dz+=.74)box(x,.2,z+dz,w,.22,.7,'#d0c8b1');
   }
   function finish(){
-    for(const [mat,matrices] of batches){const mesh=new T.InstancedMesh(cube,mat,matrices.length);matrices.forEach((m,i)=>mesh.setMatrixAt(i,m));mesh.castShadow=!mat.transparent;mesh.receiveShadow=true;mesh.computeBoundingSphere();root.add(mesh);}
-    const assets=assembleFloor({objects,doors:[]},templates,{});root.add(assets.root);
-    return {root,textures,assets,voxelCount:[...batches.values()].reduce((s,a)=>s+a.length,0)};
+    const {meshes,count}=batches.finish();root.add(...meshes);
+    for(const mat of materials.values())if(mat.userData.voxelTint)mat.dispose();
+    const staticTemplates=new Map(templates),owned=new T.Group();
+    for(const id of new Set(objects.map(o=>o.assetId).filter(id=>id.startsWith('employee')))){
+      const template=templates.get(id);if(!template)continue;
+      const compact=compactCharacter(template.clone(true),{animated:false,castShadow:true});owned.add(compact);staticTemplates.set(id,compact);
+    }
+    const assets=assembleFloor({objects,doors:[]},staticTemplates,{});root.add(assets.root);
+    const release=assets.release;assets.release=()=>{release();disposeScene(owned);owned.clear();};
+    return {root,textures,assets,voxelCount:count};
   }
   return {root,box,model,plane,material,glow,surface,tree,bush,bench,lamp,curb,sign,flowerbed,finish,textures};
 }

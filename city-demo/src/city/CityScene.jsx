@@ -1,17 +1,17 @@
 import React,{useRef,useState,useEffect} from 'react';
 import {createCityWorld} from './cityWorld.js';
 export function CityScene({api,location,spawn,overview,inputEnabled,status,onAction,onProject,onNotice,onWalk,onView,onShelfFocus,selectedShelf,pharmacyDemo,onNearShelf,director,onBotEvent,onBotView}){
-  const host=useRef(null),cb=useRef({}),labelNodes=useRef(new Map()),self=useRef(null),latest=useRef(null);
+  const host=useRef(null),cb=useRef({}),labelNodes=useRef(new Map()),self=useRef(null),latest=useRef(null),markerKey=useRef(''),viewKey=useRef('');
   const [progress,setProgress]=useState(0),[error,setError]=useState(''),[hint,setHint]=useState(null),[markers,setMarkers]=useState([]);
   cb.current={onAction,onProject,onNotice,onWalk,onView,onShelfFocus,inputEnabled,onNearShelf,onBotEvent,onBotView};
-  function place(node,p){if(!node)return;node.style.visibility=p?.visible?'visible':'hidden';if(p)node.style.transform=`translate3d(${p.x.toFixed(3)}px,${p.y.toFixed(3)}px,0) translate(-50%,-100%)`;}
+  function place(node,p){if(!node)return;const visibility=p?.visible?'visible':'hidden';if(node.style.visibility!==visibility)node.style.visibility=visibility;if(p?.visible){const transform=`translate3d(${p.x.toFixed(3)}px,${p.y.toFixed(3)}px,0) translate(-50%,-100%)`;if(node.style.transform!==transform)node.style.transform=transform;}}
   useEffect(()=>{
     let engine;
     cb.current.onNearShelf?.(null);
     try{engine=createCityWorld(host.current,{location,spawn,overview,director,onBotEvent:e=>cb.current.onBotEvent?.(e),onBotView:v=>cb.current.onBotView?.(v),onLoading:setProgress,onError:setError,onHint:h=>{setHint(h);cb.current.onNearShelf?.(h?.type==='shelf'?h.shelf:null);},
       onAction:a=>cb.current.onAction(a),onNotice:t=>cb.current.onNotice(t),onWalk:v=>cb.current.onWalk(v),
       onShelfFocus:id=>cb.current.onShelfFocus?.(id),
-      onLabels:l=>{latest.current=l;for(const m of l.markers)place(labelNodes.current.get(m.id),m);place(self.current,l.me);setMarkers(old=>old.map(m=>m.id+m.name).join(',')===l.markers.map(m=>m.id+m.name).join(',')?old:l.markers);cb.current.onView({zoom:l.zoom,overview:l.overview});}
+      onLabels:l=>{latest.current=l;for(const m of l.markers)place(labelNodes.current.get(m.id),m);place(self.current,l.me);const nextMarkers=JSON.stringify(l.markers.map(m=>[m.id,m.name]));if(markerKey.current!==nextMarkers){markerKey.current=nextMarkers;setMarkers(l.markers);}const nextView=l.zoom+'/'+l.overview;if(viewKey.current!==nextView){viewKey.current=nextView;cb.current.onView({zoom:l.zoom,overview:l.overview});}}
     });api.current=engine;engine.setKeyboardEnabled(cb.current.inputEnabled);}catch(e){setError(e.message);setProgress(null);}
     return()=>{engine?.dispose();if(api.current===engine)api.current=null;};
   },[]);
