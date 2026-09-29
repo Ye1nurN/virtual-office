@@ -1,4 +1,5 @@
 import {createSceneKit as kit} from './sceneKit.js';
+import {createRoomEnvelope} from '../world/firstPerson.js';
 import {buildPharmacy} from './pharmacy.js';
 export {buildExterior} from './exterior.js';
 export const COMMON_ASSETS=['employee_base','employee_blond','employee_seated','employee_seated_blond','tree_atrium','planter_square','plant_floor','plant_desk','bookshelf','reception_counter','monitor','desk_oak','chair_task','sofa_two','server_rack','table_coffee','coffee_mug'];
@@ -28,5 +29,6 @@ export function buildInterior(kind,templates){
     markers.push({id:'console',name:'Мониторинг сети',x:0,y:2.2,z:-1.6});
     k.box(-6,.08,1.9,1.8,.07,3.4,'#688f94');k.box(6,.08,1.9,1.8,.07,3.4,'#688f94');
   }
-  return {...k.finish(),obstacles,markers,interactions};
+  const built=k.finish(),envelope=createRoomEnvelope({width:17.8,depth:13.8,height:3.6,front:true});built.root.add(envelope.root);
+  return {...built,obstacles,markers,interactions,setFirstPerson:value=>{envelope.root.visible=value;}};
 }

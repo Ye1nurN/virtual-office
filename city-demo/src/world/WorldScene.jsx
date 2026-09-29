@@ -1,6 +1,6 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {ArrowClockwise,ArrowUpRight,WarningCircle} from '@phosphor-icons/react';
-export function WorldScene({api,onPerson,onNotice,onWalk,onDept,onZoom,onFloor,onCompany,status,walk,selectedId,inputEnabled}){
+export function WorldScene({api,cameraMode,onCameraMode,onPerson,onNotice,onWalk,onDept,onZoom,onFloor,onCompany,status,walk,selectedId,inputEnabled}){
   const host=useRef(null),zoomRef=useRef(100),[labels,setLabels]=useState({rooms:[],me:null}),[loading,setLoading]=useState({progress:0,floor:1}),[hint,setHint]=useState(null),[fatal,setFatal]=useState('');
   const positions=useRef(null),roomNodes=useRef(new Map()),selfNode=useRef(null),labelSignature=useRef('');
   function placeLabel(node,p){
@@ -8,12 +8,12 @@ export function WorldScene({api,onPerson,onNotice,onWalk,onDept,onZoom,onFloor,o
     node.style.visibility=p?.visible?'visible':'hidden';
     if(p)node.style.transform=`translate3d(${p.x.toFixed(3)}px,${p.y.toFixed(3)}px,0) translate(-50%,-100%)`;
   }
-  const cb=useRef({});cb.current={onPerson,onNotice,onWalk,onDept,onZoom,onFloor,onCompany,inputEnabled};
+  const cb=useRef({});cb.current={onCameraMode,onPerson,onNotice,onWalk,onDept,onZoom,onFloor,onCompany,inputEnabled};
   useEffect(()=>{
     let cancelled=false,office=null;
     import('./officeWorld.js').then(({createOffice})=>{
       if(cancelled)return;
-      office=createOffice(host.current,{
+      office=createOffice(host.current,{cameraMode,onCameraMode:m=>cb.current.onCameraMode?.(m),
         onPerson:id=>cb.current.onPerson(id),onDepartment:id=>cb.current.onDept(id),onCompany:()=>cb.current.onCompany(),
         onNotice:t=>cb.current.onNotice(t),onWalk:w=>cb.current.onWalk(w),onFloor:id=>cb.current.onFloor(id),onHint:setHint,onLoading:setLoading,
         onLabels:l=>{

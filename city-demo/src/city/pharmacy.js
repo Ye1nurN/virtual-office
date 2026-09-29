@@ -2,6 +2,7 @@ import * as T from 'three';
 import {createSceneKit,noise} from './sceneKit.js';
 import {SHELVES} from './catalog.js';
 import {PHARMACY_FIXTURES,pharmacyObstacles,PHARMACY_EXIT} from './pharmacyLayout.js';
+import {PHARMACY_HEIGHT_SCALE,createRoomEnvelope} from '../world/firstPerson.js';
 import {createCampaignDisplay} from './pharmacyCampaignDisplay.js';
 
 const oak='#c79455',edge='#996636',cream='#e3dac5',sage='#8cae98',metal='#53616a';
@@ -98,9 +99,9 @@ export function buildPharmacy(templates){
     k.box(x,.85,6.85,.85,1.7,.48,'#cbb68c');k.box(x,.87,7.1,.68,1.42,.03,'#d3ddd1');cross(x,.89,7.14,.52);
   }
   for(const x of [-1.94,1.94]){
-    k.box(x,.88,5.7,.06,1.76,1.6,glass);
-    for(const z of [4.9,6.5])k.box(x,.88,z,.09,1.76,.07,metal);
-    for(const y of [.08,1.77])k.box(x,y,5.7,.08,.08,1.64,metal);
+    k.box(x,1.61,5.7,.06,3.22,1.6,glass);
+    for(const z of [4.9,6.5])k.box(x,1.61,z,.09,3.22,.07,metal);
+    for(const y of [.08,3.23])k.box(x,y,5.7,.08,.08,1.64,metal);
     k.box(x+(x<0?.08:-.08),1.0,5.23,.07,.35,.09,'#acb7b0');
   }
   k.box(0,.062,5.58,2.9,.05,1.08,'#999482');
@@ -150,6 +151,10 @@ export function buildPharmacy(templates){
   for(const [x,y,z] of [[-2.4,3.75,-5.3],[1.25,2.6,-5.3],[-7.1,3.25,-.85],[7.1,3.2,1.1]]){
     const light=new T.PointLight('#ffdf9d',1.8,3.7,2);light.position.set(x,y,z);built.root.add(light);
   }
-  return {...built,obstacles:pharmacyObstacles(),markers:[selectedLabel],selectShelf,setCampaign:campaignDisplay.update,capturePose:campaignDisplay.capturePose,
+  built.root.scale.y=PHARMACY_HEIGHT_SCALE;
+  const envelope=createRoomEnvelope({width:17.9,depth:13.8,height:5.55,front:true});built.root.add(envelope.root);
+  const applySelection=id=>{selectShelf(id);selectedLabel.y*=PHARMACY_HEIGHT_SCALE;};applySelection('A-02');
+  const capturePose=(...args)=>{const pose=campaignDisplay.capturePose(...args);if(pose){pose.target.y*=PHARMACY_HEIGHT_SCALE;pose.position.y*=PHARMACY_HEIGHT_SCALE;}return pose;};
+  return {...built,obstacles:pharmacyObstacles(),markers:[selectedLabel],selectShelf:applySelection,setFirstPerson:value=>{envelope.root.visible=value;},setCampaign:campaignDisplay.update,capturePose,
     interactions:[PHARMACY_EXIT,...SHELVES.map(s=>({id:s.id,type:'shelf',title:'Выбрать полку '+s.id,x:s.x,z:s.z,radius:1.65,shelf:s.id}))]};
 }

@@ -7,6 +7,7 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {createAssetLibrary} from '../world/assets.js';
 import {createNavigation,createKeyboardInput,movementDirection,isTextEntry} from '../movement.js';
 import {cameraRelativeDirection,CAMERA_RIG} from '../world/camera.js';
+import {EYE_HEIGHT,PHARMACY_HEIGHT_SCALE,lookDirection,turnLook,positionEyes,createLookInput} from '../world/firstPerson.js';
 import {disposeScene} from '../rendering.js';
 import {buildExterior,buildInterior,COMMON_ASSETS} from './geometry.js';
 import {PROJECTS,CITY_SPAWN,CITY_BOUNDS,INTERIOR_BOUNDS,getProject} from './catalog.js';
@@ -14,7 +15,7 @@ import {loadExteriorSurfaces} from './surfaces.js';
 import {PHARMACY_CAMERA,PHARMACY_SPAWN,pharmacyDirection} from './pharmacyLayout.js';
 import {createPharmacyActors} from './pharmacyActors.js';
 
-export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,overview=true,director,...callbacks}={}){
+export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,overview=true,cameraMode='overview',director,...callbacks}={}){
   let disposed=false,ready=false,enabled=true,frame=0,last=performance.now(),dirty=true,walking=false;
   let player=null,world=null,navigation=null,path=[],pending=null,manual={x:0,z:0},hint=null;
   let width=1,height=1,showOverview=location==='city'&&overview,zoom=1,pointerStart=null;
@@ -30,10 +31,14 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
   const canvas=renderer.domElement;canvas.tabIndex=0;canvas.dataset.testid='city-canvas';canvas.dataset.location=location;
   canvas.setAttribute('aria-label','Трёхмерный город. WASD или стрелки — движение, Shift — быстрее, E — взаимодействовать.');container.appendChild(canvas);
-  const camera=isPharmacy?new T.PerspectiveCamera(32,1,.1,260):new T.OrthographicCamera(-30,30,24,-24,.1,260),target=new T.Vector3();
+  const arrival=location==='city'&&PROJECTS.find(p=>Math.hypot(spawn.x-p.entry.x,spawn.z-p.entry.z)<2.2);
+  const defaultYaw=arrival?(arrival.yaw||0)+Math.PI:0;
+  let firstPerson=cameraMode==='first-person',lookPose={yaw:defaultYaw,pitch:0};
+  const overhead=isPharmacy?new T.PerspectiveCamera(32,1,.1,260):new T.OrthographicCamera(-30,30,24,-24,.1,260),target=new T.Vector3();
+  const eyes=new T.PerspectiveCamera(68,1,.045,260);let camera=firstPerson?eyes:overhead;
   const composer=new EffectComposer(renderer);composer.setPixelRatio(Math.min(window.devicePixelRatio,1.25));
   composer.renderTarget1.samples=2;composer.renderTarget2.samples=2;
-  const renderPass=new RenderPass(scene,camera),ao=new GTAOPass(scene,camera,1,1,undefined,{radius:.75,thickness:.75,distanceExponent:1,samples:8},{radius:4,samples:8}),output=new OutputPass();
+  const renderPass=new RenderPass(scene,camera),ao=new GTAOPass(scene,overhead,1,1,undefined,{radius:.75,thickness:.75,distanceExponent:1,samples:8},{radius:4,samples:8}),output=new OutputPass();
   const bloom=new UnrealBloomPass(new T.Vector2(1,1),.2,.15,1.8);
   ao.blendIntensity=.65;composer.addPass(renderPass);composer.addPass(ao);composer.addPass(bloom);composer.addPass(output);
   renderer.info.autoReset=false;
@@ -54,13 +59,15 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     onChange(event){if(event?.pressed){if(!walking){activeFrameCount=0;activeFrameMs=0;}path=[];destination.visible=false;pending=movementDirection(input.keys);}invalidate();},
     onStop:stop,onHome:reset});
   function projection(){
-    const aspect=width/height;
-    if(isPharmacy){camera.aspect=aspect;camera.fov=T.MathUtils.radToDeg(2*Math.atan(Math.max(17.2,(aspect<.85?24:21.4)/aspect)/(2*Math.hypot(PHARMACY_CAMERA.height,PHARMACY_CAMERA.distance))));camera.zoom=zoom;camera.updateProjectionMatrix();return;}
+    const aspect=width/height;eyes.aspect=aspect;eyes.fov=aspect<1?82:68;eyes.updateProjectionMatrix();
+    if(firstPerson)return;
+    if(isPharmacy){overhead.aspect=aspect;overhead.fov=T.MathUtils.radToDeg(2*Math.atan(Math.max(17.2,(aspect<.85?24:21.4)/aspect)/(2*Math.hypot(PHARMACY_CAMERA.height,PHARMACY_CAMERA.distance))));overhead.zoom=zoom;overhead.updateProjectionMatrix();return;}
     const span=showOverview?Math.max(52,78/aspect):Math.max(location==='city'?23:14,15/aspect);
-    camera.left=-span*aspect/2;camera.right=span*aspect/2;camera.top=span*(showOverview?.52:.60);camera.bottom=-span*(showOverview?.48:.40);camera.zoom=zoom;camera.updateProjectionMatrix();
+    overhead.left=-span*aspect/2;overhead.right=span*aspect/2;overhead.top=span*(showOverview?.52:.60);overhead.bottom=-span*(showOverview?.48:.40);overhead.zoom=zoom;overhead.updateProjectionMatrix();
   }
   function follow(dt){
     if(!player)return;
+    if(firstPerson){cameraMoving=false;positionEyes(eyes,player.position,lookPose,location==='city'?1.72:EYE_HEIGHT);return;}
     // A lightly clamped follow keeps the whole small shop legible while walking.
     let focus=isPharmacy?{x:T.MathUtils.clamp(player.position.x*.12,-.6,.6),z:T.MathUtils.clamp((player.position.z-4.3)*.10,-.65,.1)}:showOverview?{x:0,z:0}:player.position;
     if(isPharmacy){
@@ -73,18 +80,27 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     const aim=isPharmacy?1.4:.8;
     target.set(focus.x,aim,focus.z);camera.position.set(focus.x+Math.sin(yaw)*distance,height+aim,focus.z+Math.cos(yaw)*distance);camera.lookAt(target);camera.updateMatrixWorld(true);
   }
-  function reset(){showOverview=false;zoom=1;projection();invalidate();}
-  function overviewMap(value){if(location!=='city')return;stop();showOverview=typeof value==='boolean'?value:!showOverview;zoom=1;projection();invalidate();}
-  function resize(){width=Math.max(1,container.clientWidth);height=Math.max(1,container.clientHeight);renderer.setSize(width,height);composer.setSize(width,height);ao.setSize(Math.round(width*.65),Math.round(height*.65));bloom.setSize(Math.round(width*.5),Math.round(height*.5));ao.enabled=width>720;bloom.enabled=width>720;projection();invalidate();}
-  function project(x,y,z){const p=new T.Vector3(x,y,z).project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2,visible:p.z<1&&Math.abs(p.x)<.95&&Math.abs(p.y)<.9};}
+  function reset(){if(firstPerson){lookPose={yaw:defaultYaw,pitch:0};invalidate();return;}showOverview=false;zoom=1;projection();invalidate();}
+  function overviewMap(value){if(location!=='city')return;if(firstPerson)setCameraMode('overview');stop();showOverview=typeof value==='boolean'?value:!showOverview;zoom=1;projection();invalidate();}
+  function resize(){width=Math.max(1,container.clientWidth);height=Math.max(1,container.clientHeight);renderer.setSize(width,height);composer.setSize(width,height);ao.setSize(Math.round(width*.65),Math.round(height*.65));bloom.setSize(Math.round(width*.5),Math.round(height*.5));ao.enabled=!firstPerson&&width>720;bloom.enabled=width>720;projection();invalidate();}
+  function look(dx,dy){if(!enabled||!firstPerson)return;lookPose=turnLook(lookPose,dx,dy);invalidate();}
+  function setCameraMode(mode){
+    firstPerson=mode==='first-person';input.clear();stop();lookInput.release();camera=firstPerson?eyes:overhead;
+    renderPass.camera=camera;ao.enabled=!firstPerson&&width>720;showOverview=false;cameraMoving=false;
+    if(player)player.visible=!firstPerson;ring.visible=!firstPerson;world?.setFirstPerson?.(firstPerson);
+    scene.background.set(firstPerson?'#c9e2ec':isPharmacy?'#cbd4ca':'#c8d4b6');scene.fog=firstPerson&&location==='city'?new T.Fog('#c9e2ec',65,180):null;
+    callbacks.onCameraMode?.(firstPerson?'first-person':'overview');projection();invalidate(true);
+  }
+  const lookInput=createLookInput(canvas,{canUse:()=>enabled&&ready&&!document.hidden,isFirstPerson:()=>firstPerson,onToggle:()=>setCameraMode(firstPerson?'overview':'first-person'),onLook:look,onStart:()=>{path=[];destination.visible=false;invalidate();}});
+  function project(x,y,z){const p=new T.Vector3(x,y,z).project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2,visible:p.z>-1&&p.z<1&&Math.abs(p.x)<.95&&Math.abs(p.y)<.9};}
   function publish(){
     const bot=botResult?.actors.find(a=>a.id===botResult.view.actor);
-    const bubbles=isPharmacy&&bot&&pharmacyDemo?.request&&pharmacyDemo.automation.mode==='auto'&&botResult.view.phase!=='complete'?[{id:'bot-'+bot.id,kind:'bot',name:bot.name+' · '+(pharmacyDemo.automation.paused?'Пауза':botResult.view.text),x:bot.x,y:2.65,z:bot.z}]:[];
+    const bubbles=isPharmacy&&bot&&pharmacyDemo?.request&&pharmacyDemo.automation.mode==='auto'&&botResult.view.phase!=='complete'?[{id:'bot-'+bot.id,kind:'bot',name:bot.name+' · '+(pharmacyDemo.automation.paused?'Пауза':botResult.view.text),x:bot.x,y:2.65*PHARMACY_HEIGHT_SCALE,z:bot.z}]:[];
     const markers=[...world.markers,...bubbles].map(m=>{const screen=project(m.x,m.y,m.z);return {...m,...screen,visible:screen.visible&&!(showOverview&&location==='city')};});
     const me=project(player.position.x,location==='city'?3.15:2.08,player.position.z);
-    callbacks.onLabels?.({markers,me,overview:showOverview,zoom:Math.round(zoom*100)});
-    Object.assign(canvas.dataset,{playerX:player.position.x.toFixed(3),playerZ:player.position.z.toFixed(3),overview:showOverview?'true':'false',interaction:hint?.id||'',moving:String(walking),enabled:String(enabled),drawCalls:String(renderer.info.render.calls),triangles:String(renderer.info.render.triangles),activeFps:activeFrameCount>4?(1000*activeFrameCount/activeFrameMs).toFixed(1):'',activeFrames:String(activeFrameCount),missingModels:[...library.missing].join(',')});
-    if(botResult)Object.assign(canvas.dataset,{botPhase:botResult.view.phase,botActor:botResult.view.actor,botAction:botResult.view.text,botProgress:String(botResult.view.progress??''),botPositions:JSON.stringify(botResult.actors.map(({id,x,z,carrying})=>({id,x:+x.toFixed(3),z:+z.toFixed(3),carrying}))),botFollowing:String(!!pharmacyDemo?.automation.follow)});
+    callbacks.onLabels?.({markers: firstPerson?[]:markers,me:{...me,visible:!firstPerson&&me.visible},overview:showOverview,zoom:Math.round(zoom*100)});
+    Object.assign(canvas.dataset,{cameraMode:firstPerson?'first-person':'overview',cameraYaw:lookPose.yaw.toFixed(3),cameraPitch:lookPose.pitch.toFixed(3),eyeHeight:camera.position.y.toFixed(3),avatarVisible:String(player.visible),playerX:player.position.x.toFixed(3),playerZ:player.position.z.toFixed(3),overview:showOverview?'true':'false',interaction:hint?.id||'',moving:String(walking),enabled:String(enabled),drawCalls:String(renderer.info.render.calls),triangles:String(renderer.info.render.triangles),activeFps:activeFrameCount>4?(1000*activeFrameCount/activeFrameMs).toFixed(1):'',activeFrames:String(activeFrameCount),missingModels:[...library.missing].join(',')});
+    if(botResult)Object.assign(canvas.dataset,{botPhase:botResult.view.phase,botActor:botResult.view.actor,botAction:botResult.view.text,botProgress:String(botResult.view.progress??''),botPositions:JSON.stringify(botResult.actors.map(({id,x,z,carrying})=>({id,x:+x.toFixed(3),z:+z.toFixed(3),carrying}))),botFollowing:String(!firstPerson&&!!pharmacyDemo?.automation.follow)});
   }
   function updateHint(){
     let next=null,distance=Infinity;
@@ -103,12 +119,12 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     input.clear();activeFrameCount=0;activeFrameMs=0;path=route;pending=null;destination.position.set(to.x,.09,to.z);destination.visible=true;
     if(showOverview){showOverview=false;projection();}invalidate();return true;
   }
-  function down(e){if(e.button!==0)return;pointerStart=[e.clientX,e.clientY];canvas.focus({preventScroll:true});}
-  function up(e){const start=pointerStart;pointerStart=null;if(!enabled||!ready||!start||e.button!==0||Math.hypot(start[0]-e.clientX,start[1]-e.clientY)>6)return;
+  function down(e){if(firstPerson||e.button!==0)return;pointerStart=[e.clientX,e.clientY];canvas.focus({preventScroll:true});}
+  function up(e){const start=pointerStart;pointerStart=null;if(firstPerson||!enabled||!ready||!start||e.button!==0||Math.hypot(start[0]-e.clientX,start[1]-e.clientY)>6)return;
     const r=canvas.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(pointer,camera);
     if(ray.ray.intersectPlane(plane,point)&&!navigate(point))callbacks.onNotice?.('Нажмите на свободную дорожку. Входы открываются клавишей E.');
   }
-  function zoomBy(delta){zoom=T.MathUtils.clamp(zoom+delta,.65,2.1);projection();invalidate();}
+  function zoomBy(delta){if(firstPerson)return;zoom=T.MathUtils.clamp(zoom+delta,.65,2.1);projection();invalidate();}
   function wheel(e){if(!enabled)return;e.preventDefault();zoomBy(-Math.sign(e.deltaY)*.08);}
   function tick(now){
     frame=0;if(disposed||document.hidden)return;
@@ -134,7 +150,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
       const tapped=!(dir.x||dir.z)&&pending;if(tapped)dir=pending;pending=null;
       if(dir.x||dir.z){
         if(showOverview){showOverview=false;projection();}
-        dir=isPharmacy?pharmacyDirection(dir):cameraRelativeDirection(dir);const speed=location==='city'?(input.keys.has('ShiftLeft')||input.keys.has('ShiftRight')?7.8:4.7):2.8;
+        dir=firstPerson?lookDirection(dir,lookPose.yaw):isPharmacy?pharmacyDirection(dir):cameraRelativeDirection(dir);const speed=location==='city'?(input.keys.has('ShiftLeft')||input.keys.has('ShiftRight')?7.8:4.7):2.8;
         moved=navigation.move(player.position,dir.x*speed*(tapped?1/30:dt),dir.z*speed*(tapped?1/30:dt));
       }else if(path.length){
         const next=path[0],dx=next.x-player.position.x,dz=next.z-player.position.z,dist=Math.hypot(dx,dz),step=Math.min(dist,(location==='city'?5.7:2.8)*dt);
@@ -160,12 +176,14 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   ]).then(([templates,albedos])=>{
     if(disposed){Object.values(albedos).forEach(t=>t.dispose());return;}
     world=location==='city'?buildExterior(templates,albedos):buildInterior(location,templates);scene.add(world.root);
-    if(isPharmacy){botVisuals=createPharmacyActors(templates);scene.add(botVisuals.root);}
-    world.setCampaign?.(pharmacyDemo);world.selectShelf?.(selectedShelf);
+    if(isPharmacy){botVisuals=createPharmacyActors(templates);botVisuals.root.scale.y=PHARMACY_HEIGHT_SCALE;scene.add(botVisuals.root);}
+    world.setFirstPerson?.(firstPerson);world.setCampaign?.(pharmacyDemo);world.selectShelf?.(selectedShelf);
     navigation=createNavigation(world.obstacles,location==='city'?CITY_BOUNDS:INTERIOR_BOUNDS);
-    player=new T.Group();const figure=templates.get('employee_base').clone(true);figure.scale.setScalar(location==='city'?2.4:isPharmacy?2.0:1.5);player.add(figure);
+    player=new T.Group();const figure=templates.get('employee_base').clone(true);figure.scale.setScalar(location==='city'?2.4:isPharmacy?2.0:1.5);if(isPharmacy)figure.scale.y*=PHARMACY_HEIGHT_SCALE;player.add(figure);
     figure.traverse(node=>{if(/^(leg_|arm_)[LR]/.test(node.name))limbs.push({node,base:node.rotation.x,side:node.name.includes('_L')?'L':'R',arm:node.name.startsWith('arm')});});
     const start=location==='city'?spawn:isPharmacy?PHARMACY_SPAWN:{x:0,z:4.4};player.position.set(start.x,.08,start.z);player.rotation.y=Math.PI;scene.add(player);
+    player.visible=!firstPerson;ring.visible=!firstPerson;
+    scene.background.set(firstPerson?'#c9e2ec':isPharmacy?'#cbd4ca':'#c8d4b6');if(firstPerson&&location==='city')scene.fog=new T.Fog('#c9e2ec',65,180);
     ready=true;last=performance.now();callbacks.onLoading?.(null);invalidate(true);updateHint();
     if(library.missing.size)callbacks.onNotice?.('Некоторые модели заменены временной геометрией.');
   }).catch(error=>{if(!disposed)callbacks.onError?.(error.message||'Не удалось собрать город.');});
@@ -187,12 +205,12 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
       }finally{renderer.setRenderTarget(previous);photoTarget.dispose();world.root.visible=frameVisible;player.visible=playerVisible;ring.visible=ringVisible;destination.visible=destinationVisible;if(botVisuals)botVisuals.root.visible=true;invalidate(true);}
   }
   return {
-    interact,reset,overview:overviewMap,zoom:zoomBy,navigate,captureShelf,
+    interact,reset,setCameraMode,look,overview:overviewMap,zoom:zoomBy,navigate,captureShelf,
     selectShelf(id){selectedShelf=id;world?.selectShelf?.(id);invalidate();},
-    setPharmacyDemo(state){const changed=pharmacyDemo?.installed!==state?.installed;pharmacyDemo=state;world?.setCampaign?.(state);if(isPharmacy){last=performance.now();invalidate(changed);}},
+    setPharmacyDemo(state){if(firstPerson&&state?.automation.follow&&!pharmacyDemo?.automation.follow)setCameraMode('overview');const changed=pharmacyDemo?.installed!==state?.installed;pharmacyDemo=state;world?.setCampaign?.(state);if(isPharmacy){last=performance.now();invalidate(changed);}},
     goToProject(id){const p=getProject(id);return p?navigate(p.entry):false;},
-    setKeyboardEnabled(value){enabled=value;if(!value){input.clear();stop();}invalidate();},
+    setKeyboardEnabled(value){enabled=value;if(!value){input.clear();stop();lookInput.release();}invalidate();},
     setDirection(x,z){if(!enabled)return;manual={x,z};path=[];invalidate();},
-    dispose(){disposed=true;input.dispose();cancelAnimationFrame(frame);observer.disconnect();canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('wheel',wheel);window.removeEventListener('keydown',actionKey);document.removeEventListener('visibilitychange',visibility);world?.assets.release();disposeScene(scene,[],world?.textures||[]);library.dispose();renderPass.dispose();ao.dispose();bloom.dispose();output.dispose();composer.dispose();renderer.dispose();canvas.remove();}
+    dispose(){disposed=true;lookInput.dispose();input.dispose();cancelAnimationFrame(frame);observer.disconnect();canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('wheel',wheel);window.removeEventListener('keydown',actionKey);document.removeEventListener('visibilitychange',visibility);world?.assets.release();disposeScene(scene,[],world?.textures||[]);library.dispose();renderPass.dispose();ao.dispose();bloom.dispose();output.dispose();composer.dispose();renderer.dispose();canvas.remove();}
   };
 }
