@@ -25,7 +25,7 @@ test('Invalid projects never become a modal or an external navigation target', (
 });
 
 test('Leaving an interior opens a valid resume section and clears the building route', () => {
-  for (const place of ['office','pharmacy','argus']) for (const section of ['projects','experience','skills','about','contact']) {
+  for (const place of CASES.map(p=>p.id)) for (const section of ['projects','experience','skills','about','contact']) {
     const url=portfolioUrl(`https://portfolio.example/?place=${place}&project=office#old`,{mode:'resume',section});
     assert.equal(url.searchParams.get('place'),null);
     assert.equal(url.searchParams.get('project'),null);

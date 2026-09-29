@@ -1,10 +1,12 @@
 import {createSceneKit as kit} from './sceneKit.js';
 import {createRoomEnvelope} from '../world/firstPerson.js';
 import {createEntranceOutlook} from './entranceOutlook.js';
+import {buildAutofix} from './autofix.js';
 import {buildPharmacy} from './pharmacy.js';
 export {buildExterior} from './exterior.js';
 export const COMMON_ASSETS=['employee_base','employee_blond','employee_seated','employee_seated_blond','tree_atrium','planter_square','plant_floor','plant_desk','bookshelf','reception_counter','monitor','desk_oak','chair_task','sofa_two','server_rack','table_coffee','coffee_mug'];
 export function buildInterior(kind,templates){
+  if(kind==='autofix')return buildAutofix(templates);
   if(kind==='pharmacy')return buildPharmacy(templates);
   const k=kit(templates),obstacles=[],interactions=[{id:'exit',type:'exit',title:'Выйти в город',x:0,z:5.6,radius:1.8}],markers=[];
   k.box(0,-.12,0,18,.24,14,'#d9d2b7');

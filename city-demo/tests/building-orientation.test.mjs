@@ -20,7 +20,9 @@ function recordBuilding(project){
 test('All facades, entry points and exit spawns point towards the plaza',()=>{
   for(const p of PROJECTS){
     const yaw=p.yaw||0,forward={x:Math.sin(yaw),z:Math.cos(yaw)};
-    close((forward.x*-p.x+forward.z*-p.z)/Math.hypot(p.x,p.z),1,p.id+' faces centre');
+    const towardCentre=(forward.x*-p.x+forward.z*-p.z)/Math.hypot(p.x,p.z);
+    if(p.id==='autofix')assert.ok(towardCentre>.7,'corner building faces the central entrance avenue');
+    else close(towardCentre,1,p.id+' faces centre');
     const door=buildingPoint(p,0,p.d/2),outside=spawnOutside(p.id),portal=exteriorPortals().find(i=>i.project===p.id);
     close(p.entry.x-door.x,forward.x*1.3,p.id+' entry x');close(p.entry.z-door.z,forward.z*1.3,p.id+' entry z');
     close(outside.x-p.entry.x,forward.x*1.4,p.id+' exit x');close(outside.z-p.entry.z,forward.z*1.4,p.id+' exit z');
@@ -28,7 +30,8 @@ test('All facades, entry points and exit spawns point towards the plaza',()=>{
     const bounds=buildingFootprint(p),px=p.parcelX??p.x,pz=p.parcelZ??p.z;
     assert.ok(Math.abs(p.x-px)+bounds.w/2+.4<9.65,p.id+' roof within parcel x');
     assert.ok(Math.abs(p.z-pz)+bounds.d/2+.4<9.3,p.id+' roof within parcel z');
-    if(p.id!=='office'){close(bounds.w,p.d,p.id+' collision width');close(bounds.d,p.w,p.id+' collision depth');}
+    close(bounds.w,Math.abs(Math.cos(yaw))*p.w+Math.abs(Math.sin(yaw))*p.d,p.id+' collision width');
+    close(bounds.d,Math.abs(Math.sin(yaw))*p.w+Math.abs(Math.cos(yaw))*p.d,p.id+' collision depth');
   }
 });
 

@@ -1,6 +1,6 @@
 import React,{useEffect,useRef,useSyncExternalStore} from 'react';
 import {ChatCircleText,X,ArrowRight,PaperPlaneTilt,Footprints,Pause,Play,ArrowClockwise,MapTrifold,BookOpen} from '@phosphor-icons/react';
-import {guide} from './guideStore.js';
+import {guide,TOUR_ORDER} from './guideStore.js';
 import {STARTERS,GUIDE_FACTS,actionLabel,projectFacts} from './knowledge.js';
 import './guide.css';
 
@@ -18,17 +18,17 @@ export function GuideOverlay(){
   return <div className="guide-layer">
     {!state.open&&<button className="guide-launcher" aria-label="Поговорить с гидом" onClick={()=>guide.open()}><Portrait/><span><strong>Гид по городу</strong><small>Поговорим?</small></span><ChatCircleText size={22}/></button>}
     {tour&&!state.open&&<section className="guide-route" aria-label="Маршрут с гидом"><span className="guide-route-icon">{arrived?<ChatCircleText size={21}/>:<Footprints size={21}/>}</span><div>
-      <small>{tour.index!==null?`ЭКСКУРСИЯ · ${tour.index+1} / 3`:'ГИД ПОКАЖЕТ ДОРОГУ'}</small><strong>{p.name}</strong>
+      <small>{tour.index!==null?`ЭКСКУРСИЯ · ${tour.index+1} / ${TOUR_ORDER.length}`:'ГИД ПОКАЖЕТ ДОРОГУ'}</small><strong>{p.name}</strong>
       <p role="status">{inside?'Расскажу, что здесь можно попробовать.':outside?'Встретимся снаружи.':arrived?p.arrival:tour.phase==='paused'?'Подожду здесь.':p.invitation}</p>
       {state.error&&<p role="status">{state.error}</p>}<div className="guide-route-actions">
         {inside?<button onClick={()=>guide.open()}>Что попробовать?</button>:outside?null:arrived?(tour.nearby&&<button onClick={()=>guide.act({type:'enter',project:p.id})}>Войти<ArrowRight size={15}/></button>):tour.phase==='paused'?<button onClick={()=>guide.resume()}><Play size={14}/>Продолжить путь гида</button>:<button onClick={()=>guide.pause()}><Pause size={14}/>Остановить гида</button>}
-        {tour.index!==null&&<button onClick={()=>guide.next()}>{tour.index===2?'Завершить':'Следующий проект'}</button>}
+        {tour.index!==null&&<button onClick={()=>guide.next()}>{tour.index===TOUR_ORDER.length-1?'Завершить':'Следующий проект'}</button>}
       </div></div><button className="guide-icon" aria-label="Завершить маршрут" onClick={()=>guide.stopTour()}><X size={17}/></button></section>}
     {state.open&&<dialog ref={dialog} className="guide-dialog" aria-labelledby="guide-title" onCancel={e=>{e.preventDefault();guide.close();}}>
       <header className="guide-heading"><Portrait/><div><h2 id="guide-title">Гид по городу</h2><span><i/>{state.mode==='ai'?'AI-собеседник':state.mode==='checking'?'Проверяем связь…':'Готовые ответы · локально'}</span></div><button className="guide-icon" aria-label="Новый разговор" title="Новый разговор" onClick={()=>guide.clear()} disabled={state.busy}><ArrowClockwise size={18}/></button><button className="guide-icon" aria-label="Закрыть разговор" onClick={()=>guide.close()}><X size={21}/></button></header>
       <div className="guide-context"><MapTrifold size={16}/><span>{projectFacts(state.location)?.name||'Центральная площадь'}</span><small>Помощник Елнура</small></div>
       <div className="guide-conversation" role="log" aria-label="Разговор с гидом" aria-live="polite" aria-relevant="additions text">
-        {state.messages.map((m,i)=><article key={i} className={'guide-message '+(m.role==='user'?'guide-mine':'')}><small>{m.role==='user'?'Вы':'Гид'}</small><p>{m.text}</p>{m.sources?.length>0&&<div className="guide-sources"><BookOpen size={12}/>{m.sources.map(id=>{const p=projectFacts(id),href=id==='author'?GUIDE_FACTS.author.github:p?.github;return href?<a key={id} href={href} target="_blank" rel="noreferrer">{p?.name||'Профиль автора'}</a>:<span key={id}>{p?.name||'Сведения об авторе'}</span>;})}</div>}{m.actions?.length>0&&<div className="guide-message-actions">{m.actions.map(a=><button key={a.type+'/'+a.project} onClick={()=>guide.act(a)}>{actionLabel(a)}<ArrowRight size={14}/></button>)}</div>}</article>)}
+        {state.messages.map((m,i)=><article key={i} className={'guide-message '+(m.role==='user'?'guide-mine':'')}><small>{m.role==='user'?'Вы':'Гид'}</small><p>{m.text}</p>{m.sources?.length>0&&<div className="guide-sources"><BookOpen size={12}/>{m.sources.map(id=>{const p=projectFacts(id),href=id==='author'?GUIDE_FACTS.author.github:p?.website||p?.github;return href?<a key={id} href={href} target="_blank" rel="noreferrer">{p?.name||'Профиль автора'}</a>:<span key={id}>{p?.name||'Сведения об авторе'}</span>;})}</div>}{m.actions?.length>0&&<div className="guide-message-actions">{m.actions.map(a=><button key={a.type+'/'+a.project} onClick={()=>guide.act(a)}>{actionLabel(a)}<ArrowRight size={14}/></button>)}</div>}</article>)}
         {state.busy&&<p className="guide-thinking" role="status">Гид готовит ответ…</p>}<div ref={end}/>
       </div>
       <div className="guide-compose">{state.messages.length<3&&<div className="guide-starters">{STARTERS.map(s=><button key={s} disabled={state.busy} onClick={()=>guide.send(s)}>{s}</button>)}</div>}{state.error&&<p className="guide-error" role="status">{state.error}</p>}

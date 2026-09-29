@@ -44,7 +44,7 @@ test('Adding a configured project creates a portal with its own stable destinati
   assert.equal(new Set(portals.map(p=>p.id)).size,portals.length);
 });
 test('Reserved plots remain distinct and avoid project buildings',()=>{
-  assert.equal(new Set(RESERVE_PLOTS.map(p=>p.id)).size,4);
+  assert.equal(new Set(RESERVE_PLOTS.map(p=>p.id)).size,3);
   for(const plot of RESERVE_PLOTS)for(const project of PROJECTS){
     const footprint=buildingFootprint(project);
     assert.ok(Math.abs(plot.x-project.x)>footprint.w/2+8||Math.abs(plot.z-project.z)>footprint.d/2+8);

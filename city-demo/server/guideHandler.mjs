@@ -2,19 +2,20 @@ import {GUIDE_FACTS,cleanReply,localReply,projectFacts} from '../src/guide/knowl
 
 const MAX_BODY=26000,MAX_MESSAGE=2000;
 const rates=new Map();
+const projectIds=GUIDE_FACTS.projects.map(p=>p.id);
 const json=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export const configured=env=>!!(env.OPENAI_API_KEY&&env.GUIDE_MODEL);
 export const replySchema={type:'object',additionalProperties:false,required:['text','actions','sources'],properties:{
   text:{type:'string'},
-  actions:{type:'array',items:{type:'object',additionalProperties:false,required:['type','project'],properties:{type:{type:'string',enum:['project','walk','enter','about','tour']},project:{type:['string','null'],enum:['office','pharmacy','argus',null]}}}},
-  sources:{type:'array',items:{type:'string',enum:['author','office','pharmacy','argus']}},
+  actions:{type:'array',items:{type:'object',additionalProperties:false,required:['type','project'],properties:{type:{type:'string',enum:['project','walk','enter','about','tour']},project:{type:['string','null'],enum:[...projectIds,null]}}}},
+  sources:{type:'array',items:{type:'string',enum:['author',...projectIds]}},
 }};
 export function validatePayload(value){
   if(!value||typeof value.message!=='string'||!value.message.trim()||value.message.length>MAX_MESSAGE)return null;
   if(value.history!==undefined&&!Array.isArray(value.history))return null;
   const history=(value.history||[]).slice(-12);
   if(history.some(m=>!m||!['user','assistant'].includes(m.role)||typeof m.text!=='string'||m.text.length>2400))return null;
-  const context={location:['city','office','pharmacy','argus'].includes(value.context?.location)?value.context.location:'city',project:projectFacts(value.context?.project)?value.context.project:null};
+  const context={location:['city',...projectIds].includes(value.context?.location)?value.context.location:'city',project:projectFacts(value.context?.project)?value.context.project:null};
   return {message:value.message.trim(),history:history.map(({role,text})=>({role,text})),context};
 }
 const instructions=`Ты — гид по интерактивному городу проектов Елнура, отдельный вымышленный персонаж, не сам Елнур. Отвечай на языке посетителя, дружелюбно, короткими абзацами, обычно до 150 слов. Можно свободно обсуждать технологии, идеи и нейтральные повседневные темы. Не навязывай экскурсии после каждого ответа.

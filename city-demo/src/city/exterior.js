@@ -75,7 +75,7 @@ export function buildExterior(templates,albedos={}){
       k.sign('КАРТА ГОРОДА',x,2.78,z+.16,2.9,.43,{bg:'#f3e7ca',fg:'#365d53',size:93});
       // The map uses the actual project coordinates, as small coloured 3D relief plots.
       k.box(x,1.79,z+.15,2.89,1.58,.035,'#c1d3ab');
-      for(let col=-1;col<=1;col++)for(let row=-1;row<=1;row++)k.box(x+col*.89,1.8-row*.46,z+.19,.72,.36,.045,(col===0&&row===-1)?'#b67846':row===0&&col===-1?'#51a18a':row===0&&col===1?'#456c89':'#829e4f');
+      for(let col=-1;col<=1;col++)for(let row=-1;row<=1;row++)k.box(x+col*.89,1.8-row*.46,z+.19,.72,.36,.045,(col===0&&row===-1)?'#b67846':row===0&&col===-1?'#51a18a':row===0&&col===1?'#456c89':row===1&&col===1?'#b29250':'#829e4f');
       interactions.push({id:'map',type:'map',title:'Карта проектов',x,z:z+1.4,radius:2.4});
     }
     if(i.type==='banner'){

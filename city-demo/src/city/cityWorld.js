@@ -66,14 +66,14 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     const aspect=width/height;eyes.aspect=aspect;eyes.fov=aspect<1?82:68;eyes.updateProjectionMatrix();
     if(firstPerson)return;
     if(isPharmacy){overhead.aspect=aspect;overhead.fov=T.MathUtils.radToDeg(2*Math.atan(Math.max(17.2,(aspect<.85?24:21.4)/aspect)/(2*Math.hypot(PHARMACY_CAMERA.height,PHARMACY_CAMERA.distance))));overhead.zoom=zoom;overhead.updateProjectionMatrix();return;}
-    const span=showOverview?Math.max(52,78/aspect):Math.max(location==='city'?23:14,15/aspect);
+    const span=showOverview?Math.max(52,78/aspect):Math.max(location==='city'?23:location==='autofix'?20:14,15/aspect);
     overhead.left=-span*aspect/2;overhead.right=span*aspect/2;overhead.top=span*(showOverview?.52:.60);overhead.bottom=-span*(showOverview?.48:.40);overhead.zoom=zoom;overhead.updateProjectionMatrix();
   }
   function follow(dt){
     if(!player)return;
     if(firstPerson){cameraMoving=false;positionEyes(eyes,player.position,lookPose,location==='city'?1.72:EYE_HEIGHT);return;}
     // A lightly clamped follow keeps the whole small shop legible while walking.
-    let focus=isPharmacy?{x:T.MathUtils.clamp(player.position.x*.12,-.6,.6),z:T.MathUtils.clamp((player.position.z-4.3)*.10,-.65,.1)}:showOverview?{x:0,z:0}:player.position;
+    let focus=location==='autofix'?{x:0,z:0}:isPharmacy?{x:T.MathUtils.clamp(player.position.x*.12,-.6,.6),z:T.MathUtils.clamp((player.position.z-4.3)*.10,-.65,.1)}:showOverview?{x:0,z:0}:player.position;
     if(isPharmacy){
       if(pharmacyDemo?.automation.follow&&pharmacyDemo.request&&botResult){const actor=botResult.actors.find(a=>a.id===botResult.view.actor);if(actor)focus={x:actor.x*.72,z:actor.z*.65};}
       cameraFocus.lerp(new T.Vector2(focus.x,focus.z),1-Math.exp(-7*dt));cameraMoving=Math.hypot(cameraFocus.x-focus.x,cameraFocus.y-focus.z)>.002;

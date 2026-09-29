@@ -1,3 +1,4 @@
+import {AUTOFIX_SITE} from './autofixDemo.js';
 import {buildingEntrance,buildingFootprint} from './buildingFrame.js';
 export {CITY_BOUNDS} from './cityBoundary.js';
 
@@ -5,9 +6,10 @@ export const PROJECTS = [
   {id:'office',name:'Мой офис',tag:'Виртуальное пространство',description:'Четыре этажа, сотрудники, отделы и взаимодействия в настоящем 3D.',stack:['React','Three.js','GLB'],x:0,z:-23,parcelX:0,parcelZ:-23,w:15,d:8.8,h:9.84,heightScale:1.2,color:'#aa6644',exteriorAsset:null,exteriorScale:[1,1,1],exteriorYaw:0},
   {id:'pharmacy',name:'Аптека',tag:'CRM рекламных размещений',description:'Выбор рекламной полки, бронирование и согласование размещения. Здесь можно пройти короткий демонстрационный сценарий.',stack:['React','Python','PostgreSQL'],github:'https://github.com/Ye1nurN/pharmacy-advertising-crm',x:-24,z:0,parcelX:-24,parcelZ:0,yaw:Math.PI/2,w:15,d:8.2,h:6.75,heightScale:1.35,color:'#78bda4',exteriorAsset:null,exteriorScale:[1,1,1],exteriorYaw:0},
   {id:'argus',name:'ARGUS',tag:'Обнаружение сетевых атак',description:'Учебный проект обнаружения атак в AMI-сетях. В зале показан отдельный сценарий с синтетическими событиями, без подключения к реальной сети.',stack:['Python','FastAPI','CNN–LSTM'],github:'https://github.com/Ye1nurN/argus-ami-ids',x:24,z:0,parcelX:24,parcelZ:0,yaw:-Math.PI/2,w:15,d:8.8,h:7.425,heightScale:1.35,color:'#354c5b',exteriorAsset:null,exteriorScale:[1,1,1],exteriorYaw:0},
+  {id:'autofix',name:'AutoFix Hub',tag:'Запись и управление детейлингом',description:'Платформа записи в детейлинг-центры: кабинеты клиента и компании, расписание боксов и аналитика. Командный проект с участием в полном цикле разработки.',stack:['React','TypeScript','Supabase','PostgreSQL'],website:AUTOFIX_SITE,websiteLabel:'Uniqs Detailing',github:'https://github.com/Uniqcorns/YX-1',privateRepository:true,x:24,z:23,parcelX:24,parcelZ:23,yaw:-Math.PI/2,w:14,d:8,h:5.2,color:'#b29250',exteriorAsset:null,exteriorScale:[1,1,1],exteriorYaw:0},
 ].map(project=>({...project,entry:buildingEntrance(project)}));
 export const RESERVE_PLOTS = [
-  {id:'04',x:-24,z:-23},{id:'05',x:24,z:-23},{id:'06',x:-24,z:23},{id:'07',x:24,z:23},
+  {id:'04',x:-24,z:-23},{id:'05',x:24,z:-23},{id:'06',x:-24,z:23},
 ];
 export const CITY_SPAWN={x:0,z:17};
 export const INTERIOR_BOUNDS={minX:-8.55,maxX:8.55,minZ:-6.6,maxZ:6.6,cellSize:.3,radius:.35};

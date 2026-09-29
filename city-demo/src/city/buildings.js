@@ -1,3 +1,4 @@
+import {buildAutofixBuilding} from './autofixBuilding.js';
 import {Euler,Quaternion,Vector3} from 'three';
 import {buildingPoint,rotatedFootprint} from './buildingFrame.js';
 
@@ -23,6 +24,7 @@ function facingKit(raw,p){
 // Authored modular facades. All pieces have real depth and remain replaceable by one GLB.
 export function buildProjectBuilding(k,p){
   if(p.exteriorAsset){k.model(p.exteriorAsset,p.x,p.z,p.exteriorScale,(p.yaw||0)+(p.exteriorYaw||0));return;}
+  if(p.id==='autofix'){buildAutofixBuilding(facingKit(k,p),p);return;}
   const raw=facingKit(k,p),ys=p.heightScale||1;
   k={...raw,box:(x,y,z,w,h,d,...rest)=>raw.box(x,y*ys,z,w,h*ys,d,...rest),
     plane:(x,y,z,w,d,mat)=>raw.plane(x,y*ys,z,w,d,mat),
