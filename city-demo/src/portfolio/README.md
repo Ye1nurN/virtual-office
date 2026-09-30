@@ -24,7 +24,7 @@ the confirmed GitHub profile and explains that no direct contact is supplied.
 
 The thumbnail in `public/portfolio` is a screenshot of the real city.
 
-Tynysh.kz is a portfolio case for the local banquet venue management application.
+Tynysh is a portfolio case for the banquet venue management application.
 Its description and stack are based on that application's source and README.
 It has no city destination or connected public demo. `hasCityDemo` is derived
 from the city catalogue: only those cases show demo/walking actions and building
