@@ -55,14 +55,33 @@ const stories = {
     scope: 'Дипломный проект. Город показывает сценарий на синтетических данных; модель ML в браузере не запускается.',
     takeaway: 'Исследование машинного обучения связано с прикладным интерфейсом.',
   },
+  tynysh: {
+    number: '05', category: 'Full-stack · B2B SaaS', title: 'Tynysh.kz',
+    stack: ['Next.js', 'React', 'TypeScript', 'NestJS', 'PostgreSQL', 'Drizzle ORM'],
+    lead: 'Управление банкетным залом — от бронирования до работы команды и финансов.',
+    problem: 'Как объединить расписание залов, подготовку мероприятий, задачи сотрудников и финансовый учёт в одной системе?',
+    built: [
+      'Календарь бронирований, карточки клиентов и мероприятий, проверка доступности залов.',
+      'Редактор планов залов и рассадки, меню и шаблоны мероприятий.',
+      'Задачи, назначения сотрудников и личный экран рабочего дня.',
+      'Учёт доходов, расходов и выплат сотрудникам, аналитика и выгрузка отчётов.',
+      'Роли владельца, администратора и сотрудника, одноразовые приглашения и журнал действий.',
+      'REST API на NestJS/Fastify, изоляция организаций через PostgreSQL RLS и ограничения БД против пересекающихся бронирований и назначений.',
+    ],
+    scope: 'Локальная версия B2B SaaS. Публичная демонстрация пока не подключена к портфолио.',
+    takeaway: 'Full-stack-приложение: интерфейсы на Next.js, API на NestJS и бизнес-правила в PostgreSQL — от бронирования до управления командой и финансового учёта.',
+  },
 };
 
-export const CASES = ['autofix','pharmacy','argus','office'].map(id => ({...PROJECTS.find(p=>p.id===id), ...stories[id]}));
+export const CASES = ['autofix','pharmacy','argus','office','tynysh'].map(id => {
+  const cityProject = PROJECTS.find(p=>p.id===id);
+  return {...cityProject, ...stories[id], id, hasCityDemo:Boolean(cityProject)};
+});
 export const SKILLS = [
-  {title:'Интерфейсы', description:'React · TypeScript · адаптивные интерфейсы · локализация', projects:['autofix','office','pharmacy']},
+  {title:'Интерфейсы', description:'React · Next.js · TypeScript · адаптивные интерфейсы · локализация', projects:['autofix','office','pharmacy','tynysh']},
   {title:'3D в браузере', description:'Three.js · GLB · навигация и взаимодействия', projects:['office']},
-  {title:'API и данные', description:'Supabase · PostgreSQL · Python · FastAPI', projects:['autofix','pharmacy','argus']},
-  {title:'Бизнес-процессы и аналитика', description:'Бронирование · расписания · Recharts · отчёты', projects:['autofix','pharmacy']},
+  {title:'API и данные', description:'NestJS · Fastify · Drizzle ORM · Supabase · PostgreSQL · Python · FastAPI', projects:['autofix','pharmacy','argus','tynysh']},
+  {title:'Бизнес-процессы и аналитика', description:'Бронирование · расписания · задачи · финансовый учёт · Recharts · отчёты', projects:['autofix','pharmacy','tynysh']},
   {title:'Машинное обучение', description:'CNN–LSTM · анализ сетевых событий', projects:['argus']},
 ];
 
