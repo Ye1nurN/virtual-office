@@ -21,7 +21,7 @@ test('All facades, entry points and exit spawns point towards the plaza',()=>{
   for(const p of PROJECTS){
     const yaw=p.yaw||0,forward={x:Math.sin(yaw),z:Math.cos(yaw)};
     const towardCentre=(forward.x*-p.x+forward.z*-p.z)/Math.hypot(p.x,p.z);
-    if(p.id==='autofix')assert.ok(towardCentre>.7,'corner building faces the central entrance avenue');
+    if(['autofix','tynysh'].includes(p.id))assert.ok(towardCentre>.7,'corner building faces the central entrance avenue');
     else close(towardCentre,1,p.id+' faces centre');
     const door=buildingPoint(p,0,p.d/2),outside=spawnOutside(p.id),portal=exteriorPortals().find(i=>i.project===p.id);
     close(p.entry.x-door.x,forward.x*1.3,p.id+' entry x');close(p.entry.z-door.z,forward.z*1.3,p.id+' entry z');

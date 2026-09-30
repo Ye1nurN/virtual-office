@@ -12,7 +12,9 @@ import {EYE_HEIGHT,PHARMACY_HEIGHT_SCALE,lookDirection,turnLook,positionEyes,cre
 import {cityPixelRatio} from './renderBudget.js';
 import {buildExterior,buildInterior,COMMON_ASSETS} from './geometry.js';
 import {PROJECTS,CITY_SPAWN,CITY_BOUNDS,INTERIOR_BOUNDS,getProject} from './catalog.js';
-import {loadExteriorSurfaces} from './surfaces.js';
+import {loadExteriorSurfaces,loadTynyshSurfaces} from './surfaces.js';
+import {createTynyshActors} from './tynyshActors.js';
+import {TYNYSH_SPAWN} from './tynyshLayout.js';
 import {createGuideActor} from '../guide/guideActor.js';
 import {createGuideWalker,guideMeetingPoint} from '../guide/guideWalker.js';
 import {GUIDE_POSITION} from '../guide/knowledge.js';
@@ -26,11 +28,11 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   let player=null,world=null,navigation=null,path=[],pending=null,manual={x:0,z:0},hint=null;
   let width=1,height=1,showOverview=location==='city'&&overview,zoom=1,pointerStart=null;
   let activeFrameCount=0,activeFrameMs=0,renderFrames=0,shadowFrames=0;
-  let pharmacyDemo=null,argusDemo=null,selectedShelf='A-02';
+  let pharmacyDemo=null,argusDemo=null,tynyshDemo=null,selectedShelf='A-02';
   let botVisuals=null,botResult=null,botViewKey='',lastBotUi=0,cameraMoving=false;
   const cameraFocus=new T.Vector2(0,0),focusPoint=new T.Vector2(),projected=new T.Vector3();
-  const isPharmacy=location==='pharmacy',isArgus=location==='argus',isStory=isPharmacy||isArgus;
-  const roomCamera=isArgus?{height:19,distance:25,yaw:0}:PHARMACY_CAMERA;
+  const isPharmacy=location==='pharmacy',isArgus=location==='argus',isTynysh=location==='tynysh',isStory=isPharmacy||isArgus||isTynysh;
+  const roomCamera=isTynysh?{height:19,distance:20,yaw:0}:isArgus?{height:19,distance:25,yaw:0}:PHARMACY_CAMERA;
   const library=createAssetLibrary(),scene=new T.Scene();scene.background=new T.Color(isPharmacy?'#cbd4ca':isArgus?'#b8cbd1':'#c8d4b6');
   const renderer=new T.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(1);renderer.outputColorSpace=T.SRGBColorSpace;
@@ -73,7 +75,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     const aspect=width/height;
     eyes.aspect=aspect;eyes.fov=aspect<1?82:68;eyes.updateProjectionMatrix();
     if(firstPerson)return;
-    if(isStory){camera.aspect=aspect;camera.fov=T.MathUtils.radToDeg(2*Math.atan(Math.max(17.2,(aspect<.85?24:21.4)/aspect)/(2*Math.hypot(roomCamera.height,roomCamera.distance))));camera.zoom=zoom;camera.updateProjectionMatrix();return;}
+    if(isStory){camera.aspect=aspect;camera.fov=T.MathUtils.radToDeg(2*Math.atan(Math.max(17.2,(isTynysh&&aspect<.85?19.5:aspect<.85?24:21.4)/aspect)/(2*Math.hypot(roomCamera.height,roomCamera.distance))));camera.zoom=zoom;camera.updateProjectionMatrix();return;}
     const span=showOverview?Math.max(52,78/aspect):Math.max(location==='city'?23:location==='autofix'?20:14,15/aspect);
     camera.left=-span*aspect/2;camera.right=span*aspect/2;camera.top=span*(showOverview?.52:.60);camera.bottom=-span*(showOverview?.48:.40);camera.zoom=zoom;camera.updateProjectionMatrix();
   }
@@ -83,7 +85,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     // A lightly clamped follow keeps the whole small shop legible while walking.
     let focus=location==='autofix'?{x:0,z:0}:isStory?{x:T.MathUtils.clamp(player.position.x*.12,-.6,.6),z:T.MathUtils.clamp((player.position.z-4.3)*.10,-.65,.1)}:showOverview?{x:0,z:0}:player.position;
     if(isStory){
-      const simulation=isArgus?argusDemo:pharmacyDemo;
+      const simulation=isTynysh?tynyshDemo:isArgus?argusDemo:pharmacyDemo;
       if(simulation?.automation.follow&&botResult){const actor=botResult.actors.find(a=>a.id===botResult.view.actor);if(actor)focus={x:actor.x*.72,z:actor.z*.65};}
       cameraFocus.lerp(focusPoint.set(focus.x,focus.z),1-Math.exp(-7*dt));cameraMoving=Math.hypot(cameraFocus.x-focus.x,cameraFocus.y-focus.z)>.002;
       focus={x:cameraFocus.x,z:cameraFocus.y};if(cameraMoving)dirty=true;
@@ -101,7 +103,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     firstPerson=mode==='first-person';input.clear();stop();lookInput.release();camera=firstPerson?eyes:overhead;
     renderPass.camera=camera;ao.enabled=!firstPerson&&width>720;showOverview=false;cameraMoving=false;
     if(player)player.visible=!firstPerson;ring.visible=contact.visible=!firstPerson;world?.setFirstPerson?.(firstPerson);
-    scene.background.set(firstPerson?'#c9e2ec':isPharmacy?'#cbd4ca':isArgus?'#b8cbd1':'#c8d4b6');scene.fog=firstPerson&&location==='city'?new T.Fog('#c9e2ec',65,180):null;
+    scene.background.set(firstPerson?'#c9e2ec':isTynysh?'#ded8c6':isPharmacy?'#cbd4ca':isArgus?'#b8cbd1':'#c8d4b6');scene.fog=firstPerson&&location==='city'?new T.Fog('#c9e2ec',65,180):null;
     callbacks.onCameraMode?.(firstPerson?'first-person':'overview');projection();invalidate(true);
   }
   const lookInput=createLookInput(canvas,{canUse:()=>enabled&&ready&&!document.hidden,isFirstPerson:()=>firstPerson,onToggle:()=>setCameraMode(firstPerson?'overview':'first-person'),onLook:look,onStart:()=>{path=[];destination.visible=false;invalidate();}});
@@ -114,7 +116,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   function publish(){
     if(guideWalker){const pose=guideWalker.snapshot();Object.assign(canvas.dataset,{guideX:pose.x.toFixed(3),guideZ:pose.z.toFixed(3),guideMoving:String(pose.moving),guidePhase:pose.phase});}
     const bot=botResult?.actors.find(a=>a.id===botResult.view.actor);
-    const simulation=isArgus?argusDemo:pharmacyDemo;
+    const simulation=isTynysh?tynyshDemo:isArgus?argusDemo:pharmacyDemo;
     const running=isArgus?argusDemo?.phase!=='setup':!!pharmacyDemo?.request;
     const bubbles=isStory&&bot&&running&&simulation?.automation.mode==='auto'&&botResult.view.phase!=='complete'?[{id:'bot-'+bot.id,kind:'bot',name:bot.name+' · '+(simulation.automation.paused?'Пауза':botResult.view.text),x:bot.x,y:2.65*(isPharmacy?PHARMACY_HEIGHT_SCALE:isArgus?.75:1),z:bot.z}]:[];
     const markers=[...world.markers,...bubbles].map(m=>{const screen=project(m.x,m.y,m.z);return {...m,...screen,visible:screen.visible&&!(showOverview&&location==='city')};});
@@ -122,6 +124,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     callbacks.onLabels?.({markers: firstPerson?[]:markers,me:{...me,visible:!firstPerson&&me.visible},overview:showOverview,zoom:Math.round(zoom*100)});
     Object.assign(canvas.dataset,{cameraMode:firstPerson?'first-person':'overview',cameraYaw:lookPose.yaw.toFixed(3),cameraPitch:lookPose.pitch.toFixed(3),eyeHeight:camera.position.y.toFixed(3),avatarVisible:String(player.visible),playerX:player.position.x.toFixed(3),playerZ:player.position.z.toFixed(3),overview:showOverview?'true':'false',interaction:hint?.id||'',moving:String(walking),enabled:String(enabled),drawCalls:String(renderer.info.render.calls),triangles:String(renderer.info.render.triangles),activeFps:activeFrameCount>4?(1000*activeFrameCount/activeFrameMs).toFixed(1):'',activeFrames:String(activeFrameCount),renderFrames:String(renderFrames),shadowFrames:String(shadowFrames),pixelRatio:renderer.getPixelRatio().toFixed(2),missingModels:[...library.missing].join(',')});
     if(isArgus&&argusDemo)Object.assign(canvas.dataset,{incidentPhase:argusDemo.phase,incidentScenario:argusDemo.scenario,incidentRevision:String(argusDemo.revision)});
+    if(isTynysh&&tynyshDemo)Object.assign(canvas.dataset,{banquetPhase:tynyshDemo.phase,banquetReady:String(tynyshDemo.tasks.filter(t=>t.done).length),banquetGuests:String(tynyshDemo.event.guests)});
     if(botResult)Object.assign(canvas.dataset,{botPhase:botResult.view.phase,botActor:botResult.view.actor,botAction:botResult.view.text,botProgress:String(botResult.view.progress??''),botPositions:JSON.stringify(botResult.actors.map(({id,x,z,carrying})=>({id,x:+x.toFixed(3),z:+z.toFixed(3),carrying}))),botFollowing:String(!firstPerson&&!!simulation?.automation.follow)});
   }
   function updateHint(){
@@ -158,7 +161,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
       if(wasMoving||guideActive)dirty=true;
     }
     if(ready&&isStory&&director){
-      const simulation=isArgus?argusDemo:pharmacyDemo;
+      const simulation=isTynysh?tynyshDemo:isArgus?argusDemo:pharmacyDemo;
       botResult=director.update(simulation,Math.min(interval/1000,1));botVisuals.update(botResult,simulation);world.updateIncident?.(argusDemo,botResult);
       const key=JSON.stringify([botResult.view.phase,botResult.view.text,botResult.view.actor]);
       if(key!==botViewKey||botResult.active&&now-lastBotUi>250){botViewKey=key;lastBotUi=now;callbacks.onBotView?.(botResult.view);}
@@ -178,7 +181,7 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
       const tapped=!(dir.x||dir.z)&&pending;if(tapped)dir=pending;pending=null;
       if(dir.x||dir.z){
         if(showOverview){showOverview=false;projection();}
-        dir=firstPerson?lookDirection(dir,lookPose.yaw):isPharmacy?pharmacyDirection(dir):isArgus?dir:cameraRelativeDirection(dir);const speed=location==='city'?(input.keys.has('ShiftLeft')||input.keys.has('ShiftRight')?7.8:4.7):2.8;
+        dir=firstPerson?lookDirection(dir,lookPose.yaw):isPharmacy?pharmacyDirection(dir):(isArgus||isTynysh)?dir:cameraRelativeDirection(dir);const speed=location==='city'?(input.keys.has('ShiftLeft')||input.keys.has('ShiftRight')?7.8:4.7):2.8;
         moved=navigation.move(player.position,dir.x*speed*(tapped?1/30:dt),dir.z*speed*(tapped?1/30:dt));
       }else if(path.length){
         const next=path[0],dx=next.x-player.position.x,dz=next.z-player.position.z,dist=Math.hypot(dx,dz),step=Math.min(dist,(location==='city'?5.7:2.8)*dt);
@@ -200,21 +203,22 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
   const assets=[...COMMON_ASSETS,...PROJECTS.map(p=>p.exteriorAsset).filter(Boolean)];
   Promise.all([
     library.prepare(assets,(done,total)=>{if(!disposed)callbacks.onLoading?.(Math.round(done/total*100));}).then(()=>library.getTemplates(assets)),
-    location==='city'?loadExteriorSurfaces():Promise.resolve({})
+    location==='city'?loadExteriorSurfaces():isTynysh?loadTynyshSurfaces():Promise.resolve({})
   ]).then(([templates,albedos])=>{
     if(disposed){Object.values(albedos).forEach(t=>t.dispose());return;}
-    world=location==='city'?buildExterior(templates,albedos):buildInterior(location,templates);scene.add(world.root);
+    world=location==='city'?buildExterior(templates,albedos):buildInterior(location,templates,albedos);scene.add(world.root);
     if(location==='city'){guideActor=createGuideActor(templates);scene.add(guideActor.root);world.interactions.push(guideActor.interaction);world.markers.push(guideActor.marker);}
     if(isPharmacy){botVisuals=createPharmacyActors(templates);botVisuals.root.scale.y=PHARMACY_HEIGHT_SCALE;scene.add(botVisuals.root);}
     if(isArgus){botVisuals=createArgusActors(templates);botVisuals.root.scale.y=.75;scene.add(botVisuals.root);world.updateIncident(argusDemo,null);}
+    if(isTynysh){botVisuals=createTynyshActors(templates);scene.add(botVisuals.root);world.setTynyshDemo(tynyshDemo);}
     world.setFirstPerson?.(firstPerson);world.setCampaign?.(pharmacyDemo);world.selectShelf?.(selectedShelf);
     navigation=createNavigation(world.obstacles,location==='city'?CITY_BOUNDS:INTERIOR_BOUNDS);
     if(guideActor){guideWalker=createGuideWalker(navigation,GUIDE_POSITION);guideWalker.restore(guideRestore);guideActor.update(guideWalker.snapshot(),0);}
-    player=new T.Group();const figure=compactCharacter(templates.get('employee_base').clone(true));figure.scale.setScalar(location==='city'?2.4:isPharmacy?2.0:1.5);if(isPharmacy)figure.scale.y*=PHARMACY_HEIGHT_SCALE;player.add(figure);
+    player=new T.Group();const figure=compactCharacter(templates.get('employee_base').clone(true));figure.scale.setScalar(location==='city'?2.4:(isPharmacy||isTynysh)?2.0:1.5);if(isPharmacy)figure.scale.y*=PHARMACY_HEIGHT_SCALE;player.add(figure);
     figure.traverse(node=>{if(/^(leg_|arm_)[LR]/.test(node.name))limbs.push({node,base:node.rotation.x,side:node.name.includes('_L')?'L':'R',arm:node.name.startsWith('arm')});});
-    const start=location==='city'?spawn:isPharmacy?PHARMACY_SPAWN:{x:0,z:4.4};player.position.set(start.x,.08,start.z);player.rotation.y=Math.PI;scene.add(player);
+    const start=location==='city'?spawn:isTynysh?TYNYSH_SPAWN:isPharmacy?PHARMACY_SPAWN:{x:0,z:4.4};player.position.set(start.x,.08,start.z);player.rotation.y=Math.PI;scene.add(player);
     player.visible=!firstPerson;ring.visible=contact.visible=!firstPerson;
-    scene.background.set(firstPerson?'#c9e2ec':isPharmacy?'#cbd4ca':isArgus?'#b8cbd1':'#c8d4b6');if(firstPerson&&location==='city')scene.fog=new T.Fog('#c9e2ec',65,180);
+    scene.background.set(firstPerson?'#c9e2ec':isTynysh?'#ded8c6':isPharmacy?'#cbd4ca':isArgus?'#b8cbd1':'#c8d4b6');if(firstPerson&&location==='city')scene.fog=new T.Fog('#c9e2ec',65,180);
     ready=true;last=performance.now();callbacks.onLoading?.(null);invalidate(true);updateHint();
     if(library.missing.size)callbacks.onNotice?.('Некоторые модели заменены временной геометрией.');
   }).catch(error=>{if(!disposed)callbacks.onError?.(error.message||'Не удалось собрать город.');});
@@ -245,6 +249,8 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     selectShelf(id){selectedShelf=id;world?.selectShelf?.(id);invalidate();},
     setPharmacyDemo(state){if(firstPerson&&state?.automation.follow&&!pharmacyDemo?.automation.follow)setCameraMode('overview');const changed=pharmacyDemo?.installed!==state?.installed;pharmacyDemo=state;world?.setCampaign?.(state);if(isPharmacy){last=performance.now();invalidate(changed);}},
     setArgusDemo(state){if(firstPerson&&state?.automation.follow&&!argusDemo?.automation.follow)setCameraMode('overview');argusDemo=state;if(isArgus){world?.updateIncident?.(state,botResult);last=performance.now();invalidate();}},
+    setTynyshDemo(state){tynyshDemo=state;if(isTynysh){world?.setTynyshDemo?.(state);last=performance.now();invalidate(true);}},
+    setRoomTop(value){if(!isTynysh)return;roomCamera.height=value?32:19;roomCamera.distance=value?.01:20;projection();invalidate();},
     goToProject(id){const p=getProject(id);return p?navigate(p.entry):false;},
     setKeyboardEnabled(value){enabled=value;if(!value){input.clear();stop();lookInput.release();}invalidate();},
     setDirection(x,z){if(!enabled)return;manual={x,z};path=[];invalidate();},

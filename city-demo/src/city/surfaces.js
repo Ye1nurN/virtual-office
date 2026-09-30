@@ -1,5 +1,11 @@
 import * as T from 'three';
 
+export async function loadTynyshSurfaces(){
+  const parquet=await new T.TextureLoader().loadAsync('/textures/tynysh-parquet-albedo.png');
+  parquet.colorSpace=T.SRGBColorSpace;parquet.wrapS=parquet.wrapT=T.RepeatWrapping;parquet.anisotropy=8;
+  return {parquet};
+}
+
 export async function loadExteriorSurfaces(){
   const loader=new T.TextureLoader(),loaded={};
   // Wait for all requests before cleanup, including one that finishes after a failure.

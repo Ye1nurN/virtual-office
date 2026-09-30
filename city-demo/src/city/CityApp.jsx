@@ -3,6 +3,10 @@ import {portfolioUrl} from '../portfolio/content.js';
 import React,{useEffect,useRef,useState,useReducer,Suspense,lazy} from 'react';
 import {guide} from '../guide/guideStore.js';
 import {AutofixExperience} from './AutofixExperience.jsx';
+import {TynyshExperience} from './TynyshExperience.jsx';
+import {createTynyshDemo,tynyshReducer} from './tynyshDemo.js';
+import {createTynyshDirector} from './tynyshDirector.js';
+import {CalendarBlank} from '@phosphor-icons/react';
 import {PortfolioCity} from '../portfolio/PortfolioCity.jsx';
 import {Car,Buildings,CaretDown,MagnifyingGlass,Bell,Microphone,MicrophoneSlash,VideoCamera,VideoCameraSlash,ChatCircleText,MonitorArrowUp,Minus,Plus,Crosshair,X,ArrowUpRight,ArrowLeft,ArrowRight,Check,MapTrifold,Keyboard,Tree,FirstAid,ShieldCheck,PaperPlaneTilt,Sun,Info,GithubLogo,Footprints} from '@phosphor-icons/react';
 import {CameraToggle,FirstPersonGuide} from '../world/CameraControls.jsx';
@@ -25,7 +29,7 @@ import './pharmacy-bots.css';
 
 const Office=lazy(()=>import('../App.jsx').then(m=>({default:m.App})));
 const validPlaces=new Set(['city',...PROJECTS.map(p=>p.id)]);
-const iconFor={office:Buildings,pharmacy:FirstAid,argus:ShieldCheck,autofix:Car};
+const iconFor={office:Buildings,pharmacy:FirstAid,argus:ShieldCheck,autofix:Car,tynysh:CalendarBlank};
 function initialPlace(){const id=new URLSearchParams(window.location.search).get('place');return validPlaces.has(id)?id:'city';}
 function Avatar(){return <span className="avatar avatar-reference" aria-hidden="true" style={{'--avatar-size':'34px',width:34,height:34}}/>;}
 function IconButton({label,children,active,...props}){return <button className={'icon-button'+(active?' active':'')} aria-label={label} title={label} {...props}>{children}</button>;}
@@ -50,6 +54,8 @@ export function CityApp(){
   const [argusDemo,dispatchArgus]=useReducer(argusDemoReducer,undefined,createArgusDemo);
   const argusDirector=useRef(null);if(!argusDirector.current)argusDirector.current=createArgusDirector();
   const [argusView,setArgusView]=useState({phase:'idle',text:'Команда готова',name:'Команда ARGUS'});
+  const [tynyshDemo,dispatchTynysh]=useReducer(tynyshReducer,undefined,createTynyshDemo);
+  const tynyshDirector=useRef(null);if(!tynyshDirector.current)tynyshDirector.current=createTynyshDirector();
   function changeCameraMode(mode){setCameraMode(mode);if(mode==='first-person'&&pharmacyDemo.automation.follow)dispatchPharmacy({type:'AUTO_CONFIG',follow:false});if(mode==='first-person'&&argusDemo.automation.follow)dispatchArgus({type:'CONTROL',follow:false});}
   const current=getProject(place),project=getProject(panel?.id),shelf=SHELVES.find(s=>s.id===panel?.id);
   const notice=t=>setToast(t);
@@ -84,6 +90,7 @@ export function CityApp(){
   function send(e){e.preventDefault();const text=draft.trim();if(!text)return;const q=text.toLowerCase();const answer=q.includes('аптек')?'Аптека — зелёное здание слева от площади. Войдите и выберите полку: появится демонстрация бронирования.':q.includes('argus')||q.includes('безопас')?'ARGUS находится справа от площади. Внутри есть консоль с учебным сценарием сетевых событий.':q.includes('офис')?'Офис находится севернее площади. Внутри доступны четыре этажа и исходные взаимодействия.':'Выберите «Проекты», чтобы открыть здание сразу или построить путь ко входу. WASD — движение, E — действие рядом с объектом.';setMessages(old=>[...old,{text,mine:true},{text:answer,mine:false}]);setDraft('');}
   function toPortfolio(target){close();setSpawn(spawnOutside(place));setStartOverview(false);history.pushState({},'',portfolioUrl(window.location.href,target));setPlace('city');}
   if(place==='city')return <PortfolioCity onVisit={visit} spawn={spawn} overview={startOverview} cameraMode={cameraMode} onCameraMode={changeCameraMode}/>;
+  if(place==='tynysh')return <TynyshExperience state={tynyshDemo} dispatch={dispatchTynysh} director={tynyshDirector.current} onLeave={leave} onPortfolio={toPortfolio}/>;
   if(place==='autofix')return <ProjectFrame projectId={place} onLeave={leave} onPortfolio={toPortfolio}><AutofixExperience onLeave={leave} cameraMode={cameraMode} onCameraMode={changeCameraMode}/></ProjectFrame>;
   if(place==='office')return <ProjectFrame projectId={place} onLeave={leave} onPortfolio={toPortfolio}><Suspense fallback={<div className="office-app"><div className="world-loading floating" role="status">Открываем офис…</div></div>}><Office cameraMode={cameraMode} onCameraMode={changeCameraMode} embedded/></Suspense></ProjectFrame>;
   return <ProjectFrame projectId={place} onLeave={leave} onPortfolio={toPortfolio}><div className={'engine-stage city-stage'+(pharmacy?' pharmacy-stage':'')+(argus?' argus-stage':'')+(cameraMode==='first-person'?' first-person-stage':'')}><main className="office-app">

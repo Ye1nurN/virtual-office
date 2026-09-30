@@ -1,6 +1,6 @@
 import {INTRO,detailReply,localReply,projectFacts,validAction,cleanReply} from './knowledge.js';
 
-export const TOUR_ORDER=['pharmacy','argus','autofix','office'];
+export const TOUR_ORDER=['pharmacy','argus','autofix','tynysh','office'];
 // Session-only state survives scene changes; no cookies, persistence or visitor identity.
 export function createGuideStore(){
   let state={open:false,location:'city',project:null,mode:'checking',messages:[{role:'assistant',text:INTRO,actions:[{type:'tour',project:null}],sources:[]}],tour:null,busy:false,error:''};

@@ -4,9 +4,11 @@ import {createEntranceOutlook} from './entranceOutlook.js';
 import {buildAutofix} from './autofix.js';
 import {buildPharmacy} from './pharmacy.js';
 import {buildArgus} from './argus.js';
+import {buildTynysh} from './tynysh.js';
 export {buildExterior} from './exterior.js';
 export const COMMON_ASSETS=['employee_base','employee_blond','employee_seated','employee_seated_blond','tree_atrium','planter_square','plant_floor','plant_desk','bookshelf','reception_counter','monitor','desk_oak','chair_task','sofa_two','server_rack','table_coffee','coffee_mug'];
-export function buildInterior(kind,templates){
+export function buildInterior(kind,templates,albedos={}){
+  if(kind==='tynysh')return buildTynysh(templates,albedos);
   if(kind==='autofix')return buildAutofix(templates);
   if(kind==='pharmacy')return buildPharmacy(templates);
   if(kind==='argus')return buildArgus(templates);
