@@ -1,0 +1,43 @@
+.pf-profile-heading{margin:0 0 20px}
+.pf-profile-heading .pf-role{font-size:24px;font-weight:600;line-height:1.35;color:var(--pf-ink);letter-spacing:-.6px;max-width:none}
+.pf-profile-heading .pf-profile-stack{font-size:12px;line-height:1.7;color:var(--pf-accent);margin-top:9px;max-width:none}
+.pf-background{display:grid;gap:35px;margin-top:34px}
+.pf-background h3{display:flex;align-items:center;gap:10px;font-size:21px;line-height:1.35;font-weight:550;letter-spacing:-.4px;margin:0 0 17px}
+.pf-background h3 svg{flex-shrink:0;color:var(--pf-accent)}
+.pf-background h4{font-size:16px;line-height:1.5;font-weight:600;margin:0 0 7px;overflow-wrap:anywhere}
+.pf-award{display:grid;grid-template-columns:140px 1fr;gap:25px;padding:25px;border-radius:14px;background:#f1ecdb;border:1px solid #e5dcc1}
+.pf-award-result{display:flex;flex-direction:column;gap:5px;color:#82663c}
+.pf-award-result strong{font-size:28px;font-weight:600;letter-spacing:-1px;line-height:1.3}
+.pf-award-result>span{font-size:12px}
+.pf-background .pf-award p{font-size:13px;line-height:1.8;color:var(--pf-muted);max-width:none}
+.pf-education-list{display:grid;gap:12px}
+.pf-education-list article{padding:23px 25px;border:1px solid var(--pf-line);background:var(--pf-paper);border-radius:13px;min-width:0}
+.pf-background .pf-education-period{font-size:11px;font-weight:550;color:var(--pf-accent);line-height:1.6;margin-bottom:11px}
+.pf-background .pf-education-program{font-size:13px;color:var(--pf-ink);line-height:1.7;max-width:none}
+.pf-background .pf-education-location{font-size:12px;line-height:1.7;color:var(--pf-muted);margin-top:5px}
+.pf-background .pf-education-detail{font-size:12px;line-height:1.8;color:var(--pf-muted);padding-top:13px;margin-top:13px;border-top:1px solid var(--pf-line);max-width:none}
+.pf-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
+.pf-metrics>div{display:flex;flex-direction:column-reverse;align-items:flex-start;justify-content:flex-end;gap:5px;padding:15px 12px;border-radius:10px;background:#eaf1e7;min-width:0}
+.pf-metrics dt{font-size:10px;line-height:1.6;color:var(--pf-muted);overflow-wrap:anywhere}
+.pf-metrics dd{margin:0;font-size:27px;line-height:1.3;font-weight:600;letter-spacing:-1px;color:var(--pf-accent)}
+.pf-project-results .pf-metric-note{font-size:11px;line-height:1.8}
+.pf-skills button{text-align:left}
+.pf-drawer-body .pf-background{margin-top:4px}
+.pf-drawer-body .pf-award{grid-template-columns:1fr;gap:16px;padding:20px}
+.pf-drawer-body .pf-award-result{flex-direction:row;align-items:baseline;gap:14px}
+.pf-drawer-body .pf-background h3{font-size:19px}
+.pf-drawer-body .pf-background h4{font-size:15px}
+.pf-drawer-body .pf-education-list article{padding:20px}
+.pf-project-card{min-height:100%}
+.pf-project-card .pf-card-bottom{margin-top:auto}
+.pf-project-card .pf-tags{margin-bottom:22px}
+@media(max-width:720px){
+  .pf-profile-heading .pf-role{font-size:23px}
+  .pf-profile-heading .pf-profile-stack{font-size:11px}
+  .pf-background{gap:27px;margin-top:26px}
+  .pf-background h3{font-size:21px}
+  .pf-award{grid-template-columns:1fr;gap:15px;padding:21px}
+  .pf-award-result{flex-direction:row;align-items:baseline;gap:14px}
+  .pf-education-list article{padding:21px}
+  .pf-metrics dd{font-size:25px}
+}

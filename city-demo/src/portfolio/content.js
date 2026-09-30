@@ -1,11 +1,11 @@
 import {PROJECTS} from '../city/catalog.js';
+import {RESUME_PROFILE, RESUME_STORIES} from './resume.js';
 
 // Public portfolio copy lives here, independently of scene geometry.
-// Add a role, CV and direct contacts only after the author provides them.
+// Only author-provided roles, education and project facts are published.
 export const PROFILE = {
   name: 'Елнур',
-  title: 'Портфолио проектов',
-  intro: 'Веб-приложения, интерактивные пространства и эксперименты с машинным обучением.',
+  ...RESUME_PROFILE,
   github: 'https://github.com/Ye1nurN',
   handle: 'Ye1nurN',
   email: null,
@@ -75,14 +75,84 @@ const stories = {
 
 export const CASES = ['autofix','pharmacy','argus','office','tynysh'].map(id => {
   const cityProject = PROJECTS.find(p=>p.id===id);
-  return {...cityProject, ...stories[id], id, hasCityDemo:Boolean(cityProject)};
+  return {...cityProject, ...stories[id], ...RESUME_STORIES[id], id, hasCityDemo:Boolean(cityProject)};
 });
 export const SKILLS = [
-  {title:'Интерфейсы', description:'React · Next.js · TypeScript · адаптивные интерфейсы · локализация', projects:['autofix','office','pharmacy','tynysh']},
-  {title:'3D в браузере', description:'Three.js · GLB · навигация и взаимодействия', projects:['office']},
-  {title:'API и данные', description:'NestJS · Fastify · Drizzle ORM · Supabase · PostgreSQL · Python · FastAPI', projects:['autofix','pharmacy','argus','tynysh']},
-  {title:'Бизнес-процессы и аналитика', description:'Бронирование · расписания · задачи · финансовый учёт · Recharts · отчёты', projects:['autofix','pharmacy','tynysh']},
-  {title:'Машинное обучение', description:'CNN–LSTM · анализ сетевых событий', projects:['argus']},
+  {
+    "title": "Frontend",
+    "description": "React · JavaScript · TypeScript · адаптивная вёрстка · локализация · Next.js",
+    "projects": [
+      "pharmacy",
+      "autofix",
+      "tynysh"
+    ]
+  },
+  {
+    "title": "API и backend",
+    "description": "Python · FastAPI · REST API · WebSocket · интеграция с Supabase · NestJS · Fastify · Drizzle ORM",
+    "projects": [
+      "argus",
+      "pharmacy",
+      "autofix",
+      "tynysh"
+    ]
+  },
+  {
+    "title": "Данные",
+    "description": "PostgreSQL · SQLite · проектирование схем · нормализация и импорт данных",
+    "projects": [
+      "pharmacy",
+      "argus",
+      "tynysh"
+    ]
+  },
+  {
+    "title": "Бизнес-логика",
+    "description": "Бронирования · проверка пересечений · временные резервы · жизненный цикл заявок · RBAC · расписания · задачи · финансовый учёт",
+    "projects": [
+      "pharmacy",
+      "tynysh"
+    ]
+  },
+  {
+    "title": "Визуализация",
+    "description": "Recharts · интерактивные карты · аналитические панели · фильтрация и экспорт отчётов",
+    "projects": [
+      "autofix",
+      "pharmacy"
+    ]
+  },
+  {
+    "title": "Машинное обучение",
+    "description": "TensorFlow/Keras · CNN–LSTM · подготовка и масштабирование признаков · обучение и оценка классификаторов",
+    "projects": [
+      "argus"
+    ]
+  },
+  {
+    "title": "Инфраструктура",
+    "description": "Linux/Ubuntu · Docker · Docker Compose · Nginx · reverse proxy",
+    "projects": [
+      "pharmacy",
+      "argus"
+    ]
+  },
+  {
+    "title": "3D в браузере",
+    "description": "Three.js · GLB-модели · управление персонажем и камерой · взаимодействия со сценой",
+    "projects": [
+      "office"
+    ]
+  },
+  {
+    "title": "Безопасность",
+    "description": "Контроль доступа · обнаружение вторжений · CTF: криптография, цифровая криминалистика и веб-безопасность",
+    "projects": [
+      "pharmacy",
+      "argus"
+    ],
+    "achievement": "BRICS 2024"
+  }
 ];
 
 export function readPortfolioRoute(href, compact = false) {
