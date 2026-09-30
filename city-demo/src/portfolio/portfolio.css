@@ -47,3 +47,8 @@
   .pf-document{scroll-padding-top:175px}
 }
 .pf-autofix .pf-project-icon,.pf-case-symbol.pf-autofix{background:#eee8d3;color:#997539}.pf-project-card.pf-autofix{border-color:#cfc8a6!important;background:#fffdf0!important}
+
+/* Author-provided development periods, shared by cards, experience and cases. */
+.pf-project-period{display:flex;flex-wrap:wrap;gap:3px 12px;margin:0 0 12px;font-size:11px;line-height:1.6;font-weight:550;color:var(--pf-accent)}
+.pf-period-note{font-size:10px;font-weight:400;color:var(--pf-muted)}
+.pf-drawer-body>.pf-project-period{margin:0}
