@@ -157,8 +157,9 @@ export function createOffice(container,callbacks={}){
     firstPerson=mode==='first-person';input.clear();stop();lookInput.release();inspectionTarget=null;camera=firstPerson?eyes:overhead;controls.enabled=!firstPerson;canvas.style.cursor='';
     if(player)player.visible=!firstPerson;if(envelope)envelope.root.visible=firstPerson;ring.visible=!firstPerson&&!seated;
     callbacks.onCameraMode?.(firstPerson?'first-person':'overview');resize();invalidate(true);
+    if(firstPerson)lookInput.capture();
   }
-  const lookInput=createLookInput(canvas,{canUse:()=>keyboardEnabled&&!loading&&!document.hidden,isFirstPerson:()=>firstPerson,onToggle:()=>setCameraMode(firstPerson?'overview':'first-person'),onLook:look,onStart:()=>{path=[];pathIndex=0;destination.visible=false;invalidate();}});
+  const lookInput=createLookInput(canvas,{canUse:()=>keyboardEnabled&&!loading&&!document.hidden,isFirstPerson:()=>firstPerson,onToggle:()=>setCameraMode(firstPerson?'overview':'first-person'),onLook:look,onUnlock:()=>{input.clear();stop();},onStart:()=>{path=[];pathIndex=0;destination.visible=false;invalidate();}});
   function actionKey(e){if(e.code!=='KeyE'||e.repeat||e.ctrlKey||e.metaKey||e.altKey||e.isComposing||isTextEntry(e.target)||!keyboardEnabled||loading)return;e.preventDefault();interact();}
   window.addEventListener('keydown',actionKey);
   function pick(e){const r=canvas.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);raycaster.setFromCamera(pointer,camera);}

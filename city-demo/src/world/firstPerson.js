@@ -15,10 +15,13 @@ export function positionEyes(camera,position,pose,height=EYE_HEIGHT){
   camera.rotation.order='YXZ';camera.rotation.set(pose.pitch,pose.yaw,0);camera.updateMatrixWorld(true);
 }
 
-// Drag-to-look keeps the cursor available for the CRM. No pointer lock or global
-// mouse capture: releases, dialogs and tab changes always stop the gesture.
-export function createLookInput(canvas,{eventTarget=window,canUse,isFirstPerson,onToggle,onLook,onStart}){
-  let drag=null;
+// Desktop mouse look is persistent; touch and browsers denying pointer lock
+// retain drag-to-look. Only a user gesture requests a lock, never an unlock event.
+export function createLookInput(canvas,{eventTarget=window,documentTarget=canvas.ownerDocument,canUse,isFirstPerson,onToggle,onLook,onStart,onUnlock}){
+  let drag=null,pending=false,wanted=false,locked=false,disposed=false;
+  const ownsLock=()=>documentTarget?.pointerLockElement===canvas;
+  function report(state,error=''){if(canvas.dataset){canvas.dataset.mouseLook=state;canvas.dataset.mouseLockError=error;}}
+  report('free');
   const key=e=>e.code==='KeyV'||['v','м'].includes(e.key?.toLowerCase());
   function downKey(e){
     if(e.key==='Escape'){release();return;}
@@ -28,25 +31,60 @@ export function createLookInput(canvas,{eventTarget=window,canUse,isFirstPerson,
     const direction={KeyJ:[-20,0],KeyL:[20,0],KeyI:[0,-15],KeyK:[0,15]}[e.code];
     if(direction){e.preventDefault();onLook(...direction);}
   }
-  function release(){
+  function releaseDrag(){
     const previous=drag;drag=null;
     if(previous&&canvas.hasPointerCapture?.(previous.id))canvas.releasePointerCapture(previous.id);
+  }
+  function release(){
+    wanted=false;releaseDrag();
+    if(ownsLock())documentTarget.exitPointerLock();
+    report('free');
+  }
+  function lockChange(){
+    pending=false;
+    if(ownsLock()){
+      if(disposed||!wanted||!canUse()||!isFirstPerson()){release();return;}
+      locked=true;releaseDrag();canvas.focus({preventScroll:true});report('locked');onStart?.();
+    }else{
+      wanted=false;releaseDrag();if(locked)onUnlock?.();locked=false;report('free');
+    }
+  }
+  function lockError(error){pending=false;wanted=false;report('drag',error?.name||'PointerLockError');}
+  function capture(){
+    if(disposed||pending||ownsLock()||!canUse()||!isFirstPerson()||!canvas.requestPointerLock)return;
+    if(documentTarget?.defaultView?.matchMedia?.('(pointer: fine)').matches===false)return;
+    wanted=true;pending=true;canvas.focus({preventScroll:true});report('requesting');
+    try{
+      // Older browsers return void; modern browsers reject a Promise on denial.
+      const request=canvas.requestPointerLock();
+      request?.then(()=>{if(disposed||!wanted||!canUse()||!isFirstPerson())release();},lockError);
+    }catch{lockError();}
   }
   function down(e){
     if(e.button!==0||!canUse()||!isFirstPerson())return;
     e.preventDefault();canvas.focus({preventScroll:true});onStart?.();
+    if(ownsLock())return;
     drag={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture?.(e.pointerId);
+    if(!e.pointerType||e.pointerType==='mouse')capture();
   }
   function move(e){
+    if(ownsLock())return;
     if(!drag||e.pointerId!==drag.id)return;
     if(!canUse()||!isFirstPerson()){release();return;}
     onLook(e.clientX-drag.x,e.clientY-drag.y);drag.x=e.clientX;drag.y=e.clientY;
   }
+  function mouseMove(e){
+    if(!ownsLock())return;
+    if(disposed||!wanted||!canUse()||!isFirstPerson()){release();return;}
+    onLook(e.movementX||0,e.movementY||0);
+  }
   function focus(e){if(isTextEntry(e.target))release();}
+  function visibility(){if(documentTarget.hidden)release();}
   canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);
-  canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
+  canvas.addEventListener('pointerup',releaseDrag);canvas.addEventListener('pointercancel',releaseDrag);canvas.addEventListener('lostpointercapture',releaseDrag);
+  documentTarget?.addEventListener('mousemove',mouseMove);documentTarget?.addEventListener('pointerlockchange',lockChange);documentTarget?.addEventListener('pointerlockerror',lockError);documentTarget?.addEventListener('visibilitychange',visibility);
   eventTarget.addEventListener('keydown',downKey);eventTarget.addEventListener('blur',release);eventTarget.addEventListener('focusin',focus);
-  return {release,dispose(){release();canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',release);canvas.removeEventListener('pointercancel',release);canvas.removeEventListener('lostpointercapture',release);eventTarget.removeEventListener('keydown',downKey);eventTarget.removeEventListener('blur',release);eventTarget.removeEventListener('focusin',focus);}};
+  return {capture,release,dispose(){disposed=true;release();canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',releaseDrag);canvas.removeEventListener('pointercancel',releaseDrag);canvas.removeEventListener('lostpointercapture',releaseDrag);documentTarget?.removeEventListener('mousemove',mouseMove);documentTarget?.removeEventListener('pointerlockchange',lockChange);documentTarget?.removeEventListener('pointerlockerror',lockError);documentTarget?.removeEventListener('visibilitychange',visibility);eventTarget.removeEventListener('keydown',downKey);eventTarget.removeEventListener('blur',release);eventTarget.removeEventListener('focusin',focus);}};
 }
 
 // The overview is a cutaway. These real interior surfaces are visible only at

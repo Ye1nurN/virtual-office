@@ -105,8 +105,9 @@ export function createCityWorld(container,{location='city',spawn=CITY_SPAWN,over
     if(player)player.visible=!firstPerson;ring.visible=contact.visible=!firstPerson;world?.setFirstPerson?.(firstPerson);
     scene.background.set(firstPerson?'#c9e2ec':isTynysh?'#ded8c6':isPharmacy?'#cbd4ca':isArgus?'#b8cbd1':'#c8d4b6');scene.fog=firstPerson&&location==='city'?new T.Fog('#c9e2ec',65,180):null;
     callbacks.onCameraMode?.(firstPerson?'first-person':'overview');projection();invalidate(true);
+    if(firstPerson)lookInput.capture();
   }
-  const lookInput=createLookInput(canvas,{canUse:()=>enabled&&ready&&!document.hidden,isFirstPerson:()=>firstPerson,onToggle:()=>setCameraMode(firstPerson?'overview':'first-person'),onLook:look,onStart:()=>{path=[];destination.visible=false;invalidate();}});
+  const lookInput=createLookInput(canvas,{canUse:()=>enabled&&ready&&!document.hidden,isFirstPerson:()=>firstPerson,onToggle:()=>setCameraMode(firstPerson?'overview':'first-person'),onLook:look,onUnlock:()=>{input.clear();stop();},onStart:()=>{path=[];destination.visible=false;invalidate();}});
   function project(x,y,z){const p=projected.set(x,y,z).project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2,visible:p.z>-1&&p.z<1&&Math.abs(p.x)<.95&&Math.abs(p.y)<.9};}
   function getGuidePosition(){
     if(!ready||!guideWalker)return null;
