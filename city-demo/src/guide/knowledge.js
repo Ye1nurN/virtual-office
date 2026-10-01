@@ -1,4 +1,5 @@
 import {PROJECTS} from '../city/catalog.js';
+import {PROFILE} from '../portfolio/content.js';
 
 export const GUIDE_POSITION={x:-4.5,z:4.5};
 export const GUIDE_NAME='Гид';
@@ -10,7 +11,7 @@ const PROJECT_LINES={
   office:{invitation:'Пойдём к офису.',arrival:'Это виртуальный офис: четыре этажа с отделами и рабочими местами. Внутри можно прогуляться, сменить этаж и попробовать взаимодействия.'},
 };
 export const GUIDE_FACTS={
-  author:{name:'Елнур',github:'https://github.com/Ye1nurN',bio:'Автор города проектов. Подтверждённые сведения об образовании, местах работы, стаже и контактах пока не добавлены.'},
+  author:{name:PROFILE.name,github:PROFILE.github,bio:PROFILE.intro,email:PROFILE.email,telegram:PROFILE.telegram,phone:PROFILE.phone},
   projects:PROJECTS.map(({id,name,description,stack,github,website,privateRepository})=>({id,name,description,stack,github:privateRepository?null:github||null,website:website||null,
     ...PROJECT_LINES[id],
     scope:id==='tynysh'?'Бронирование залов, рассадка гостей, задачи команды, меню и финансы мероприятия.':id==='autofix'?'Командный проект YX-1, опубликованный как Uniqs Detailing. Елнур участвовал в полном цикле разработки: интерфейсы, бизнес-логика, Supabase, аналитика, адаптивность и локализация. Городской сценарий работает на учебных данных и не создаёт настоящих записей.':id==='pharmacy'?'В городе работает локальная демонстрация рекламного размещения. Реальные бронирования, платежи и сервер исходной CRM не подключены.':id==='argus'?'Учебный проект. Город показывает синтетические события; реальная сеть и inference модели не подключены.':'В браузере доступен четырёхэтажный 3D-офис. Реальные сотрудники, голосовая связь и многопользовательский сервер не подключены.',
@@ -35,7 +36,8 @@ export function localReply(message,{location='city',project=null}={},history=[])
   const mentioned=/tynysh|тыныш|банкет/.test(q)?'tynysh':/autofix|auto fix|uniq|yx-1|детейлинг|автосервис|автофикс/.test(q)?'autofix':q.includes('аптек')||q.includes('crm')?'pharmacy':q.includes('argus')||q.includes('аргус')||q.includes('безопас')?'argus':q.includes('офис')?'office':null;
   const previous=[...history].reverse().find(m=>m.sources?.some(id=>projectFacts(id)))?.sources.find(id=>projectFacts(id));
   const id=mentioned||project||(location!=='city'?location:null)||previous;
-  if(/автор|елнур|ельнур|резюме|опыт|стаж|образован|контакт/.test(q))return {text:`Автор города — ${GUIDE_FACTS.author.name}. Здесь собраны его проекты: AutoFix Hub, виртуальный офис, аптечная CRM, Tynysh и учебный ARGUS. Биография, места работы и подтверждённый стаж ещё не добавлены — я не буду их придумывать. Исходные проекты можно изучить в GitHub.`,actions:[{type:'tour',project:null}],sources:['author']};
+  if(/контакт|связаться|написать|телег|telegram|почт|email|e-mail|телефон|позвон/.test(q))return {text:`Связаться с Елнуром:\nTelegram: ${PROFILE.telegramHandle} (${PROFILE.telegram})\nПочта: ${PROFILE.email}\nТелефон: ${PROFILE.phoneLabel}\n\nКликабельные контакты доступны по кнопке «Связаться» вверху страницы.`,actions:[],sources:['author']};
+  if(/автор|елнур|ельнур|резюме|опыт|стаж|образован/.test(q))return {text:`Автор города — ${PROFILE.name}, ${PROFILE.title.toLocaleLowerCase('ru')}. ${PROFILE.about}\n\nОбразование и достижения доступны в разделе «Обо мне», контакты — по кнопке «Связаться». Места работы и подтверждённый стаж ещё не добавлены.`,actions:[{type:'about',project:null}],sources:['author']};
   if(/экскурс|самое интересное|покажи город|с чего начать/.test(q))return {text:'Предлагаю короткий маршрут: аптека → ARGUS → AutoFix Hub → Tynysh → офис. Попробуем бизнес-сценарии и запись на детейлинг, учебный мониторинг сети и четырёхэтажное пространство. Каждый этап можно пропустить или остановить.',actions:[{type:'tour',project:null}],sources:['pharmacy','argus','autofix','tynysh','office']};
   if(/backend|бэкенд|бэкен|баз[аыуе] дан|postgres|sql/.test(q))return {text:'Начать можно с аптечной CRM: её исходный проект использует Python и PostgreSQL. База данных хранит структурированные данные; сервер проверяет правила и обрабатывает запросы. В городе показан локальный сценарий размещения, поэтому реальных записей в PostgreSQL эта демонстрация не создаёт.',actions:[{type:'project',project:'pharmacy'},{type:'walk',project:'pharmacy'}],sources:['pharmacy']};
   if(/frontend|фронтен|three|3d|тр[её]хмер|устроен.*город/.test(q))return {text:'Здесь настоящий 3D-мир: Three.js рисует здания, персонажей и освещение, а React отвечает за интерфейс. Путь ко входу рассчитывается с учётом препятствий. Модели GLB можно менять отдельно от логики взаимодействий.',actions:[{type:'project',project:'office'}],sources:['office']};

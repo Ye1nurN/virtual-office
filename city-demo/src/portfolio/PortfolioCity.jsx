@@ -1,6 +1,6 @@
 import {PortfolioHeader} from './PortfolioHeader.jsx';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {CalendarBlank, Car, ArrowRight, ArrowUpRight, ArrowLeft, Buildings, FirstAid, ShieldCheck, GithubLogo, MapTrifold, FileText, X, Plus, Minus, Crosshair, Keyboard, Footprints, LinkSimple, Check, EnvelopeSimple, PaperPlaneTilt, Cube, MagnifyingGlass, Eye} from '@phosphor-icons/react';
+import {CalendarBlank, Car, ArrowRight, ArrowUpRight, ArrowLeft, Buildings, FirstAid, ShieldCheck, GithubLogo, MapTrifold, FileText, X, Plus, Minus, Crosshair, Keyboard, Footprints, LinkSimple, Check, EnvelopeSimple, PaperPlaneTilt, Phone, Cube, MagnifyingGlass, Eye} from '@phosphor-icons/react';
 import {CASES, PROFILE, SKILLS, portfolioUrl, readPortfolioRoute} from './content.js';
 import './portfolio.css';
 import {ProfileHeading, ProjectResults, ResumeBackground} from './ResumeSections.jsx';
@@ -34,7 +34,14 @@ function Experience({onOpen}) {
 }
 
 function Contact() {
-  return <div className="pf-contact"><span className="pf-kicker">ДАВАЙТЕ ЗНАКОМИТЬСЯ</span><h2>Продолжим общение</h2><p>Мои проекты и профиль доступны на GitHub.</p><External className="pf-contact-link" href={PROFILE.github}><GithubLogo size={25}/><span><strong>GitHub</strong><small>{PROFILE.handle}</small></span></External>{PROFILE.email&&<a className="pf-contact-link" href={'mailto:'+PROFILE.email}><EnvelopeSimple size={23}/>{PROFILE.email}<ArrowUpRight size={17}/></a>}{PROFILE.telegram&&<External className="pf-contact-link" href={PROFILE.telegram}><PaperPlaneTilt size={23}/>Telegram</External>}{!PROFILE.email&&!PROFILE.telegram&&<p className="pf-fine">Прямой контакт пока не указан.</p>}</div>;
+  return <div className="pf-contact">
+    <span className="pf-kicker">ДАВАЙТЕ ЗНАКОМИТЬСЯ</span><h2>Продолжим общение</h2>
+    <p>Обсудим проект или работу вместе. Выберите удобный способ связи.</p>
+    {PROFILE.telegram&&<External className="pf-contact-link" href={PROFILE.telegram}><PaperPlaneTilt size={23}/><span><strong>Telegram</strong><small>{PROFILE.telegramHandle}</small></span></External>}
+    {PROFILE.email&&<a className="pf-contact-link" href={'mailto:'+PROFILE.email}><EnvelopeSimple size={23}/><span><strong>Почта</strong><small>{PROFILE.email}</small></span><ArrowUpRight size={17}/></a>}
+    {PROFILE.phone&&<a className="pf-contact-link" href={'tel:'+PROFILE.phone}><Phone size={23}/><span><strong>Телефон</strong><small>{PROFILE.phoneLabel}</small></span><ArrowUpRight size={17}/></a>}
+    <External className="pf-contact-link" href={PROFILE.github}><GithubLogo size={25}/><span><strong>GitHub</strong><small>{PROFILE.handle}</small></span></External>
+  </div>;
 }
 
 function Drawer({panel, onClose, toast, children}) {

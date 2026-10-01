@@ -20,11 +20,13 @@ view, screens up to 720px start with the document view. No 3D scene, model loadi
 or WebGL context is created while that view is open. JavaScript dependencies
 are still shared with the main application bundle.
 
-The public identity deliberately has no invented job title, employment dates,
-skill percentages or business metrics. `PROFILE.email`, `PROFILE.telegram` and
-`PROFILE.resume` stay null until the author provides them. A configured resume
-must point to a real downloadable file. The contact panel currently links to
-the confirmed GitHub profile and explains that no direct contact is supplied.
+The public identity uses only author-provided facts, without invented employment
+dates, skill percentages or business metrics. The author supplied Telegram,
+email and phone contacts on 2026-10-01; `PROFILE` provides the shared values for
+the resume, contact drawer and guide. Email uses `mailto:` and phone uses `tel:`.
+`PROFILE.resume` stays null until a real downloadable CV is supplied.
+Uniqs Detailing is a team project (autumn 2025–spring 2026), not a diploma project;
+the diploma designation applies to ARGUS-AMI.
 
 The thumbnail in `public/portfolio` is a screenshot of the real city.
 
