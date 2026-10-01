@@ -83,20 +83,25 @@ function buildFloor(id){
     line(side*11.88,-5.8,side*10.1,-5.8);line(side*8.35,-5.8,side*8.8,-5.8);
     interactions.push({id:'stairs-'+side,type:'stairs',title:'Выбрать этаж',x:side*9.45,z:-5.1,radius:1.8});
   }
-  line(-8.35,-5.8,-6.842,-5.8);line(-5.358,-5.8,-3.3,-5.8);line(-3.3,-9.88,-3.3,-5.8);
+  line(-8.35,-5.8,-6.842,-5.8);line(-5.358,-5.8,-3.3,-5.8);line(-3.3,-9.88,-3.3,-5.8,true);
   door(-6.1,-5.8,Math.PI,'Санузлы');
   for(const x of [-7.4,-4.4]){solid('toilet',x,-9.25,0);solid('washbasin',x,-6.22,Math.PI);add('bathroom_mirror',x,-5.95,1.2,Math.PI);}
   glass(-5.9,-8.9,2,Math.PI/2);
-  solid('elevator_cabin',-1.35,-7.6,0,{collider:[1.65,1.8]});
-  add('elevator_portal',-1.35,-6.7,0,0,{dynamic:true});
-  interactions.push({id:'lift',type:'lift',title:'Выбрать этаж',x:-1.35,z:-5.55,radius:1.7});
-  room('lift-label','Лифт',-1.35,-6.55,'lift');
+  // Recess the lift in the service core, with its portal on the corridor wall.
+  // The cabin's open +Z edge meets the portal; no walkable gap behind the shaft.
+  solid('elevator_cabin',-1.35,-6.55,0,{collider:[1.5,1.5]});
+  add('elevator_portal',-1.35,-5.8,0,0,{dynamic:true,solid:true,collider:[1.68,.46]});
+  line(-3.3,-5.8,-2.19,-5.8,true);line(-.51,-5.8,1,-5.8,true);
+  line(-3.3,-9.73,1,-9.73,true);
+  add('floor_light_tile',-1.15,-7.84,2.65,0,{scale:[4.3,1,4.08],roomId:'lift-shaft'});
+  interactions.push({id:'lift',type:'lift',title:'Выбрать этаж',x:-1.35,z:-5.05,radius:1.7});
+  room('lift-label','Лифт',-1.35,-5.6,'lift');
   solid('coffee_counter',3.6,-8.9);solid('fridge_small',5.1,-8.9);add('coffee_machine',3.1,-8.85,.92);add('kettle',4,-8.85,.92);
   solid('table_cafe',4.2,-7.05);for(const x of [3,5.4])seat('stool_cafe',x,-7.05,x<4.2?Math.PI/2:-Math.PI/2);
   plant(7.45,-8.85);plant(6.9,-6.3);
   room('kitchen-'+id,id===1?'Кофе-зона':'Кухня',4,-8.35,'kitchen-'+id);
   rooms.at(-1).bounds={minX:1,maxX:8.35,minZ:-10,maxZ:-5.8};
-  glass(1,-7.84,4.08,Math.PI/2);glass(1.7,-5.8,1.4);glass(6.225,-5.8,4.25);
+  line(1,-9.88,1,-5.8,true);glass(1.7,-5.8,1.4);glass(6.225,-5.8,4.25);
   // All major branches share an open horizontal hallway at z=-4.9.
   if(id===1){
     splitRoom(-1,-4,2.2,'guest-meeting','Переговорная',-.2,'guest-meeting');meeting(-8.6,-1);

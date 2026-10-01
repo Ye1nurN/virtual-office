@@ -45,6 +45,8 @@ test('Ground furniture does not intersect other furniture, partitions or open do
     const items=f.objects.filter(o=>o.solid);
     for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
       const a=items[i],b=items[j];if(structure(a)&&structure(b))continue; // Intentional wall junctions.
+      // The portal threshold joins the cabin floor; its alignment is checked below.
+      if([a.assetId,b.assetId].sort().join('/')==='elevator_cabin/elevator_portal')continue;
       if(overlap(f.boxes.get(a.id),f.boxes.get(b.id)))failures.push([a.id,b.id]);
     }
     for(const door of f.doors){const group=placed(f.objects.find(o=>o.id===door.id));let leaf;
@@ -59,6 +61,36 @@ test('Both sides of every room door and all lift/stair approaches have executabl
   for(const f of floors){
     for(const d of f.doors)for(const side of [-1,1])assertWalk(f,{x:d.x+Math.sin(d.yaw)*.5*side,z:d.z+Math.cos(d.yaw)*.5*side});
     for(const point of f.interactions.filter(i=>i.type!=='seat'))assertWalk(f,point);
+  }
+});
+test('Lift portals face the corridor and join a covered, enclosed service shaft on every floor',()=>{
+  for(const f of floors){
+    const cabin=f.objects.find(o=>o.assetId==='elevator_cabin'),portal=f.objects.find(o=>o.assetId==='elevator_portal');
+    const cb=f.boxes.get(cabin.id),pb=f.boxes.get(portal.id),call=f.interactions.find(i=>i.type==='lift');
+    assert.equal(portal.yaw,0,'Lift doors must face the +Z corridor');
+    assert.equal(cabin.yaw,portal.yaw,'Cabin opening must face the portal');
+    assert.equal(cabin.position[0],portal.position[0]);
+    assert.ok(Math.abs(cb.max.z-portal.position[2])<.01,'Cabin front must meet the portal');
+    assert.ok(pb.min.x<cb.min.x&&pb.max.x>cb.max.x,'Portal must cover the cabin opening');
+    assert.ok(call.z>pb.max.z+NAV_BOUNDS.radius,'Call point must be in front of the closed doors');
+    assert.ok(f.nav.blocked(portal.position[0],portal.position[2]),'Closed lift must block walking through its doors');
+    const roof=f.objects.find(o=>o.roomId==='lift-shaft'),rb=roof&&f.boxes.get(roof.id);
+    assert.ok(rb&&rb.min.y>=cb.max.y&&rb.min.x<=cb.min.x&&rb.max.x>=cb.max.x&&rb.min.z<=cb.min.z&&rb.max.z>=cb.max.z,'Cabin must sit entirely under the shaft roof');
+    // A detached cabin would allow the avatar to circle around its rear.
+    for(const x of [cb.min.x-.6,cabin.position[0],cb.max.x+.6]){
+      assert.equal(f.nav.findPath(f.liftSpawn,{x,z:cb.min.z-.55}).length,0,'Space inside/behind the shaft must not be accessible');
+    }
+  }
+});
+test('Lift call points and both adjoining service approaches remain walkable',()=>{
+  for(const f of floors){
+    const call=f.interactions.find(i=>i.type==='lift');
+    assertWalk(f,call);
+    assert.ok(f.nav.clearSegment(f.liftSpawn,call),'Lift selection requires an unobstructed approach');
+    for(const x of [-3.9,1.6]){
+      const side={x,z:call.z};assertWalk(f,side);
+      assert.ok(f.nav.clearSegment(side,call),'Lift frontage must not narrow the cross corridor');
+    }
   }
 });
 test('Every chair, occupied workstation and sofa has one continuously reachable seating approach',()=>{
