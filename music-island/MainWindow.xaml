@@ -100,7 +100,6 @@
     <Slider x:Name="PositionSlider" Margin="0,8,0,0" Minimum="0" Maximum="1" SmallChange="5" LargeChange="10" ValueChanged="Position_Changed" PreviewMouseLeftButtonDown="Seek_Begin" PreviewMouseLeftButtonUp="Seek_End" LostMouseCapture="Seek_End" AutomationProperties.Name="Позиция трека" />
     <DockPanel Margin="2,-2,2,0"><TextBlock x:Name="DurationText" DockPanel.Dock="Right" Text="0:00" Foreground="#CCCCD3" FontSize="11" /><TextBlock x:Name="ElapsedText" Text="0:00" Foreground="#CCCCD3" FontSize="11" /></DockPanel>
     </StackPanel>
-    <TextBlock x:Name="TimelineUnavailable" Visibility="Collapsed" TextWrapping="Wrap" Foreground="#A3A3AD" FontSize="11" Margin="0,12,0,0" />
     <Grid Margin="0,10,0,14">
      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="124" /></Grid.ColumnDefinitions>
      <UniformGrid Columns="3" Margin="0,0,14,0">

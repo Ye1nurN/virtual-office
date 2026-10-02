@@ -137,8 +137,6 @@ namespace Ostrov
         {
             bool available = !External || media.HasTimeline;
             ProgressPanel.Visibility = available ? Visibility.Visible : Visibility.Collapsed;
-            TimelineUnavailable.Visibility = available ? Visibility.Collapsed : Visibility.Visible;
-            TimelineUnavailable.Text = External ? media.ApplicationName + " не передаёт время трека" : "";
             if (seeking) return;
             updating = true;
             double duration = External ? media.Duration : engine.Duration, position = External ? media.Position : engine.Position;
