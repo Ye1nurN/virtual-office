@@ -1,0 +1,49 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Ostrov</RootNamespace>
+    <AssemblyName>Ostrov</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>7.3</LangVersion>
+    <StartupObject>Ostrov.Program</StartupObject>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <WindowsSdkVersion Condition="'$(WindowsSdkVersion)' == ''">10.0.22621.0</WindowsSdkVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" /><Reference Include="System.Core" /><Reference Include="System.Xml" />
+    <Reference Include="System.Xaml" /><Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" /><Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.CSharp" /><Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" /><Reference Include="PresentationFramework" />
+    <Reference Include="Windows">
+      <HintPath>$(MSBuildProgramFiles32)\Windows Kits\10\UnionMetadata\$(WindowsSdkVersion)\Windows.winmd</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Runtime.WindowsRuntime">
+      <HintPath>$(MSBuildFrameworkToolsPath)System.Runtime.WindowsRuntime.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.InteropServices.WindowsRuntime" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" /><Compile Include="Models.cs" />
+    <Compile Include="AudioEngine.cs" /><Compile Include="Native.cs" />
+    <Compile Include="MainWindow.xaml.cs"><DependentUpon>MainWindow.xaml</DependentUpon></Compile>
+    <Compile Include="SelfTest.cs" />
+    <Compile Include="NowPlaying.cs" />
+    <Compile Include="DarkTrayRenderer.cs" />
+    <Page Include="MainWindow.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
+    <Resource Include="Icons.xaml" />
+    <Resource Include="DarkTheme.xaml" />
+    <None Include="app.manifest" /><None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
