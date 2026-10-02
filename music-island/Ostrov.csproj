@@ -9,6 +9,7 @@
     <LangVersion>7.3</LangVersion>
     <StartupObject>Ostrov.Program</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Ostrov.ico</ApplicationIcon>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
@@ -43,6 +44,7 @@
     <Page Include="MainWindow.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
     <Resource Include="Icons.xaml" />
     <Resource Include="DarkTheme.xaml" />
+    <Resource Include="Assets\Ostrov.ico" />
     <None Include="app.manifest" /><None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,5 @@
 <Window x:Class="Ostrov.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Остров" Width="440" SizeToContent="Height"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Остров" Icon="Assets/Ostrov.ico" Width="440" SizeToContent="Height"
  WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True" Background="Transparent"
  ShowInTaskbar="False" Topmost="True" FontFamily="Segoe UI" Foreground="#F0F0F2"
  UseLayoutRounding="True" SnapsToDevicePixels="True" PreviewKeyDown="Window_KeyDown"

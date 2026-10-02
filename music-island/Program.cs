@@ -42,6 +42,7 @@ namespace Ostrov
                 var media = new NowPlaying(app.Dispatcher);
                 var window = new MainWindow(store, engine, media); app.MainWindow = window;
                 NativeHost host = null; Forms.NotifyIcon tray = null; RegisteredWaitHandle wait = null;
+                System.Drawing.Icon trayIcon = null;
                 app.Startup += async (s, e) =>
                 {
                     host = new NativeHost(() => { if (window.IsVisible) window.Dismiss(); else window.Reveal(); }, window.Reveal, store.State.EdgeEnabled);
@@ -54,7 +55,10 @@ namespace Ostrov
                     edgeItem.CheckedChanged += (x, y) => { store.State.EdgeEnabled = edgeItem.Checked; host.SetEdge(edgeItem.Checked); store.Save(); }; menu.Items.Add(edgeItem);
                     menu.Items.Add(new Forms.ToolStripSeparator());
                     menu.Items.Add("Выход", null, (x, y) => app.Shutdown());
-                    tray = new Forms.NotifyIcon { Text = "Остров · " + host.Shortcut, Icon = System.Drawing.SystemIcons.Application, ContextMenuStrip = menu, Visible = true };
+                    using (var iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Ostrov.ico")).Stream)
+                    using (var icon = new System.Drawing.Icon(iconStream, Forms.SystemInformation.SmallIconSize))
+                        trayIcon = (System.Drawing.Icon)icon.Clone();
+                    tray = new Forms.NotifyIcon { Text = "Остров · " + host.Shortcut, Icon = trayIcon, ContextMenuStrip = menu, Visible = true };
                     tray.DoubleClick += (x, y) => window.Reveal();
                     wait = ThreadPool.RegisterWaitForSingleObject(wake, (x, timeout) => app.Dispatcher.BeginInvoke(new Action(window.Reveal)), null, Timeout.Infinite, false);
                     window.Restore();
@@ -66,7 +70,7 @@ namespace Ostrov
                 app.Exit += (s, e) =>
                 {
                     window.SavePosition(); wait?.Unregister(null); host?.Dispose();
-                    if (tray != null) { tray.Visible = false; tray.Dispose(); } media.Dispose(); engine.Dispose(); mutex.ReleaseMutex();
+                    if (tray != null) { tray.Visible = false; tray.Dispose(); } trayIcon?.Dispose(); media.Dispose(); engine.Dispose(); mutex.ReleaseMutex();
                 };
                 app.DispatcherUnhandledException += (s, e) =>
                 {
