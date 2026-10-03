@@ -10,14 +10,20 @@ the entrance spawn back into the portfolio city.
   education and BRICS achievement. Existing development periods stay in `content.js`.
 - `ResumeSections.jsx` / `resume.css`: shared profile, project results and
   education/achievement sections for the document and city panels.
-- `PortfolioCity.jsx`: city/resume switch, first screen, navigation, accessible
+- `PortfolioHome.jsx` / `home.css`: the approved six-section homepage, with a
+  separate projects entrance instead of embedded project cards.
+- `GalleryHeader.jsx` / `gallery-theme.css`: shared home/projects navigation,
+  warm charcoal/white theme, drawer colours and reduced-motion support.
+- `PortfolioCity.jsx`: home/city/resume/collection switch, navigation, accessible
   modal project details, search, contact panel and city controls.
 - `portfolio.css`: styles scoped to `.pf-*`; no redesign of interior demo UIs.
 
-Routes: `?view=city`, `?view=resume`, and
-`?view=resume&project=pharmacy` (also `office`, `argus`, `autofix` and `tynysh`). Without an explicit
-view, screens up to 720px start with the document view. No 3D scene, model loading
-or WebGL context is created while that view is open. JavaScript dependencies
+Routes: `/` and `?view=home` open the homepage on all screen sizes.
+`?view=collection` opens the projects shelf; `?view=collection&item=all` shows all
+five buildings. `?view=city` retains the walkable city and `?view=resume` retains
+the full document. Project links such as `?view=resume&project=pharmacy` still
+work (also `office`, `argus`, `autofix` and `tynysh`). No 3D scene, model loading
+or WebGL context is created while the homepage or document is open. JavaScript dependencies
 are still shared with the main application bundle.
 
 The public identity uses only author-provided facts, without invented employment

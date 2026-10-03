@@ -1,11 +1,11 @@
 import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
 import '@fontsource-variable/lora/wght.css';
-import {ArrowRight,ArrowUpRight,PaperPlaneTilt,X} from '@phosphor-icons/react';
-import {PROFILE} from '../portfolio/content.js';
+import {ArrowRight,ArrowUpRight} from '@phosphor-icons/react';
+import {GalleryHeader} from '../portfolio/GalleryHeader.jsx';
 import {COLLECTION,readCollectionItem,collectionItemUrl} from './collectionData.js';
 import './collection.css';
 
-export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
+export default function CollectionView({onMode,onOpenCase,onVisit}) {
   const [selected,setSelected]=useState(()=>readCollectionItem(location.href));
   const [status,setStatus]=useState('loading');
   const host=useRef(null),scroller=useRef(null),api=useRef(null),views=useRef(new Map()),drag=useRef(null),heading=useRef(null);
@@ -33,13 +33,9 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
   return <div className={'collection-shell '+(status==='error'?'collection-unavailable':'')}>
     <div className="collection-canvas" ref={host}/>
     <div className="collection-scroll" ref={scroller}>
-      <header className="collection-header">
-        <button className="collection-brand" onClick={()=>select(null)} aria-label="Елнур — вся коллекция"><span className="collection-monogram">Е.</span><strong>{PROFILE.name}</strong><span>{PROFILE.title}</span></button>
-        <nav aria-label="Навигация коллекции"><button aria-current="page" onClick={()=>select(null)}>Коллекция</button><button onClick={onAbout}>Обо мне</button><button onClick={()=>onMode('city')}>Город</button></nav>
-        <a className="collection-contact" href={PROFILE.telegram} target="_blank" rel="noreferrer"><PaperPlaneTilt weight="fill" size={24}/><span>{PROFILE.telegramHandle}</span></a>
-      </header>
+      <GalleryHeader mode="collection" onMode={onMode} onProjects={()=>select(null)}/>
       <main id="pf-main" className={'collection-main '+(!active?'collection-overview':'')} tabIndex={-1}>
-        <div className="collection-breadcrumb"><div><button onClick={()=>select(null)}>Коллекция</button>{active&&<><span>/</span><span>{active.label}</span></>}</div>{active&&<button onClick={()=>select(null)}>Закрыть<X size={19}/></button>}</div>
+        <div className="collection-breadcrumb"><div><button onClick={()=>select(null)}>Проекты</button>{active&&<><span>/</span><span>{active.label}</span></>}</div>{active&&<button onClick={()=>select(null)}>Все проекты<ArrowUpRight size={19}/></button>}</div>
         {active?<section className="collection-feature" aria-label="Выбранный проект">
           <div className="collection-display">
             <div className="collection-hero-model" ref={slot(active.id)} data-hero="true" role="group" aria-label={'3D-модель: '+active.title} tabIndex={0} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={()=>drag.current=null} onPointerCancel={()=>drag.current=null} onLostPointerCapture={()=>drag.current=null} onKeyDown={e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();api.current?.rotate(selected,e.key==='ArrowLeft'?-.3:.3);}}}>
@@ -57,12 +53,11 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
             <div className="collection-actions"><button className="collection-primary" onClick={()=>onOpenCase(active.id)}>Открыть кейс<ArrowUpRight size={22}/></button><button onClick={()=>onVisit(active.id)}>Попробовать демо<ArrowRight size={21}/></button></div>
             <div className="collection-secondary"><button onClick={()=>select(null)}>Все проекты</button><button onClick={()=>onMode('resume')}>Резюме<ArrowUpRight size={18}/></button></div>
           </article>
-        </section>:<section className="collection-intro" key="overview"><span className="collection-eyebrow">Личная коллекция · 05 проектов</span><h1 ref={heading} tabIndex={-1}>Идеи, которым<br/>нашлось место.</h1><p>За каждым зданием — проект.<br/>Возьмите с полки тот, который хочется изучить.</p>{status==='error'&&<p role="status">3D-витрина недоступна. Выберите проект по названию.</p>}</section>}
+        </section>:<section className="collection-intro" key="overview"><span className="collection-eyebrow">{String(COLLECTION.length).padStart(2,'0')} проектов</span><h1 ref={heading} tabIndex={-1}>Проекты</h1><p>Кейсы, мой вклад и интерактивные демонстрации.<br/>Выберите здание, чтобы изучить проект.</p>{status==='error'&&<p role="status">3D-витрина недоступна. Выберите проект по названию.</p>}</section>}
         <section className="collection-bottom" aria-label="Проекты на полке">
           <div className="collection-miniatures">{others.map(p=><button key={p.id} className="collection-miniature" aria-label={'Рассмотреть '+p.label} onClick={()=>select(p.id)} onPointerEnter={()=>api.current?.rotate(p.id,.055)} onPointerLeave={()=>api.current?.rotate(p.id,-.055)}><span className="collection-mini-model" ref={slot(p.id)} data-hero="false"/><span className="collection-plaque">{p.plaque}</span></button>)}</div>
-          <aside className="collection-quote">Большие проекты начинаются с идей, которым есть место.<span/></aside>
         </section>
-        <footer className="collection-footer"><span>Коллекция продолжает расти</span><button onClick={()=>onMode('city')}>Исследовать город<ArrowUpRight size={16}/></button></footer>
+        <footer className="collection-footer"><span>Елнур · Портфолио проектов</span><button onClick={()=>onMode('city')}>Исследовать город<ArrowUpRight size={16}/></button></footer>
       </main>
     </div>
   </div>;

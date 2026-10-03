@@ -119,3 +119,20 @@
 .collection-intro{animation:collection-copy-enter 400ms cubic-bezier(.22,1,.36,1) both}
 @keyframes collection-copy-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.collection-story>*,.collection-intro{animation:none}}
+
+/* The projects gallery shares the homepage's matte-white identity. */
+.pf-gallery.pf-mode-collection{--pf-ink:#f5f1e9;--pf-muted:#bdb4a7;--pf-accent:#f4eee3;--pf-paper:#201d19;--pf-line:#49423a}
+.pf-gallery .collection-shell{background-image:url('/portfolio/gallery/wall.webp');background-color:#878078;background-blend-mode:multiply}
+.pf-gallery .collection-scroll{scrollbar-color:#62584b #151411}
+.pf-gallery .collection-main{min-height:calc(100% - 96px)}
+.pf-gallery .collection-eyebrow{color:#c9c0b4}
+.pf-gallery .collection-breadcrumb{color:#ded7cd}
+.pf-gallery .collection-breadcrumb>div{font-family:inherit;font-size:16px}
+.pf-gallery .collection-actions .collection-primary{background:#f4eee3;color:#201d19}
+.pf-gallery .collection-actions .collection-primary:hover{background:#fff9ed;color:#201d19}
+.pf-gallery .collection-secondary button{text-decoration-color:#b7a992}
+.pf-gallery .collection-miniatures{flex-basis:100%}
+.pf-gallery .collection-plaque{background:#f4eee3;color:#201d19;border-color:#847764}
+.pf-gallery .collection-metrics small,.pf-gallery .collection-footer,.pf-gallery .collection-drag-hint{color:#bdb4a7}
+.pf-gallery .collection-stack{color:#f5f1e9;border-color:#49423a}
+@media(max-width:700px){.pf-gallery .collection-main{min-height:calc(100% - 136px)}}

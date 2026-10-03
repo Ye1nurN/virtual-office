@@ -62,14 +62,15 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   }
   function mesh(geometry,material,x=0,y=0,z=0){const m=new T.Mesh(geometry,material);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;return m;}
   function plaque(text,width,height){
-    const group=new T.Group(),brass=new T.MeshStandardMaterial({color:'#d3af6d',metalness:.5,roughness:.27});
-    group.add(mesh(new RoundedBoxGeometry(width+.12,height+.1,.07,3,.04),new T.MeshStandardMaterial({color:'#4b351e',roughness:.55}),0,0,-.025));
-    group.add(mesh(new RoundedBoxGeometry(width,height,.095,3,.045),brass));
+    const group=new T.Group(),ceramic=new T.MeshStandardMaterial({color:'#f4eee3',metalness:0,roughness:.72});
+    group.add(mesh(new RoundedBoxGeometry(width+.12,height+.1,.07,3,.04),new T.MeshStandardMaterial({color:'#49423a',roughness:.7}),0,0,-.025));
+    group.add(mesh(new RoundedBoxGeometry(width,height,.095,3,.045),ceramic));
     const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=Math.round(1536*height/width);
     const c=canvas.getContext('2d');c.fillStyle='#171710';c.textAlign='center';c.textBaseline='middle';c.font=`600 ${canvas.height*.49}px Arial`;c.fillText(text,768,canvas.height*.52,1370);
     const map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;textures.add(map);
     const face=new T.Mesh(new T.PlaneGeometry(width,height),new T.MeshBasicMaterial({map,transparent:true,toneMapped:false}));face.position.z=.053;group.add(face);
-    for(const x of [-width/2+.16,width/2-.16])group.add(mesh(new T.SphereGeometry(.052,8,6),brass,x,0,.065));
+    const fastener=new T.MeshStandardMaterial({color:'#51473b',metalness:.15,roughness:.6});
+    for(const x of [-width/2+.16,width/2-.16])group.add(mesh(new T.SphereGeometry(.052,8,6),fastener,x,0,.065));
     return group;
   }
   function createStage(){
@@ -91,7 +92,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     if(stage.signature===signature)return;stage.signature=signature;
     stage.furniture.traverse(o=>{const map=o.material?.map;if(map?.isCanvasTexture){map.dispose();textures.delete(map);}});
     disposeScene(stage.furniture);stage.furniture.clear();
-    const woodMat=new T.MeshStandardMaterial({map:wood,color:'#ffffff',roughness:.43,bumpMap:wood,bumpScale:.045});
+    const woodMat=new T.MeshStandardMaterial({map:wood,color:'#756b60',roughness:.65,bumpMap:wood,bumpScale:.045});
     const depth=hero?11:27,front=hero?13:24,thick=hero?1.4:4;
     const slab=new RoundedBoxGeometry(width,thick,depth,3,.09),positions=slab.attributes.position;
     // A gently receding side edge matches the shallow perspective of the shelf.

@@ -5,14 +5,16 @@ import {CASES, PROFILE, SKILLS, portfolioUrl, readPortfolioRoute} from './conten
 import './portfolio.css';
 import {ProfileHeading, ProjectResults, ResumeBackground} from './ResumeSections.jsx';
 import {guide} from '../guide/guideStore.js';
+import PortfolioHome from './PortfolioHome.jsx';
+import './gallery-theme.css';
+import './home.css';
 
 import {CityScene as Scene} from '../city/CityScene.jsx';
 import {FirstPersonGuide} from '../world/CameraControls.jsx';
 const icons = {office:Buildings, pharmacy:FirstAid, argus:ShieldCheck, autofix:Car, tynysh:CalendarBlank};
-const sectionNames = {projects:'Проекты', experience:'Опыт', skills:'Навыки', about:'Обо мне', contact:'Связаться', help:'Управление', plot:'Будущий проект'};
-const compact = () => window.matchMedia('(max-width: 720px)').matches;
+const sectionNames = {projects:'Проекты', experience:'Опыт', skills:'Навыки', about:'Обо мне', education:'Образование и достижения', contact:'Связаться', help:'Управление', plot:'Будущий проект'};
 const CollectionView=lazy(()=>import('../collection/CollectionView.jsx'));
-const initialRoute = () => readPortfolioRoute(window.location.href, compact());
+const initialRoute = () => readPortfolioRoute(window.location.href);
 
 function ProjectIcon({id, size=24}) { const Icon=icons[id]; return <Icon size={size} weight="duotone"/>; }
 function External({href, children, className='', label}) { return <a className={className} aria-label={label} href={href} target="_blank" rel="noreferrer">{children}<ArrowUpRight size={17}/></a>; }
@@ -68,6 +70,8 @@ export function PortfolioCity({onVisit, spawn, overview, cameraMode='overview', 
   function open(type,id) {setQuery('');setPanel({type,id});writeRoute(mode,type==='project'?id:null);}
   function close() {setPanel(null);writeRoute(mode);}
   function selectMode(next) {setPanel(null);setMode(next);setIntro(next==='city');writeRoute(next,null,true);}
+  useEffect(()=>{if(mode==='home'||mode==='collection'){guide.close();guide.stopTour();}},[mode]);
+  useEffect(()=>{const frame=requestAnimationFrame(()=>document.getElementById('pf-main')?.focus({preventScroll:true}));return()=>cancelAnimationFrame(frame);},[mode]);
   useEffect(()=>guide.setCityMode(()=>{setMode('city');setPanel(null);setIntro(false);writeRoute('city');}),[]);
   function visit(id) {setPanel(null);if(mode!=='collection')writeRoute('city');onVisit(id);}
   function showSection(type) {
@@ -94,10 +98,10 @@ export function PortfolioCity({onVisit, spawn, overview, cameraMode='overview', 
     try{await navigator.clipboard.writeText(url);notice('Ссылка на проект скопирована');}catch{notice('Ссылка на проект доступна в адресной строке');}
   }
   const matches=CASES.filter(p=>(p.title+' '+p.category+' '+p.stack.join(' ')).toLocaleLowerCase('ru').includes(query.toLocaleLowerCase('ru').trim()));
-  return <div className={'pf-app pf-mode-'+mode}>
+  return <div className={'pf-app pf-mode-'+mode+(['home','collection'].includes(mode)?' pf-gallery':'')}>
     <a className="pf-skip" href="#pf-main">Перейти к содержимому</a>
-    {mode!=='collection'&&<PortfolioHeader mode={mode} activeSection={panel?.type} onHome={()=>{close();setIntro(true);documentRef.current?.scrollTo({top:0,behavior:'smooth'});}} onMode={selectMode} onSection={type=>type==='contact'?open('contact'):showSection(type)}/>}
-    {mode==='collection'?<Suspense fallback={<p role="status">Открываем коллекцию…</p>}><CollectionView onMode={selectMode} onAbout={()=>open('about')} onOpenCase={id=>open('project',id)} onVisit={visit}/></Suspense>:mode==='city'?<main id="pf-main" className={'pf-city city-stage engine-stage'+(cameraMode==='first-person'?' first-person-stage':'')} tabIndex={-1}>
+    {!['home','collection'].includes(mode)&&<PortfolioHeader mode={mode} activeSection={panel?.type} onHome={()=>selectMode('home')} onMode={selectMode} onSection={type=>type==='contact'?open('contact'):showSection(type)}/>}
+    {mode==='home'?<PortfolioHome onMode={selectMode} onSection={type=>open(type)}/>:mode==='collection'?<Suspense fallback={<p role="status">Открываем проекты…</p>}><CollectionView onMode={selectMode} onOpenCase={id=>open('project',id)} onVisit={visit}/></Suspense>:mode==='city'?<main id="pf-main" className={'pf-city city-stage engine-stage'+(cameraMode==='first-person'?' first-person-stage':'')} tabIndex={-1}>
       <Scene api={api} location="city" spawn={spawn} overview={overview} cameraMode={cameraMode} onCameraMode={setCameraMode} status="Исследую" inputEnabled={!panel} onAction={a=>a.type==='enter'?visit(a.project):open(a.type==='profile'?'about':a.type==='plot'?'plot':'projects',a.plot)} onProject={id=>open('project',id)} onNotice={notice} onWalk={moving=>{if(moving)setIntro(false);}} onView={updateView}/>
       {intro&&!panel&&<section className="pf-welcome"><span className="pf-kicker"><span className="pf-dot"/>ИНТЕРАКТИВНОЕ ПОРТФОЛИО</span><h1>Привет,<br/>я {PROFILE.name}<span className="pf-accent">.</span></h1><p>{PROFILE.shortIntro}</p><div className="pf-welcome-actions"><button className="pf-button pf-primary" onClick={()=>open('projects')}>Смотреть проекты<ArrowRight size={18}/></button><button className="pf-text-button" onClick={()=>{setIntro(false);api.current?.reset();}}>Прогуляться<Footprints size={18}/></button></div><div className="pf-welcome-bottom"><Cube size={17}/><span>Каждое здание — проект.<br/>Заходите и пробуйте.</span></div><button className="pf-welcome-close pf-icon-button" aria-label="Свернуть знакомство" onClick={()=>setIntro(false)}><Minus size={17}/></button></section>}
       {!intro&&!panel&&<button className="pf-intro-peek" onClick={()=>setIntro(true)}>Привет, я {PROFILE.name}<ArrowUpRight size={16}/></button>}
@@ -119,6 +123,7 @@ export function PortfolioCity({onVisit, spawn, overview, cameraMode='overview', 
       {panel.type==='experience'&&<><span className="pf-kicker">ОТ ИДЕИ К РЕАЛИЗАЦИИ</span><h2>Проектный опыт</h2><Experience onOpen={id=>open('project',id)}/></>}
       {panel.type==='skills'&&<><span className="pf-kicker">ИНСТРУМЕНТЫ В РАБОТЕ</span><h2>Технологии<br/>в проектах</h2><p className="pf-muted">Выберите проект, чтобы увидеть применение технологии.</p><Skills onOpen={id=>open('project',id)} onAbout={()=>showSection('about')}/></>}
       {panel.type==='about'&&<><span className="pf-kicker">ДАВАЙТЕ ЗНАКОМИТЬСЯ</span><h2>Я {PROFILE.name}<span className="pf-accent">.</span></h2><ProfileHeading profile={PROFILE}/><p className="pf-case-lead">{PROFILE.intro}</p><ResumeBackground/><button className="pf-button pf-primary" onClick={()=>open('projects')}>Мои проекты<ArrowRight size={18}/></button><External href={PROFILE.github} className="pf-text-button"><GithubLogo size={20}/>GitHub · {PROFILE.handle}</External></>}
+      {panel.type==='education'&&<><span className="pf-kicker">ОБРАЗОВАНИЕ И ДОСТИЖЕНИЯ</span><h2>Обучение<br/>и практика</h2><ResumeBackground/></>}
       {panel.type==='contact'&&<Contact/>}
       {panel.type==='plot'&&<><span className="pf-kicker">ГОРОД РАСТЁТ</span><h2>Здесь появится<br/>новый проект.</h2><p>Участок {panel.id} оставлен для следующей работы. А пока можно исследовать открытые здания.</p><button className="pf-button pf-primary" onClick={()=>open('projects')}>Выбрать проект<ArrowRight size={18}/></button></>}
       {panel.type==='help'&&<><span className="pf-kicker">НЕБОЛЬШАЯ ПРОГУЛКА</span><h2>Осмотритесь<br/>в городе.</h2><div className="pf-help-rows">{[['WASD / стрелки','Двигаться. Русская раскладка тоже работает.'],['Shift','Бежать'],['E / У','Войти в ближайшее здание'],['Клик по улице','Пройти к выбранной точке'],['V / М','Сменить ракурс: сверху / от первого лица'],['Потяните сцену','В первом лице — осмотреться мышью или пальцем'],['J / L · I / K','Повернуть взгляд / посмотреть вверх и вниз'],['Колесо / ±','Изменить масштаб в виде сверху'],['Home','Вернуться к персонажу'],['Esc','Закрыть панель или остановиться']].map(([key,text])=><div key={key}><kbd>{key}</kbd><span>{text}</span></div>)}</div><p className="pf-muted">Демонстрации городских проектов можно запустить и сразу — через их карточки.</p><button className="pf-button pf-primary" onClick={close}>Всё понятно<Check size={18}/></button></>}

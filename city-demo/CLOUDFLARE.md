@@ -22,7 +22,9 @@ Workers & Pages → **yelnur** → Settings → Build / Builds & deployments →
 
 ## Проверка после успешной публикации
 
-- `https://yelnur.pages.dev/` — город.
+- `https://yelnur.pages.dev/` — главная портфолио.
+- `https://yelnur.pages.dev/?view=collection` — проекты на полках.
+- `https://yelnur.pages.dev/?view=city` — город.
 - `https://yelnur.pages.dev/?place=pharmacy` — аптека с локальным сценарием заявки и ботами.
 - `https://yelnur.pages.dev/?place=office` — сохранённый четырёхэтажный офис.
 - `https://yelnur.pages.dev/models.html` — каталог моделей.

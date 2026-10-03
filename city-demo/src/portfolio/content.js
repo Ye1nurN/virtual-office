@@ -158,10 +158,10 @@ export const SKILLS = [
   }
 ];
 
-export function readPortfolioRoute(href, compact = false) {
+export function readPortfolioRoute(href) {
   const url = new URL(href);
   const requested = url.searchParams.get('view');
-  const mode = ['resume','city','collection'].includes(requested) ? requested : compact ? 'resume' : 'city';
+  const mode = ['home','resume','city','collection'].includes(requested) ? requested : 'home';
   const id = url.searchParams.get('project');
   return {mode, project:CASES.some(p => p.id === id) ? id : null};
 }
@@ -169,7 +169,7 @@ export function readPortfolioRoute(href, compact = false) {
 export function portfolioUrl(href, {mode, project = null, section = null}) {
   const url = new URL(href);
   url.searchParams.delete('place');
-  url.searchParams.set('view', ['resume','collection'].includes(mode) ? mode : 'city');
+  url.searchParams.set('view', ['home','resume','collection'].includes(mode) ? mode : 'city');
   if(mode!=='collection')url.searchParams.delete('item');
   if (CASES.some(p => p.id === project)) url.searchParams.set('project', project);
   else url.searchParams.delete('project');
