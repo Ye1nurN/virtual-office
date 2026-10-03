@@ -1,6 +1,6 @@
 import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
 import '@fontsource-variable/lora/wght.css';
-import {ArrowRight,ArrowUpRight,ArrowCounterClockwise,PaperPlaneTilt,X} from '@phosphor-icons/react';
+import {ArrowRight,ArrowUpRight,PaperPlaneTilt,X} from '@phosphor-icons/react';
 import {PROFILE} from '../portfolio/content.js';
 import {COLLECTION,readCollectionItem,collectionItemUrl} from './collectionData.js';
 import './collection.css';
@@ -45,7 +45,6 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
             <div className="collection-hero-model" ref={slot(active.id)} data-hero="true" role="group" aria-label={'3D-модель: '+active.title} tabIndex={0} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={()=>drag.current=null} onPointerCancel={()=>drag.current=null} onLostPointerCapture={()=>drag.current=null} onKeyDown={e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();api.current?.rotate(selected,e.key==='ArrowLeft'?-.3:.3);}}}>
               {status!=='ready'&&<div className="collection-loading" role="status">{status==='loading'?'Расставляем коллекцию…':'3D-витрина недоступна. Описания и демонстрации можно открыть справа.'}</div>}
             </div>
-            <button className="collection-rotate" disabled={status!=='ready'} onClick={()=>api.current?.rotate(selected)}><span><ArrowCounterClockwise size={23}/></span>Повернуть</button>
             <span className="collection-drag-hint">Можно вращать мышью или стрелками</span>
           </div>
           <article className="collection-story" key={active.id}>
