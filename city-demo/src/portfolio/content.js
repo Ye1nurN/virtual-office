@@ -161,7 +161,7 @@ export const SKILLS = [
 export function readPortfolioRoute(href, compact = false) {
   const url = new URL(href);
   const requested = url.searchParams.get('view');
-  const mode = requested === 'resume' ? 'resume' : requested === 'city' ? 'city' : compact ? 'resume' : 'city';
+  const mode = ['resume','city','collection'].includes(requested) ? requested : compact ? 'resume' : 'city';
   const id = url.searchParams.get('project');
   return {mode, project:CASES.some(p => p.id === id) ? id : null};
 }
@@ -169,7 +169,8 @@ export function readPortfolioRoute(href, compact = false) {
 export function portfolioUrl(href, {mode, project = null, section = null}) {
   const url = new URL(href);
   url.searchParams.delete('place');
-  url.searchParams.set('view', mode === 'resume' ? 'resume' : 'city');
+  url.searchParams.set('view', ['resume','collection'].includes(mode) ? mode : 'city');
+  if(mode!=='collection')url.searchParams.delete('item');
   if (CASES.some(p => p.id === project)) url.searchParams.set('project', project);
   else url.searchParams.delete('project');
   url.hash=['projects','experience','skills','about','contact'].includes(section)?'pf-'+section:'';

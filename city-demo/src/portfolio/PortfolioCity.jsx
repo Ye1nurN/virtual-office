@@ -1,5 +1,5 @@
 import {PortfolioHeader} from './PortfolioHeader.jsx';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {lazy, Suspense, useCallback, useEffect, useRef, useState} from 'react';
 import {CalendarBlank, Car, ArrowRight, ArrowUpRight, ArrowLeft, Buildings, FirstAid, ShieldCheck, GithubLogo, MapTrifold, FileText, X, Plus, Minus, Crosshair, Keyboard, Footprints, LinkSimple, Check, EnvelopeSimple, PaperPlaneTilt, Phone, Cube, MagnifyingGlass, Eye} from '@phosphor-icons/react';
 import {CASES, PROFILE, SKILLS, portfolioUrl, readPortfolioRoute} from './content.js';
 import './portfolio.css';
@@ -11,6 +11,7 @@ import {FirstPersonGuide} from '../world/CameraControls.jsx';
 const icons = {office:Buildings, pharmacy:FirstAid, argus:ShieldCheck, autofix:Car, tynysh:CalendarBlank};
 const sectionNames = {projects:'Проекты', experience:'Опыт', skills:'Навыки', about:'Обо мне', contact:'Связаться', help:'Управление', plot:'Будущий проект'};
 const compact = () => window.matchMedia('(max-width: 720px)').matches;
+const CollectionView=lazy(()=>import('../collection/CollectionView.jsx'));
 const initialRoute = () => readPortfolioRoute(window.location.href, compact());
 
 function ProjectIcon({id, size=24}) { const Icon=icons[id]; return <Icon size={size} weight="duotone"/>; }
@@ -68,14 +69,14 @@ export function PortfolioCity({onVisit, spawn, overview, cameraMode='overview', 
   function close() {setPanel(null);writeRoute(mode);}
   function selectMode(next) {setPanel(null);setMode(next);setIntro(next==='city');writeRoute(next,null,true);}
   useEffect(()=>guide.setCityMode(()=>{setMode('city');setPanel(null);setIntro(false);writeRoute('city');}),[]);
-  function visit(id) {setPanel(null);writeRoute('city');onVisit(id);}
+  function visit(id) {setPanel(null);if(mode!=='collection')writeRoute('city');onVisit(id);}
   function showSection(type) {
     if(mode==='resume'){setPanel(null);writeRoute(mode);requestAnimationFrame(()=>document.getElementById('pf-'+type)?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'}));}
     else open(type);
   }
   function walkTo(id) {
     setPanel(null);setIntro(false);
-    if(mode==='resume'){pendingWalk.current=id;setMode('city');writeRoute('city');}
+    if(mode!=='city'){pendingWalk.current=id;setMode('city');writeRoute('city');}
     else {writeRoute(mode);api.current?.goToProject(id);notice('Маршрут ко входу. Рядом с дверью нажмите E.');}
   }
   const updateView=useCallback(next=>{
@@ -95,8 +96,8 @@ export function PortfolioCity({onVisit, spawn, overview, cameraMode='overview', 
   const matches=CASES.filter(p=>(p.title+' '+p.category+' '+p.stack.join(' ')).toLocaleLowerCase('ru').includes(query.toLocaleLowerCase('ru').trim()));
   return <div className={'pf-app pf-mode-'+mode}>
     <a className="pf-skip" href="#pf-main">Перейти к содержимому</a>
-    <PortfolioHeader mode={mode} activeSection={panel?.type} onHome={()=>{close();setIntro(true);documentRef.current?.scrollTo({top:0,behavior:'smooth'});}} onMode={selectMode} onSection={type=>type==='contact'?open('contact'):showSection(type)}/>
-    {mode==='city'?<main id="pf-main" className={'pf-city city-stage engine-stage'+(cameraMode==='first-person'?' first-person-stage':'')} tabIndex={-1}>
+    {mode!=='collection'&&<PortfolioHeader mode={mode} activeSection={panel?.type} onHome={()=>{close();setIntro(true);documentRef.current?.scrollTo({top:0,behavior:'smooth'});}} onMode={selectMode} onSection={type=>type==='contact'?open('contact'):showSection(type)}/>}
+    {mode==='collection'?<Suspense fallback={<p role="status">Открываем коллекцию…</p>}><CollectionView onMode={selectMode} onAbout={()=>open('about')} onOpenCase={id=>open('project',id)} onVisit={visit}/></Suspense>:mode==='city'?<main id="pf-main" className={'pf-city city-stage engine-stage'+(cameraMode==='first-person'?' first-person-stage':'')} tabIndex={-1}>
       <Scene api={api} location="city" spawn={spawn} overview={overview} cameraMode={cameraMode} onCameraMode={setCameraMode} status="Исследую" inputEnabled={!panel} onAction={a=>a.type==='enter'?visit(a.project):open(a.type==='profile'?'about':a.type==='plot'?'plot':'projects',a.plot)} onProject={id=>open('project',id)} onNotice={notice} onWalk={moving=>{if(moving)setIntro(false);}} onView={updateView}/>
       {intro&&!panel&&<section className="pf-welcome"><span className="pf-kicker"><span className="pf-dot"/>ИНТЕРАКТИВНОЕ ПОРТФОЛИО</span><h1>Привет,<br/>я {PROFILE.name}<span className="pf-accent">.</span></h1><p>{PROFILE.shortIntro}</p><div className="pf-welcome-actions"><button className="pf-button pf-primary" onClick={()=>open('projects')}>Смотреть проекты<ArrowRight size={18}/></button><button className="pf-text-button" onClick={()=>{setIntro(false);api.current?.reset();}}>Прогуляться<Footprints size={18}/></button></div><div className="pf-welcome-bottom"><Cube size={17}/><span>Каждое здание — проект.<br/>Заходите и пробуйте.</span></div><button className="pf-welcome-close pf-icon-button" aria-label="Свернуть знакомство" onClick={()=>setIntro(false)}><Minus size={17}/></button></section>}
       {!intro&&!panel&&<button className="pf-intro-peek" onClick={()=>setIntro(true)}>Привет, я {PROFILE.name}<ArrowUpRight size={16}/></button>}

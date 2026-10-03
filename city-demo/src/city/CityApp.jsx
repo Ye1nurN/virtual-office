@@ -60,7 +60,7 @@ export function CityApp(){
   const current=getProject(place),project=getProject(panel?.id),shelf=SHELVES.find(s=>s.id===panel?.id);
   const notice=t=>setToast(t);
   const close=()=>{setPanel(null);setMenu(null);setSearch(false);};
-  function visit(id){if(!validPlaces.has(id))return;close();setWalk(false);setSelectedShelf(pharmacyDemo.request?.shelf||'A-02');setPlace(id);const url=new URL(window.location.href);url.searchParams.set('view','city');url.searchParams.delete('project');url.hash='';id==='city'?url.searchParams.delete('place'):url.searchParams.set('place',id);history.pushState({place:id},'',url);}
+  function visit(id){if(!validPlaces.has(id))return;close();setWalk(false);setSelectedShelf(pharmacyDemo.request?.shelf||'A-02');setPlace(id);const url=new URL(window.location.href);url.searchParams.set('view','city');url.searchParams.delete('project');url.searchParams.delete('item');url.hash='';id==='city'?url.searchParams.delete('place'):url.searchParams.set('place',id);history.pushState({place:id},'',url);}
   function leave(){setSpawn(spawnOutside(place));setStartOverview(false);visit('city');}
   function open(type,id){if(type==='chat'){close();guide.open();return;}setPanel({type,id});setMenu(null);setSearch(false);setQuery('');}
   useEffect(()=>{guide.setLocation(place);return guide.setNavigator(visit);});

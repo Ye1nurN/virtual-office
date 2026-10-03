@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {CASES, readPortfolioRoute, portfolioUrl} from '../src/portfolio/content.js';
 
 test('Portfolio deep links round-trip every project in either presentation', () => {
-  for (const project of CASES) for (const mode of ['city','resume']) {
+  for (const project of CASES) for (const mode of ['city','resume','collection']) {
     const url=portfolioUrl('https://portfolio.example/?place=office&utm_source=cv', {mode,project:project.id});
     assert.deepEqual(readPortfolioRoute(url.href), {mode,project:project.id});
     assert.equal(url.searchParams.get('place'), null);
