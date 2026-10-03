@@ -46,6 +46,20 @@
      </Grid><ControlTemplate.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="Opacity" Value="0.8" /></Trigger></ControlTemplate.Triggers>
     </ControlTemplate></Setter.Value></Setter>
    </Style>
+   <Style x:Key="VerticalVolumeSlider" TargetType="Slider" BasedOn="{StaticResource {x:Type Slider}}">
+    <Setter Property="Orientation" Value="Vertical" /><Setter Property="IsDirectionReversed" Value="False" />
+    <Setter Property="Width" Value="30" /><Setter Property="Height" Value="104" />
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Slider">
+     <Grid Margin="0,3" Background="Transparent">
+      <Border Width="4" Background="#38383F" CornerRadius="2" HorizontalAlignment="Center" />
+      <Track x:Name="PART_Track" Orientation="{TemplateBinding Orientation}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+       <Track.DecreaseRepeatButton><RepeatButton Command="Slider.DecreaseLarge" Focusable="False"><RepeatButton.Template><ControlTemplate><Border Width="4" Background="#BABAC4" CornerRadius="2" HorizontalAlignment="Center" /></ControlTemplate></RepeatButton.Template></RepeatButton></Track.DecreaseRepeatButton>
+       <Track.IncreaseRepeatButton><RepeatButton Command="Slider.IncreaseLarge" Focusable="False"><RepeatButton.Template><ControlTemplate><Border Background="Transparent" /></ControlTemplate></RepeatButton.Template></RepeatButton></Track.IncreaseRepeatButton>
+       <Track.Thumb><Thumb Width="12" Height="12"><Thumb.Template><ControlTemplate><Ellipse Fill="#BABAC4" /></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+      </Track>
+     </Grid><ControlTemplate.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="Opacity" Value="0.8" /></Trigger></ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+   </Style>
    <Style TargetType="TextBox"><Setter Property="Foreground" Value="#F0F0F2" /><Setter Property="Background" Value="#1B1B1F" /><Setter Property="BorderBrush" Value="#404047" /><Setter Property="Padding" Value="10,7" /><Setter Property="FontSize" Value="13" /></Style>
    <Style TargetType="ListBox"><Setter Property="Background" Value="Transparent" /><Setter Property="Foreground" Value="#F0F0F2" /><Setter Property="BorderThickness" Value="0" /><Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" /></Style>
    <Style TargetType="ListBoxItem">
@@ -83,6 +97,9 @@
     </StackPanel>
    </Grid>
    <StackPanel x:Name="PlayerPane" Visibility="Collapsed">
+    <Grid Margin="0,0,0,10">
+     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="54" /></Grid.ColumnDefinitions>
+     <StackPanel>
     <Grid>
      <Grid.ColumnDefinitions><ColumnDefinition Width="74" /><ColumnDefinition Width="*" /><ColumnDefinition Width="36" /></Grid.ColumnDefinitions>
      <Border Width="74" Height="74" CornerRadius="5" Background="#202025" ClipToBounds="True">
@@ -109,11 +126,14 @@
      </UniformGrid>
      <TextBlock x:Name="ExternalStatus" Grid.Column="1" Text="Telegram" TextWrapping="Wrap" Foreground="#BABAC4" FontSize="12" VerticalAlignment="Center" TextAlignment="Center" Visibility="Collapsed" />
     </Grid>
-    <Grid x:Name="VolumePanel" Margin="0,0,0,10">
-     <Grid.ColumnDefinitions><ColumnDefinition Width="34" /><ColumnDefinition Width="*" /><ColumnDefinition Width="44" /></Grid.ColumnDefinitions>
-     <Button x:Name="MuteButton" Style="{StaticResource IconButton}" Width="30" Height="30" Click="Mute_Click" ToolTip="Выключить звук" AutomationProperties.Name="Выключить звук"><Path x:Name="VolumeIcon" Style="{StaticResource Icon}" Data="{StaticResource IconSpeakerHigh}" Width="18" Height="18" Fill="#BABAC4" /></Button>
-     <Slider x:Name="VolumeSlider" Grid.Column="1" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1" ValueChanged="Volume_Changed" LostMouseCapture="Volume_End" VerticalAlignment="Center" AutomationProperties.Name="Громкость" />
-     <TextBlock x:Name="VolumePercent" Grid.Column="2" Text="50%" FontSize="11" Foreground="#BABAC4" TextAlignment="Right" VerticalAlignment="Center" />
+     </StackPanel>
+     <Border Grid.Column="1" BorderBrush="#303036" BorderThickness="1,0,0,0" Margin="12,0,0,0" Padding="9,0,0,0" VerticalAlignment="Center">
+      <StackPanel x:Name="VolumePanel">
+       <TextBlock x:Name="VolumePercent" Text="50%" FontSize="11" Foreground="#BABAC4" TextAlignment="Center" Margin="0,0,0,4" />
+       <Slider x:Name="VolumeSlider" Style="{StaticResource VerticalVolumeSlider}" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1" ValueChanged="Volume_Changed" LostMouseCapture="Volume_End" HorizontalAlignment="Center" AutomationProperties.Name="Громкость" AutomationProperties.HelpText="Вверх — громче, вниз — тише" />
+       <Button x:Name="MuteButton" Style="{StaticResource IconButton}" Width="30" Height="30" Margin="0,4,0,0" Click="Mute_Click" ToolTip="Выключить звук" AutomationProperties.Name="Выключить звук"><Path x:Name="VolumeIcon" Style="{StaticResource Icon}" Data="{StaticResource IconSpeakerHigh}" Width="18" Height="18" Fill="#BABAC4" /></Button>
+      </StackPanel>
+     </Border>
     </Grid>
     <Border x:Name="LocalActions" BorderBrush="#303036" BorderThickness="0,1,0,0" Padding="0,9,0,0"><UniformGrid Columns="2">
      <Button Click="Queue_Click" AutomationProperties.Name="Очередь"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource Icon}" Data="{StaticResource IconPlaylist}" Margin="0,0,9,0" /><TextBlock Text="Очередь" VerticalAlignment="Center" /></StackPanel></Button>
