@@ -17,21 +17,24 @@ namespace Ostrov
         readonly Store store;
         readonly AudioEngine engine;
         readonly NowPlaying media;
+        readonly AppVolume appVolume;
         readonly DispatcherTimer progress;
         readonly DispatcherTimer search;
-        bool closing, modal, importing, updating, seeking, commandPending;
+        bool closing, modal, importing, updating, seeking, commandPending, updatingVolume;
         string view = "player", coverPath;
         ImageSource cachedCover;
         int coverRequest;
         double lastVolume = .5;
+        double lastExternalVolume = .5;
+        string volumeTarget;
         public string Shortcut { get; set; } = "Alt+M";
         public bool ProgressTimerRunning { get { return progress.IsEnabled; } }
         internal bool TimelineVisible { get { return ProgressPanel.Visibility == Visibility.Visible; } }
         bool External { get { return media != null && store.State.Source != "local"; } }
         bool Playing { get { return External ? media.Playing : engine.Playing; } }
-        public MainWindow(Store store, AudioEngine engine, NowPlaying media = null)
+        public MainWindow(Store store, AudioEngine engine, NowPlaying media = null, AppVolume appVolume = null)
         {
-            this.store = store; this.engine = engine; this.media = media;
+            this.store = store; this.engine = engine; this.media = media; this.appVolume = appVolume;
             InitializeComponent();
             progress = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(500) };
             progress.Tick += (s, e) => UpdateProgress();
@@ -39,8 +42,9 @@ namespace Ostrov
             search.Tick += (s, e) => { search.Stop(); RefreshList(); };
             engine.Changed += EngineChanged; engine.Ended += TrackEnded;
             if (media != null) { media.Changed += EngineChanged; media.SetFilter(store.State.Source); }
-            VolumeSlider.Value = store.State.Volume;
-            Closed += (s, e) => { progress.Stop(); search.Stop(); engine.Changed -= EngineChanged; engine.Ended -= TrackEnded; if (media != null) media.Changed -= EngineChanged; };
+            if (appVolume != null) appVolume.Changed += UpdateVolume;
+            UpdateVolume();
+            Closed += (s, e) => { progress.Stop(); search.Stop(); engine.Changed -= EngineChanged; engine.Ended -= TrackEnded; if (media != null) media.Changed -= EngineChanged; if (appVolume != null) { appVolume.Changed -= UpdateVolume; appVolume.SetTarget(null); } };
         }
         public void Restore()
         {
@@ -70,6 +74,7 @@ namespace Ostrov
         {
             if (!IsVisible || closing || modal) return;
             closing = true; progress.Stop(); search.Stop(); SavePosition();
+            appVolume?.SetTarget(null);
             if (!SystemParameters.ClientAreaAnimation) { Hide(); closing = false; return; }
             var animation = new DoubleAnimation(Slide.Y, -Math.Max(80, ActualHeight), TimeSpan.FromMilliseconds(140)) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn } };
             animation.Completed += (s, e) => { if (closing) { Hide(); closing = false; } };
@@ -112,11 +117,15 @@ namespace Ostrov
             System.Windows.Automation.AutomationProperties.SetName(PlayButton, Playing ? "Пауза" : "Воспроизвести");
             FavoriteButton.IsEnabled = track != null;
             FavoriteButton.Visibility = external ? Visibility.Collapsed : Visibility.Visible;
-            LocalVolume.Visibility = LocalActions.Visibility = external ? Visibility.Collapsed : Visibility.Visible;
+            LocalActions.Visibility = external ? Visibility.Collapsed : Visibility.Visible;
+            Grid.SetColumnSpan(TransportButtons, external ? 1 : 2);
+            TransportButtons.Margin = new Thickness(0, 0, external ? 14 : 0, 0);
             ExternalStatus.Visibility = ExternalFooter.Visibility = external ? Visibility.Visible : Visibility.Collapsed;
             if (external) ExternalStatus.Text = media.ApplicationName + "\n" + (media.Playing ? "Играет" : "На паузе");
             FavoriteIcon.Data = (Geometry)FindResource(track != null && track.Favorite ? "IconHeartFill" : "IconHeart");
             FavoriteIcon.Fill = track != null && track.Favorite ? (Brush)FindResource("Accent") : Brushes.White;
+            appVolume?.SetTarget(external && IsVisible && !closing ? media.AppId : null);
+            UpdateVolume();
             UpdateProgress(); UpdateCover();
             if (view != "player") RefreshList();
             if (!external && engine.Error != null) ShowNotice(engine.Error);
@@ -267,8 +276,60 @@ namespace Ostrov
             PlayTrack(tracks[(tracks.IndexOf(engine.Current) - 1 + tracks.Count) % tracks.Count]);
         }
         void Favorite_Click(object sender, RoutedEventArgs e) { if (engine.Current == null) return; engine.Current.Favorite = !engine.Current.Favorite; store.Save(); UpdateUI(); }
-        void Volume_Changed(object sender, RoutedPropertyChangedEventArgs<double> e) { if (engine == null) return; engine.Volume = e.NewValue; if (VolumeIcon != null) VolumeIcon.Data = (Geometry)FindResource(e.NewValue > 0 ? "IconSpeakerHigh" : "IconSpeakerSlash"); }
-        void Mute_Click(object sender, RoutedEventArgs e) { if (engine.Volume > 0) { lastVolume = engine.Volume; VolumeSlider.Value = 0; } else VolumeSlider.Value = lastVolume; }
+        void UpdateVolume()
+        {
+            if (VolumeSlider == null || VolumePercent == null) return;
+            bool external = External;
+            var state = appVolume?.State;
+            bool available = !external || (state != null && state.Available && state.Target == media.AppId);
+            double level = external ? available && !state.Muted ? state.Level : 0 : engine.Volume;
+            if (volumeTarget != state?.Target) { volumeTarget = state?.Target; lastExternalVolume = .5; }
+            if (external && available && state.Level > 0) lastExternalVolume = state.Level;
+            VolumeSlider.IsEnabled = MuteButton.IsEnabled = available;
+            VolumePanel.Opacity = available ? 1 : .45;
+            VolumePanel.ToolTip = !external ? "Громкость локальной музыки" : available
+                ? "Громкость приложения «" + media.ApplicationName + "». Для браузера — всех его вкладок."
+                : "Включи воспроизведение, чтобы появилась громкость приложения";
+            if (VolumeSlider.IsMouseCaptureWithin && available) return;
+            updatingVolume = true; VolumeSlider.Value = level; updatingVolume = false;
+            ShowVolume(level, available);
+        }
+        void ShowVolume(double level, bool available = true)
+        {
+            VolumePercent.Text = available ? Math.Round(level * 100) + "%" : "—";
+            VolumeIcon.Data = (Geometry)FindResource(level > 0 ? "IconSpeakerHigh" : "IconSpeakerSlash");
+            string action = level > 0 ? "Выключить звук" : "Включить звук";
+            MuteButton.ToolTip = action;
+            System.Windows.Automation.AutomationProperties.SetName(MuteButton, action);
+        }
+        void Volume_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (updatingVolume || VolumePercent == null || engine == null) return;
+            if (External)
+            {
+                if (appVolume?.State.Available != true || appVolume.State.Target != media.AppId) return;
+                appVolume.SetVolume(e.NewValue);
+            }
+            else { engine.Volume = e.NewValue; if (e.NewValue > 0) lastVolume = e.NewValue; }
+            ShowVolume(e.NewValue);
+        }
+        void Volume_End(object sender, MouseEventArgs e)
+        {
+            // Reconcile notifications deferred during a drag; an outstanding write will publish again.
+            if (!VolumeSlider.IsMouseCaptureWithin) UpdateVolume();
+            if (!External) SavePosition();
+        }
+        void Mute_Click(object sender, RoutedEventArgs e)
+        {
+            if (External)
+            {
+                var state = appVolume?.State;
+                if (state == null || !state.Available || state.Target != media.AppId) return;
+                if (state.Level == 0) appVolume.SetVolume(lastExternalVolume);
+                else appVolume.SetMute(!state.Muted);
+            }
+            else { if (engine.Volume > 0) { lastVolume = engine.Volume; VolumeSlider.Value = 0; } else VolumeSlider.Value = lastVolume; SavePosition(); }
+        }
         void Position_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (updating || engine == null) return;
@@ -285,7 +346,7 @@ namespace Ostrov
         void Back_Click(object sender, RoutedEventArgs e) { view = "player"; UpdateUI(); }
         void PlayItem_Click(object sender, RoutedEventArgs e) { var track = (sender as FrameworkElement)?.DataContext as Track; if (track != null) PlayTrack(track); }
         void Search_Changed(object sender, TextChangedEventArgs e) { if (search == null) return; search.Stop(); if (IsVisible) search.Start(); }
-        void Window_KeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Escape) { Dismiss(); e.Handled = true; } else if (e.Key == Key.Space && !(Keyboard.FocusedElement is TextBox)) { Play_Click(sender, e); e.Handled = true; } }
+        void Window_KeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Escape) { Dismiss(); e.Handled = true; } else if (e.Key == Key.Space && !(Keyboard.FocusedElement is TextBox) && !(Keyboard.FocusedElement is Button)) { Play_Click(sender, e); e.Handled = true; } }
         void Window_Deactivated(object sender, EventArgs e) { if (!modal) Dismiss(); }
         void Window_DragOver(object sender, DragEventArgs e) { e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None; e.Handled = true; }
         void Window_Drop(object sender, DragEventArgs e)

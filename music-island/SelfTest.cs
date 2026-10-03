@@ -41,6 +41,9 @@ namespace Ostrov
                 check(Library.Recommend(new[] { current, other, related }, current, 1)[0] == other, "Recent tracks are penalized");
                 check(NowPlaying.IsTelegram("Telegram.exe") && NowPlaying.IsTelegram("Telegram.TelegramDesktop.some-id") && NowPlaying.IsTelegram("TelegramMessengerLLP.TelegramDesktop_abc!App"), "Telegram desktop, portable and Store identifiers are recognized");
                 check(!NowPlaying.IsTelegram("brave.exe") && !NowPlaying.IsTelegram("fake-Telegram.exe") && !NowPlaying.IsTelegram(null), "Telegram filter excludes browsers and unrelated sessions");
+                check(AppVolume.MatchesIdentity("brave.exe", "brave") && AppVolume.MatchesIdentity(@"C:\Apps\Telegram.exe", "Telegram") && AppVolume.MatchesIdentity("TelegramMessengerLLP.TelegramDesktop_abc!App", "Telegram"), "Mixer matches browser and Telegram desktop/Store processes");
+                check(!AppVolume.MatchesIdentity("brave.exe", "chrome") && !AppVolume.MatchesIdentity("fake-Telegram.exe", "Telegram") && !AppVolume.MatchesIdentity("Package!Player", "Player") && !AppVolume.MatchesIdentity(null, "brave"), "Mixer never falls through to a different application");
+                check(AppVolume.MatchesIdentity("Package!Player", "host", "Package!Player") && !AppVolume.MatchesIdentity("Package!Player", "host", "Other!Player"), "Store audio processes require an exact application identity");
                 var sessions = new[] { "paused-browser", "playing-telegram" };
                 check(NowPlaying.Choose(sessions, sessions[0], s => s == sessions[1]) == sessions[1], "Playing Telegram wins over current paused browser");
                 check(NowPlaying.Choose(sessions, sessions[0], s => true) == sessions[0], "OS current session wins when multiple sources play");
@@ -65,10 +68,19 @@ namespace Ostrov
                     engine.Toggle(); double paused = engine.Position;
                     await Task.Delay(250);
                     check(!engine.Playing && Math.Abs(engine.Position - paused) < .08, "Actual pause holds position");
+                    await TestMixer(check);
                     engine.Seek(1.6); await Task.Delay(100);
                     check(Math.Abs(engine.Position - 1.6) < .15, "Actual seek changes playback position");
                     var ended = new TaskCompletionSource<bool>(); engine.Ended += () => ended.TrySetResult(true);
                     var window = new MainWindow(store, engine);
+                    var slider = (System.Windows.Controls.Slider)window.FindName("VolumeSlider");
+                    slider.Value = .42;
+                    check(Math.Abs(engine.Volume - .42) < .001 && ((System.Windows.Controls.TextBlock)window.FindName("VolumePercent")).Text == "42%", "Local volume slider updates the actual player and percentage");
+                    var mute = (System.Windows.Controls.Button)window.FindName("MuteButton");
+                    mute.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                    check(engine.Volume == 0, "Local speaker button mutes playback");
+                    mute.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                    check(Math.Abs(engine.Volume - .42) < .001, "Local speaker button restores the previous volume");
                     engine.Toggle();
                     check(!window.IsVisible && !window.ProgressTimerRunning && engine.Playing, "Hidden window has no progress timer while audio continues");
                     check(await Task.WhenAny(ended.Task, Task.Delay(5000)) == ended.Task, "MediaEnded is raised without UI polling");
@@ -92,6 +104,48 @@ namespace Ostrov
         {
             var watch = Stopwatch.StartNew();
             while (!predicate() && watch.ElapsedMilliseconds < timeout) await Task.Delay(50);
+        }
+        static async Task TestMixer(Action<bool, string> check)
+        {
+            string ownApp = Process.GetCurrentProcess().ProcessName + ".exe";
+            using (var mixer = new AppVolume(Application.Current.Dispatcher))
+            using (var observer = new AppVolume(Application.Current.Dispatcher))
+            {
+                mixer.SetTarget(ownApp); observer.SetTarget(ownApp);
+                await WaitUntil(() => mixer.State.Available && observer.State.Available, 5000);
+                check(mixer.State.Available && observer.State.Available, "Core Audio locates this test process's real audio session");
+                double original = observer.State.Level; bool wasMuted = observer.State.Muted;
+                try
+                {
+                    mixer.SetVolume(.37);
+                    await WaitUntil(() => Math.Abs(observer.State.Level - .37) < .001 && !observer.State.Muted, 3000);
+                    check(Math.Abs(observer.State.Level - .37) < .001 && !observer.State.Muted, "Application volume reaches Windows mixer and another event subscriber");
+                    mixer.SetMute(true);
+                    await WaitUntil(() => observer.State.Muted, 3000);
+                    check(observer.State.Muted && Math.Abs(observer.State.Level - .37) < .001, "Application mute preserves its previous volume");
+                    mixer.SetVolume(.64);
+                    await WaitUntil(() => !observer.State.Muted && Math.Abs(observer.State.Level - .64) < .001, 3000);
+                    check(!observer.State.Muted && Math.Abs(observer.State.Level - .64) < .001, "Moving the volume slider unmutes the actual audio session");
+                    for (int i = 1; i <= 80; i++) mixer.SetVolume(i / 100.0);
+                    mixer.SetMute(true);
+                    await WaitUntil(() => observer.State.Muted && Math.Abs(observer.State.Level - .8) < .001, 3000);
+                    check(observer.State.Muted && Math.Abs(observer.State.Level - .8) < .001, "Rapid volume changes followed by mute preserve the last requested level");
+                    mixer.SetTarget("ostrov-nonexistent-self-test.exe");
+                    mixer.SetVolume(.99);
+                    await Task.Delay(150);
+                    check(!mixer.State.Available && Math.Abs(observer.State.Level - .8) < .001, "Switching to an unavailable source cannot change the previous app volume");
+                    mixer.SetTarget(null); observer.SetVolume(.21);
+                    await WaitUntil(() => Math.Abs(observer.State.Level - .21) < .001, 3000);
+                    check(mixer.State.Target == null && !mixer.State.Available && Math.Abs(observer.State.Level - .21) < .001, "Hidden mixer detaches while the audio session remains independently controllable");
+                }
+                finally
+                {
+                    observer.SetVolume(original);
+                    await WaitUntil(() => Math.Abs(observer.State.Level - original) < .001, 2000);
+                    observer.SetMute(wasMuted);
+                    await WaitUntil(() => observer.State.Muted == wasMuted, 2000);
+                }
+            }
         }
         static void WriteSilence(string path, int seconds)
         {

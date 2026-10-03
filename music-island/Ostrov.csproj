@@ -40,6 +40,7 @@
     <Compile Include="MainWindow.xaml.cs"><DependentUpon>MainWindow.xaml</DependentUpon></Compile>
     <Compile Include="SelfTest.cs" />
     <Compile Include="NowPlaying.cs" />
+    <Compile Include="AppVolume.cs" /><Compile Include="CoreAudio.cs" />
     <Compile Include="DarkTrayRenderer.cs" />
     <Page Include="MainWindow.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
     <Resource Include="Icons.xaml" />

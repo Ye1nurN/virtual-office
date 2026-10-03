@@ -40,7 +40,8 @@ namespace Ostrov
                 var store = new Store(data);
                 var engine = new AudioEngine { Volume = store.State.Volume };
                 var media = new NowPlaying(app.Dispatcher);
-                var window = new MainWindow(store, engine, media); app.MainWindow = window;
+                var volume = new AppVolume(app.Dispatcher);
+                var window = new MainWindow(store, engine, media, volume); app.MainWindow = window;
                 NativeHost host = null; Forms.NotifyIcon tray = null; RegisteredWaitHandle wait = null;
                 System.Drawing.Icon trayIcon = null;
                 app.Startup += async (s, e) =>
@@ -70,7 +71,7 @@ namespace Ostrov
                 app.Exit += (s, e) =>
                 {
                     window.SavePosition(); wait?.Unregister(null); host?.Dispose();
-                    if (tray != null) { tray.Visible = false; tray.Dispose(); } trayIcon?.Dispose(); media.Dispose(); engine.Dispose(); mutex.ReleaseMutex();
+                    if (tray != null) { tray.Visible = false; tray.Dispose(); } trayIcon?.Dispose(); volume.Dispose(); media.Dispose(); engine.Dispose(); mutex.ReleaseMutex();
                 };
                 app.DispatcherUnhandledException += (s, e) =>
                 {

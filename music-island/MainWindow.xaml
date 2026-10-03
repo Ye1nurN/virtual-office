@@ -100,24 +100,26 @@
     <Slider x:Name="PositionSlider" Margin="0,8,0,0" Minimum="0" Maximum="1" SmallChange="5" LargeChange="10" ValueChanged="Position_Changed" PreviewMouseLeftButtonDown="Seek_Begin" PreviewMouseLeftButtonUp="Seek_End" LostMouseCapture="Seek_End" AutomationProperties.Name="Позиция трека" />
     <DockPanel Margin="2,-2,2,0"><TextBlock x:Name="DurationText" DockPanel.Dock="Right" Text="0:00" Foreground="#CCCCD3" FontSize="11" /><TextBlock x:Name="ElapsedText" Text="0:00" Foreground="#CCCCD3" FontSize="11" /></DockPanel>
     </StackPanel>
-    <Grid Margin="0,10,0,14">
+    <Grid Margin="0,10,0,6">
      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="124" /></Grid.ColumnDefinitions>
-     <UniformGrid Columns="3" Margin="0,0,14,0">
+     <UniformGrid x:Name="TransportButtons" Columns="3" Margin="0,0,14,0">
       <Button x:Name="PreviousButton" Style="{StaticResource IconButton}" Click="Previous_Click" ToolTip="Предыдущий" AutomationProperties.Name="Предыдущий"><Path Style="{StaticResource Icon}" Data="{StaticResource IconSkipBack}" /></Button>
       <Button x:Name="PlayButton" Style="{StaticResource PlayButtonStyle}" Width="48" Height="48" Background="#29292F" Padding="13" Click="Play_Click" ToolTip="Воспроизвести / пауза" AutomationProperties.Name="Воспроизвести / пауза"><Path x:Name="PlayIcon" Style="{StaticResource Icon}" Data="{StaticResource IconPlay}" Fill="#F0F0F2" /></Button>
       <Button x:Name="NextButton" Style="{StaticResource IconButton}" Click="Next_Click" ToolTip="Следующий" AutomationProperties.Name="Следующий"><Path Style="{StaticResource Icon}" Data="{StaticResource IconSkipForward}" /></Button>
      </UniformGrid>
-     <Border x:Name="LocalVolume" Grid.Column="1" BorderBrush="#303036" BorderThickness="1,0,0,0" Padding="8,0,0,0" VerticalAlignment="Center"><DockPanel>
-      <Button Style="{StaticResource IconButton}" Width="30" DockPanel.Dock="Left" Click="Mute_Click" AutomationProperties.Name="Включить или выключить звук"><Path x:Name="VolumeIcon" Style="{StaticResource Icon}" Data="{StaticResource IconSpeakerHigh}" Width="20" Height="20" /></Button>
-      <Slider x:Name="VolumeSlider" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1" ValueChanged="Volume_Changed" VerticalAlignment="Center" AutomationProperties.Name="Громкость" />
-     </DockPanel></Border>
      <TextBlock x:Name="ExternalStatus" Grid.Column="1" Text="Telegram" TextWrapping="Wrap" Foreground="#BABAC4" FontSize="12" VerticalAlignment="Center" TextAlignment="Center" Visibility="Collapsed" />
+    </Grid>
+    <Grid x:Name="VolumePanel" Margin="0,0,0,10">
+     <Grid.ColumnDefinitions><ColumnDefinition Width="34" /><ColumnDefinition Width="*" /><ColumnDefinition Width="44" /></Grid.ColumnDefinitions>
+     <Button x:Name="MuteButton" Style="{StaticResource IconButton}" Width="30" Height="30" Click="Mute_Click" ToolTip="Выключить звук" AutomationProperties.Name="Выключить звук"><Path x:Name="VolumeIcon" Style="{StaticResource Icon}" Data="{StaticResource IconSpeakerHigh}" Width="18" Height="18" Fill="#BABAC4" /></Button>
+     <Slider x:Name="VolumeSlider" Grid.Column="1" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1" ValueChanged="Volume_Changed" LostMouseCapture="Volume_End" VerticalAlignment="Center" AutomationProperties.Name="Громкость" />
+     <TextBlock x:Name="VolumePercent" Grid.Column="2" Text="50%" FontSize="11" Foreground="#BABAC4" TextAlignment="Right" VerticalAlignment="Center" />
     </Grid>
     <Border x:Name="LocalActions" BorderBrush="#303036" BorderThickness="0,1,0,0" Padding="0,9,0,0"><UniformGrid Columns="2">
      <Button Click="Queue_Click" AutomationProperties.Name="Очередь"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource Icon}" Data="{StaticResource IconPlaylist}" Margin="0,0,9,0" /><TextBlock Text="Очередь" VerticalAlignment="Center" /></StackPanel></Button>
      <Button Click="Similar_Click" AutomationProperties.Name="Похожее"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource Icon}" Data="{StaticResource IconSparkle}" Fill="#BABAC4" Margin="0,0,9,0" /><TextBlock Text="Похожее" Foreground="#BABAC4" VerticalAlignment="Center" /></StackPanel></Button>
     </UniformGrid></Border>
-    <TextBlock x:Name="ExternalFooter" Text="Громкость и очередь — в приложении" Foreground="#A3A3AD" FontSize="11" HorizontalAlignment="Center" Margin="0,0,0,4" Visibility="Collapsed" />
+    <TextBlock x:Name="ExternalFooter" Text="Очередь — в приложении" Foreground="#A3A3AD" FontSize="11" HorizontalAlignment="Center" Margin="0,0,0,4" Visibility="Collapsed" />
    </StackPanel>
    <StackPanel x:Name="LibraryPane" Visibility="Collapsed">
     <DockPanel Margin="0,0,0,12"><Button Style="{StaticResource IconButton}" DockPanel.Dock="Left" Click="Back_Click" AutomationProperties.Name="Назад"><Path Style="{StaticResource Icon}" Data="{StaticResource IconArrowLeft}" /></Button>
