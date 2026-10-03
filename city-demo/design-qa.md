@@ -1,3 +1,20 @@
+# Wide gallery layout — 2026-10-04
+
+Removed the 1485 px container cap for the projects view above that breakpoint.
+Header, content and lower shelf now use the available width with a 4.5% text gutter;
+the existing shelf materials and viewport-height framing are retained.
+
+Compared `qa/collection-charcoal/wide-before.jpg` and `wide-after.jpg` at the user's
+1898 × 937 viewport: the lower shelf expands from 1304 to 1813 px, and the main
+container starts at x0 instead of x206.5. CRM, ARGUS and the all-projects overview
+fit without horizontal or vertical overflow. At 1280 × 680 the page still fits in
+one viewport; 390 × 844 retains its readable single-column mobile layout.
+Project selection and return from the overview work; browser errors: none.
+124 tests passed and production build passed (existing shared-chunk advisory).
+
+final result: passed
+
+---
 # Shelf fidelity correction — 2026-10-04
 
 User requested a closer match to the exact shelf in `design/collection/charcoal-reference.png`.

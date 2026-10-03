@@ -50,6 +50,14 @@
 .collection-overview .collection-mini-model{height:clamp(240px,22vw,350px)}
 .pf-mode-collection ~ .guide-layer,.pf-mode-collection ~ .guide-root{display:none}
 
+/* Let the gallery fill wide screens while retaining the reference's edge-to-edge
+   shelf on the left and a small shared gutter for the header, copy and lower row. */
+@media(min-width:1486px){
+  .pf-mode-collection .gallery-header{max-width:none;padding-inline:4.5%}
+  .collection-main{max-width:none}
+  .collection-bottom{width:104.945%}
+}
+
 /* Case drawers use the same neutral UI; the warm homepage is independent. */
 .pf-app.pf-gallery.pf-mode-collection .pf-drawer{background:#191a1b;--pf-accent:#fff}
 .pf-app.pf-gallery.pf-mode-collection .pf-drawer::backdrop{background:#08090ac4}
