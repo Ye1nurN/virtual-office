@@ -9,7 +9,9 @@ import {FullScreenQuad} from 'three/addons/postprocessing/Pass.js';
 import {CopyShader} from 'three/addons/shaders/CopyShader.js';
 import {PROJECTS} from '../city/catalog.js';
 import {COLLECTION} from './collectionData.js';
-import {createSceneKit} from '../city/sceneKit.js';
+import {createExhibitKit} from './exhibitKit.js';
+import {createExhibitMotion,EXHIBIT_REST_ANGLE} from './exhibitMotion.js';
+import {createExhibitEffects} from './exhibitEffects.js';
 import {createVegetation} from '../city/vegetation.js';
 import {buildProjectBuilding} from '../city/buildings.js';
 import {createAssetLibrary} from '../world/assets.js';
@@ -21,7 +23,7 @@ import {disposeScene} from '../rendering.js';
 export function createCollectionRenderer(host, scrollRoot, onState) {
   let renderer;
   try {renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});}
-  catch {onState('error');return {dispose(){},update(){},rotate(){},drag(){}};}
+  catch {onState('error');return {dispose(){},update(){},rotate(){},drag(){},interest(){}};}
   renderer.setClearColor(0,0);renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
   renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
@@ -44,6 +46,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   const blendQuad=new FullScreenQuad(blendMaterial);
   const library=createAssetLibrary(),items=new Map(),textures=new Set(),stages=[];
   const motion=matchMedia('(prefers-reduced-motion: reduce)');
+  const exhibits=createExhibitMotion(PROJECTS.map(p=>p.id));
   let disposed=false,frame=0,slots=[],lastTime=0,resize=true,wood,stone,heroId,transition=null;
   const transitionDuration=460;
   const ease=t=>t*t*(3-2*t);
@@ -164,8 +167,8 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     const dt=Math.min((time-lastTime)/1000,.05);lastTime=time;
     const bounds=host.getBoundingClientRect();if(resize){renderer.setSize(bounds.width,bounds.height,false);resize=false;}
     const progress=transition?.start!=null?Math.min(1,Math.max(0,(time-transition.start)/transitionDuration)):1;
-    renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);let moving=false;
-    for(const item of items.values()){const delta=item.target-item.pivot.rotation.y;if(Math.abs(delta)>.0005){item.pivot.rotation.y=motion.matches?item.target:item.pivot.rotation.y+delta*(1-Math.exp(-dt*13));moving=true;}else item.pivot.rotation.y=item.target;}
+    renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);let moving=exhibits.step(dt,motion.matches);
+    for(const [id,item] of items){const state=exhibits.states.get(id);item.pivot.rotation.y=state.angle;item.effects.update(state.scene);}
     const visible=slots.filter(s=>s.element?.isConnected).map(s=>({...s,rect:s.element.getBoundingClientRect()}));
     const hero=visible.find(s=>s.hero);let index=0;
     if(hero){renderStage(stages[index]||createStage(),hero.rect,[hero],true,bounds,progress);index++;}
@@ -184,17 +187,17 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   }
   const observer=new ResizeObserver(entries=>{if(entries.some(e=>e.target===host)){clearTransition();resize=true;}invalidate();});observer.observe(host);observer.observe(scrollRoot);
   scrollRoot.addEventListener('scroll',invalidate,{passive:true});
-  const stopTransition=()=>{clearTransition();invalidate();};
+  const stopTransition=()=>{clearTransition();exhibits.clearInterest();invalidate();};
   scrollRoot.addEventListener('wheel',stopTransition,{passive:true});scrollRoot.addEventListener('touchmove',stopTransition,{passive:true});
-  const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;clearTransition();}else invalidate();};document.addEventListener('visibilitychange',visibility);motion.addEventListener('change',stopTransition);
+  const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;clearTransition();exhibits.clearInterest();}else invalidate();};document.addEventListener('visibilitychange',visibility);motion.addEventListener('change',stopTransition);window.addEventListener('blur',stopTransition);
   async function init(){
-    const ids=['plant_floor',...PROJECTS.map(p=>p.exteriorAsset).filter(Boolean)];
+    const ids=['plant_floor','employee_base',...PROJECTS.map(p=>p.exteriorAsset).filter(Boolean)];
     const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/ivory-travertine-v2.webp'),loadTexture('/collection/charcoal-wood-v2.webp')]);
     const albedos=results[0].status==='fulfilled'?results[0].value:{};Object.values(albedos).forEach(t=>textures.add(t));
     if(disposed){textures.forEach(t=>t.dispose());return;}if(results.some(r=>r.status==='rejected')||library.missing.size){onState('error');return;}
     stone=results[2].value;wood=results[3].value;wood.wrapS=wood.wrapT=T.MirroredRepeatWrapping;const templates=await library.getTemplates(ids);if(disposed)return;
     for(const project of PROJECTS){
-      const kit=createSceneKit(templates,albedos);buildProjectBuilding(kit,{...project,x:0,z:0,yaw:0,galleryDisplay:true});
+      const kit=createExhibitKit(templates,albedos);buildProjectBuilding(kit,{...project,x:0,z:0,yaw:0,galleryDisplay:true});
       kit.box(0,.03,.85,19,.24,13.2,'#aaa79d');kit.plane(0,.16,.85,18.8,13,kit.surface('paving',18.8,13,5,'#dfdbd0'));kit.lamp(-8.4,5.6,1.3);
       const vegetation=createVegetation((x,y,z,w,h,d,col,...rest)=>kit.box(x,y,z,w*(col.startsWith('#')&&h<.8?.66:1),h,d*(col.startsWith('#')&&h<.8?.66:1),col,...rest),{detail:'original'});
       if(project.id==='pharmacy'){
@@ -204,13 +207,14 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
         for(const x of [6.75,9.25])kit.box(x,1.65,7.4,.12,3.3,.18,'#a7814d');kit.box(8,.24,7.5,2.65,.18,.4,'#8d6c42');
       }
       const built=kit.finish();built.textures.forEach(t=>textures.add(t));
-      const pivot=new T.Group();pivot.rotation.y=.19;built.root.position.z=-.85;pivot.add(built.root);
+      const effects=createExhibitEffects(project,built.parts);
+      const pivot=new T.Group();pivot.rotation.y=EXHIBIT_REST_ANGLE;built.root.position.z=-.85;pivot.add(built.root);
       const mat=new T.MeshStandardMaterial({map:stone,bumpMap:stone,bumpScale:.045,color:'#d5d1c8',roughness:.65});
       const tray=new T.Group();tray.add(mesh(surfaceGeometry(new RoundedBoxGeometry(19.5,1.15,13.8,3,.13),7),mat,0,-.665,0));
       const jointMat=new T.MeshStandardMaterial({color:'#706d65',roughness:1});
       for(let x=-8.75;x<9;x+=1.46)tray.add(mesh(new T.BoxGeometry(.025,.86,.035),jointMat,x,-.64,6.9));
       pivot.add(tray);
-      items.set(project.id,{pivot,tray,assets:built.assets,target:.19,height:new T.Box3().setFromObject(built.root).max.y});
+      items.set(project.id,{pivot,tray,assets:built.assets,effects,height:new T.Box3().setFromObject(built.root).max.y});
     }onState('ready');invalidate();
   }
   init().catch(()=>{if(!disposed)onState('error');});
@@ -224,9 +228,10 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
       const before=new T.FramebufferTexture(width,height);renderer.copyFramebufferToTexture(before);
       clearTransition();transition={before,after:new T.FramebufferTexture(width,height),start:null};
     },
-    update(next){const nextHero=next.find(s=>s.hero)?.id;if(nextHero!==heroId){heroId=nextHero;for(const item of items.values()){item.target=.19;item.pivot.rotation.y=.19;}}for(const slot of slots)observer.unobserve(slot.element);slots=next;for(const slot of slots)observer.observe(slot.element);if(transition?.start===null)transition.start=performance.now();invalidate();},
-    rotate(id,amount=.65){const item=items.get(id);if(item){item.target+=amount;invalidate();}},
-    drag(id,amount){const item=items.get(id);if(item){item.target+=amount;item.pivot.rotation.y=item.target;invalidate();}},
-    dispose(){disposed=true;cancelAnimationFrame(frame);clearTransition();observer.disconnect();scrollRoot.removeEventListener('scroll',invalidate);scrollRoot.removeEventListener('wheel',stopTransition);scrollRoot.removeEventListener('touchmove',stopTransition);document.removeEventListener('visibilitychange',visibility);motion.removeEventListener('change',stopTransition);renderer.domElement.removeEventListener('webglcontextlost',contextLost);for(const item of items.values()){item.assets.release();disposeScene(item.pivot);}for(const stage of stages){disposeScene(stage.scene);stage.ao.dispose();stage.output.dispose();stage.composer.dispose();}textures.forEach(t=>t.dispose());copyQuad.dispose();copyMaterial.dispose();blendQuad.dispose();blendMaterial.dispose();environment.dispose();library.dispose();renderer.dispose();renderer.domElement.remove();},
+    update(next){const nextHero=next.find(s=>s.hero)?.id;if(nextHero!==heroId){heroId=nextHero;exhibits.select(heroId);}for(const slot of slots)observer.unobserve(slot.element);slots=next;for(const slot of slots)observer.observe(slot.element);if(transition?.start===null)transition.start=performance.now();invalidate();},
+    interest(id,source,on){exhibits.interest(id,source,on);invalidate();},
+    rotate(id,amount=.65){exhibits.turn(id,amount);invalidate();},
+    drag(id,amount){exhibits.turn(id,amount,true);invalidate();},
+    dispose(){disposed=true;cancelAnimationFrame(frame);clearTransition();observer.disconnect();scrollRoot.removeEventListener('scroll',invalidate);scrollRoot.removeEventListener('wheel',stopTransition);scrollRoot.removeEventListener('touchmove',stopTransition);document.removeEventListener('visibilitychange',visibility);motion.removeEventListener('change',stopTransition);window.removeEventListener('blur',stopTransition);renderer.domElement.removeEventListener('webglcontextlost',contextLost);for(const item of items.values()){item.assets.release();disposeScene(item.pivot);}for(const stage of stages){disposeScene(stage.scene);stage.ao.dispose();stage.output.dispose();stage.composer.dispose();}textures.forEach(t=>t.dispose());copyQuad.dispose();copyMaterial.dispose();blendQuad.dispose();blendMaterial.dispose();environment.dispose();library.dispose();renderer.dispose();renderer.domElement.remove();},
   };
 }

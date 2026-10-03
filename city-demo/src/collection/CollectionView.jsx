@@ -53,7 +53,7 @@ export default function CollectionView({onMode,onOpenCase,onVisit}) {
           </article>
         </section>:<section className="collection-intro" key="overview"><span className="collection-eyebrow">{String(COLLECTION.length).padStart(2,'0')} проектов</span><h1 ref={heading} tabIndex={-1}>Проекты</h1><p>Кейсы, мой вклад и интерактивные демонстрации.<br/>Выберите здание, чтобы изучить проект.</p>{status==='error'&&<p role="status">3D-витрина недоступна. Выберите проект по названию.</p>}</section>}
         <section className="collection-bottom" aria-label="Проекты на полке">
-          <div className="collection-miniatures">{others.map(p=><button key={p.id} className="collection-miniature" aria-label={'Рассмотреть '+p.label} onClick={()=>select(p.id)} onPointerEnter={()=>api.current?.rotate(p.id,.055)} onPointerLeave={()=>api.current?.rotate(p.id,-.055)}><span className="collection-mini-model" ref={slot(p.id)} data-hero="false"/><span className="collection-plaque">{p.plaque}</span></button>)}</div>
+          <div className="collection-miniatures">{others.map(p=><button key={p.id} className="collection-miniature" aria-label={'Рассмотреть '+p.label} onClick={()=>select(p.id)} onPointerEnter={e=>{if(e.pointerType!=='touch')api.current?.interest(p.id,'pointer',true);}} onPointerLeave={()=>api.current?.interest(p.id,'pointer',false)} onFocus={e=>{if(e.currentTarget.matches(':focus-visible'))api.current?.interest(p.id,'focus',true);}} onBlur={()=>api.current?.interest(p.id,'focus',false)}><span className="collection-mini-model" ref={slot(p.id)} data-hero="false"/><span className="collection-plaque">{p.plaque}</span></button>)}</div>
         </section>
       </main>
     </div>

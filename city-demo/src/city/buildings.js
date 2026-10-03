@@ -2,6 +2,7 @@ import {buildAutofixBuilding} from './autofixBuilding.js';
 import {buildTynyshBuilding} from './tynyshBuilding.js';
 import {Euler,Quaternion,Vector3} from 'three';
 import {buildingPoint,rotatedFootprint} from './buildingFrame.js';
+import {buildingPart} from './buildingPart.js';
 
 // Rotate authoring coordinates before batching, keeping both scene-kit renderers usable.
 function facingKit(raw,p){
@@ -85,13 +86,14 @@ export function buildProjectBuilding(k,p){
     face(side,u,y+hh/2+.18,.26,ww+.5,.16,.44,edge);
   }
   if(office){
-    for(const u of [-5.15,5.15])window(0,u,1.95,2.3,2.5,true);
+    for(const u of [-5.15,5.15])buildingPart(k,'office-ground-'+u,()=>window(0,u,1.95,2.3,2.5,true));
     // Keep the window tops aligned while reserving a clear band for the sign.
-    for(const u of [-5.35,-2.7,0,2.7,5.35])window(0,u,6.23,1.37,1.81,u!==0);
+    for(const u of [-5.35,-2.7,0,2.7,5.35])buildingPart(k,'office-window-'+u,()=>window(0,u,6.23,1.37,1.81,u!==0));
+    if(p.galleryDisplay)buildingPart(k,'office-employee',()=>k.model('employee_base',x,front+.45,1.5,0,5.46));
     for(const side of [-1,1])for(const u of [-3.8,0,3.8])for(const y of [1.95,5.9])window(side,u,y,1.85,2.5,true);
     for(const u of [-3.55,3.55])face(0,u,5.7,.17,.29,3.75,.26,'#935b36');
   }else{
-    for(const u of [-4.6,4.6])window(0,u,1.9,3.7,2.32,pharmacy);
+    for(const u of [-4.6,4.6])buildingPart(k,'display-'+(u<0?'left':'right'),()=>window(0,u,1.9,3.7,2.32,pharmacy));
     for(const side of [-1,1])for(const u of [-3.5,0,3.5])window(side,u,1.9,1.95,2.2,false);
   }
   // Recessed entry, glazed double doors, brass pulls and a projecting canopy.
@@ -123,17 +125,23 @@ export function buildProjectBuilding(k,p){
   k.sign(office?'МОЙ ОФИС':pharmacy?'АПТЕКА':'ARGUS',x+(pharmacy?1.05:!office?.7:0),signY,front+.62,pharmacy?7.2:office?8:7,office?1.12:1.3,{bg:office?'#28323c':pharmacy?'#247a60':'#183a52',size:240});
   if(pharmacy){
     k.box(x-4.22,signY,front+.74,1.72,1.86,.27,'#1b7458');
+    buildingPart(k,'pharmacy-cross',()=>{
     k.box(x-4.22,signY,front+.94,.32,1.25,.15,k.glow('#efffe1',.38));k.box(x-4.22,signY,front+.95,1.21,.34,.15,k.glow('#efffe1',.38));
+    });
   }else if(!office){
     const cyan=k.glow('#24c7ec',1.15);
     for(const dx of [-6.8,6.8,-2.2,2.2]){k.box(x+dx,1.98,front+.56,.105,2.4,.09,cyan);k.box(x+dx,3.19,front+.56,.4,.13,.1,cyan);}
     // A metal shield emblem assembled as a small physical relief.
+    buildingPart(k,'argus-shield',()=>{
+    const cyan=k.glow('#24c7ec',1.15);
     k.box(x-4.2,signY+.08,front+.77,1.25,1.3,.14,cyan);
     k.box(x-4.2,signY-.57,front+.77,.89,.89,.14,cyan,0,0,Math.PI/4);
     k.box(x-4.2,signY+.05,front+.87,.94,1.1,.08,'#276686');
     k.box(x-4.2,signY-.41,front+.88,.66,.66,.08,'#276686',0,0,Math.PI/4);
     k.box(x-4.3,signY-.02,front+.97,.14,.52,.06,'#e9ffff',0,0,.65);
     k.box(x-4.05,signY+.1,front+.97,.14,.72,.06,'#e9ffff',0,0,-.62);
+    });
+    if(p.galleryDisplay)buildingPart(k,'argus-scan',()=>k.box(x,1,front+.65,w-.8,.055,.035,k.glow('#75e6ff',1.9)));
   }
   // Roof deck, stepped coping, glazing, service units and planted corners.
   const roof=h+.39;

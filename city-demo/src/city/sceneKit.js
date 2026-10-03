@@ -80,7 +80,7 @@ export function createSceneKit(templates,albedos={}){
     else for(let dz=-d/2+.36;dz<d/2;dz+=.74)box(x,.2,z+dz,w,.22,.7,'#d0c8b1');
   }
   function finish(){
-    const {meshes,count}=batches.finish();root.add(...meshes);
+    const {meshes,count}=batches.finish();if(meshes.length)root.add(...meshes);
     for(const mat of materials.values())if(mat.userData.voxelTint)mat.dispose();
     const staticTemplates=new Map(templates),owned=new T.Group();
     for(const id of new Set(objects.map(o=>o.assetId).filter(id=>id.startsWith('employee')))){

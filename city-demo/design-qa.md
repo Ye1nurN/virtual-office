@@ -1,3 +1,35 @@
+# Interactive souvenir animations — 2026-10-04
+
+Implemented the approved motion direction on the existing shelf layout. Miniatures
+rest at 18.3 degrees and turn towards the visitor on pointer hover or keyboard
+focus. Name plaques stay on the shelf. Each facade plays a finite scene: pharmacy
+cross and sequenced display lights; Uniqs roller shutter revealing a car; ARGUS
+scan and shield; office window lights and employee; Tynysh hinged doors and lights.
+The selected detail also plays without hover, so a single mobile selection works.
+
+- Pointer enter/leave, keyboard Tab/Enter, arrow rotation, quick project changes,
+  case drawer, city navigation and returning to the collection verified in browser.
+- Checked 1860 × 916 and 1280 × 680: both shelves fit without page overflow.
+  At 390 × 844, single-column content and single-click selection work with no
+  horizontal overflow. This was responsive browser testing, not a hardware touch test.
+- Captures: `qa/collection-motion/desktop-garage.jpg`, `mobile-garage.jpg`,
+  `office-keyboard.jpg`. Inspected open garage, door hinges, lights and window actor.
+- Eight motion regression tests cover finite settling, interruption, stale pointer
+  events, keyboard focus, manual rotation, reduced-motion end poses, fixed hinges,
+  reversible lighting and missing parts in replacement GLBs. Reduced motion is
+  covered by these tests; the browser's OS preference was not changed.
+- Fixed an empty-geometry `Object3D.add()` warning for GLB-only scene groups.
+  No new browser errors after the fix and reload. The city keeps its static
+  building geometry, collision data and original scene batching.
+- `npm test`: 132 passed. `npm run build`: passed with the existing shared-chunk
+  size advisory. No animation dependency was added; rendering stops once settled.
+
+The unselected two-shelf overview draft was preserved separately and is not part
+of this change.
+
+final result: passed
+
+---
 # Wide gallery layout — 2026-10-04
 
 Removed the 1485 px container cap for the projects view above that breakpoint.
