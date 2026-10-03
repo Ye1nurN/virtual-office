@@ -42,7 +42,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   const blendQuad=new FullScreenQuad(blendMaterial);
   const library=createAssetLibrary(),items=new Map(),textures=new Set(),stages=[];
   const motion=matchMedia('(prefers-reduced-motion: reduce)');
-  let disposed=false,frame=0,slots=[],lastTime=0,resize=true,wood,stone,heroId,transition=null;
+  let disposed=false,frame=0,slots=[],lastTime=0,resize=true,shelfSurface,stone,heroId,transition=null;
   const transitionDuration=460;
   const ease=t=>t*t*(3-2*t);
   function clearTransition(){if(!transition)return;transition.before.dispose();transition.after.dispose();transition=null;blendMaterial.uniforms.before.value=null;blendMaterial.uniforms.after.value=null;}
@@ -62,21 +62,21 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   }
   function mesh(geometry,material,x=0,y=0,z=0){const m=new T.Mesh(geometry,material);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;return m;}
   function plaque(text,width,height){
-    const group=new T.Group(),ceramic=new T.MeshStandardMaterial({color:'#f4eee3',metalness:0,roughness:.72});
-    group.add(mesh(new RoundedBoxGeometry(width+.12,height+.1,.07,3,.04),new T.MeshStandardMaterial({color:'#49423a',roughness:.7}),0,0,-.025));
+    const group=new T.Group(),ceramic=new T.MeshStandardMaterial({color:'#ffffff',metalness:0,roughness:.72});
+    group.add(mesh(new RoundedBoxGeometry(width+.12,height+.1,.07,3,.04),new T.MeshStandardMaterial({color:'#333639',roughness:.7}),0,0,-.025));
     group.add(mesh(new RoundedBoxGeometry(width,height,.095,3,.045),ceramic));
     const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=Math.round(1536*height/width);
-    const c=canvas.getContext('2d');c.fillStyle='#171710';c.textAlign='center';c.textBaseline='middle';c.font=`600 ${canvas.height*.49}px Arial`;c.fillText(text,768,canvas.height*.52,1370);
+    const c=canvas.getContext('2d');c.fillStyle='#111315';c.textAlign='center';c.textBaseline='middle';c.font=`600 ${canvas.height*.49}px Arial`;c.fillText(text,768,canvas.height*.52,1370);
     const map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;textures.add(map);
     const face=new T.Mesh(new T.PlaneGeometry(width,height),new T.MeshBasicMaterial({map,transparent:true,toneMapped:false}));face.position.z=.053;group.add(face);
-    const fastener=new T.MeshStandardMaterial({color:'#51473b',metalness:.15,roughness:.6});
+    const fastener=new T.MeshStandardMaterial({color:'#777d83',metalness:.15,roughness:.6});
     for(const x of [-width/2+.16,width/2-.16])group.add(mesh(new T.SphereGeometry(.052,8,6),fastener,x,0,.065));
     return group;
   }
   function createStage(){
     const scene=new T.Scene(),furniture=new T.Group();scene.add(furniture);scene.environment=environment.texture;scene.environmentIntensity=.035;
-    scene.add(new T.HemisphereLight('#fff6e6','#433a2d',.85));
-    const key=new T.DirectionalLight('#fff0da',3.15);key.position.set(-16,28,18);key.castShadow=true;
+    scene.add(new T.HemisphereLight('#ffffff','#33383d',.85));
+    const key=new T.DirectionalLight('#ffffff',3.15);key.position.set(-16,28,18);key.castShadow=true;
     key.shadow.mapSize.set(2048,2048);key.shadow.normalBias=.015;key.shadow.bias=-.000025;key.shadow.radius=3;
     Object.assign(key.shadow.camera,{left:-65,right:65,top:35,bottom:-20,near:1,far:120});scene.add(key);
     const fill=new T.DirectionalLight('#ced8de',.45);fill.position.set(20,12,2);scene.add(fill);
@@ -92,16 +92,16 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     if(stage.signature===signature)return;stage.signature=signature;
     stage.furniture.traverse(o=>{const map=o.material?.map;if(map?.isCanvasTexture){map.dispose();textures.delete(map);}});
     disposeScene(stage.furniture);stage.furniture.clear();
-    const woodMat=new T.MeshStandardMaterial({map:wood,color:'#756b60',roughness:.65,bumpMap:wood,bumpScale:.045});
+    const shelfMat=new T.MeshStandardMaterial({color:'#303438',roughness:.64,metalness:.08,bumpMap:shelfSurface,bumpScale:.015});
     const depth=hero?11:27,front=hero?13:24,thick=hero?1.4:4;
     const slab=new RoundedBoxGeometry(width,thick,depth,3,.09),positions=slab.attributes.position;
     // A gently receding side edge matches the shallow perspective of the shelf.
     for(let i=0;i<positions.count;i++)if(positions.getX(i)>0)positions.setX(i,positions.getX(i)-(depth/2-positions.getZ(i))/depth*(hero?.7:1.8));
     slab.computeVertexNormals();
-    stage.furniture.add(mesh(surfaceGeometry(slab,12),woodMat,hero?-.9:0,-thick/2,front-depth/2));
-    stage.furniture.add(mesh(surfaceGeometry(new RoundedBoxGeometry(width,.12,.17,3,.05),12),woodMat,hero?-.9:0,-.06,front+.025));
+    stage.furniture.add(mesh(surfaceGeometry(slab,12),shelfMat,hero?-.9:0,-thick/2,front-depth/2));
+    stage.furniture.add(mesh(surfaceGeometry(new RoundedBoxGeometry(width,.12,.17,3,.05),12),shelfMat,hero?-.9:0,-.06,front+.025));
     if(hero){
-      const stoneMat=new T.MeshPhysicalMaterial({map:stone,bumpMap:stone,bumpScale:.11,color:'#fff4df',roughness:.4,clearcoat:.22,clearcoatRoughness:.3});
+      const stoneMat=new T.MeshPhysicalMaterial({bumpMap:stone,bumpScale:.045,color:'#f4f5f6',roughness:.5,clearcoat:.16,clearcoatRoughness:.4});
       stage.furniture.add(mesh(surfaceGeometry(new T.CylinderGeometry(11.7,11.74,2.25,128),8),stoneMat,0,1.125,.85));
       const label=plaque(entries[0].label.toUpperCase(),8.3,1.05);label.position.set(2.05,.98,12.7);stage.furniture.add(label);
     }else for(const e of entries){const label=plaque(e.label,Math.min(15.5,e.cell*.72),2.05);label.position.set(e.x,1.02,front-5);label.rotation.x=-.1;stage.furniture.add(label);}
@@ -132,7 +132,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     for(const e of entries)items.get(e.id)?.pivot.removeFromParent();
   }
   function draw(time){
-    frame=0;if(disposed||!wood)return;
+    frame=0;if(disposed||!shelfSurface)return;
     const dt=Math.min((time-lastTime)/1000,.05);lastTime=time;
     const bounds=host.getBoundingClientRect();if(resize){renderer.setSize(bounds.width,bounds.height,false);resize=false;}
     const progress=transition?.start!=null?Math.min(1,Math.max(0,(time-transition.start)/transitionDuration)):1;
@@ -161,10 +161,10 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;clearTransition();}else invalidate();};document.addEventListener('visibilitychange',visibility);motion.addEventListener('change',stopTransition);
   async function init(){
     const ids=['plant_floor',...PROJECTS.map(p=>p.exteriorAsset).filter(Boolean)];
-    const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/travertine.png'),loadTexture('/collection/walnut.png')]);
+    const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/travertine.png'),loadTexture('/portfolio/gallery/charcoal-panel-v2.webp')]);
     const albedos=results[0].status==='fulfilled'?results[0].value:{};Object.values(albedos).forEach(t=>textures.add(t));
     if(disposed){textures.forEach(t=>t.dispose());return;}if(results.some(r=>r.status==='rejected')||library.missing.size){onState('error');return;}
-    stone=results[2].value;wood=results[3].value;const templates=await library.getTemplates(ids);if(disposed)return;
+    stone=results[2].value;shelfSurface=results[3].value;const templates=await library.getTemplates(ids);if(disposed)return;
     for(const project of PROJECTS){
       const kit=createSceneKit(templates,albedos);buildProjectBuilding(kit,{...project,x:0,z:0,yaw:0,galleryDisplay:true});
       kit.box(0,.03,.85,19,.24,13.2,'#b5aa94');kit.plane(0,.16,.85,18.8,13,kit.surface('paving',18.8,13,5,'#e3d4b9'));kit.lamp(-8.4,5.6,1.3);
@@ -177,7 +177,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
       }
       const built=kit.finish();built.textures.forEach(t=>textures.add(t));
       const pivot=new T.Group();pivot.rotation.y=.19;built.root.position.z=-.85;pivot.add(built.root);
-      const mat=new T.MeshStandardMaterial({map:stone,bumpMap:stone,bumpScale:.035,color:'#e7dcc6',roughness:.55});
+      const mat=new T.MeshStandardMaterial({bumpMap:stone,bumpScale:.025,color:'#f4f5f6',roughness:.55});
       const tray=mesh(surfaceGeometry(new RoundedBoxGeometry(19.5,.38,13.8,2,.06),5),mat,0,-.28,0);pivot.add(tray);
       items.set(project.id,{pivot,tray,assets:built.assets,target:.19,height:new T.Box3().setFromObject(built.root).max.y});
     }onState('ready');invalidate();
@@ -185,7 +185,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   init().catch(()=>{if(!disposed)onState('error');});
   return {
     prepareTransition(){
-      if(disposed||!wood||motion.matches||document.hidden)return;
+      if(disposed||!shelfSurface||motion.matches||document.hidden)return;
       // Capture the currently blended frame on rapid clicks, before React swaps
       // the DOM slots. No second WebGL context or persistent render loop is used.
       cancelAnimationFrame(frame);frame=0;draw(performance.now());

@@ -1,5 +1,4 @@
 import React from 'react';
-import '@fontsource-variable/roboto/wght.css';
 import {ArrowRight, ArrowUpRight, Code, EnvelopeSimple, Folder, GraduationCap, PaperPlaneTilt, Trophy} from '@phosphor-icons/react';
 import {CASES, PROFILE} from './content.js';
 import {ACHIEVEMENTS, EDUCATION} from './resume.js';

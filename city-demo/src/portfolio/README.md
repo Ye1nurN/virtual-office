@@ -16,8 +16,14 @@ the entrance spawn back into the portfolio city.
   white accents, locally packaged Roboto and a measured three-track grid.
   The full resume is reachable from About; the footer matches the reference date.
 - `GalleryHeader.jsx` / `gallery-theme.css`: shared home/projects navigation,
-  warm charcoal/white gallery theme, drawer colours and reduced-motion support.
-  Home's neutral tokens are scoped in `home.css`, including its detail panels.
+  neutral graphite/white tokens, Roboto body type, Times display headings,
+  common material rasters, drawer colours and reduced-motion support. Both routes
+  use this single theme rather than separate palette/header overrides.
+- `../collection/collection.css`: matching graphite project detail card, white
+  and outlined actions, responsive shelf overview and keyboard focus states.
+  `collectionRenderer.js` keeps shared 3D cameras/shadows and existing building
+  colours; the gallery furniture uses graphite shelves, white ceramic plinths
+  and neutral lighting. Existing rotation and project crossfades are preserved.
 - `PortfolioCity.jsx`: home/city/resume/collection switch, navigation, accessible
   modal project details, search, contact panel and city controls.
 - `portfolio.css`: styles scoped to `.pf-*`; no redesign of interior demo UIs.

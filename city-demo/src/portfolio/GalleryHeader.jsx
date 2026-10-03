@@ -1,4 +1,5 @@
 import React from 'react';
+import '@fontsource-variable/roboto/wght.css';
 import {PaperPlaneTilt} from '@phosphor-icons/react';
 import {PROFILE, portfolioUrl} from './content.js';
 

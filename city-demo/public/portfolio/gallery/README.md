@@ -19,6 +19,14 @@ Source style reference: `design/home-graphite-approved.png`. The homepage uses
 repository and WebP-encoded without programmatic recolouring. Typography and
 controls remain HTML; no screenshot is used as a substitute for live UI.
 
+As of 2026-10-04 these two neutral textures also serve the projects gallery:
+the same wall and detail-card surface are shared with home. The panel texture
+provides a restrained bump map for the real 3D graphite shelf. The existing
+travertine texture contributes only surface relief to white ceramic plinths;
+its warm albedo is no longer used by the gallery furniture. No new generated
+assets or recoloured bitmap copies were needed. City building materials stay
+in the shared building catalogue.
+
 Wall prompt:
 > Use case: style-transfer. Asset type: text-free raster material background for a portfolio homepage, landscape aspect ratio 1485:1059. Input image is a style reference ONLY: use the subtle near-black embossed background material visible around the outer edges of the supplied screenshot. Produce ONLY that empty material background across the entire canvas. Neutral charcoal base approximately #0d0f10, delicate low-relief swirling leather/plaster grain and extremely faint soft tonal variation. Texture should be most perceptible along the outer perimeter and very understated at the center, suitable underneath HTML cards. Keep the whole image nearly black, subtle and neutral grayscale. No brown, bronze, gold, green or blue color cast. NO interface panels, cards, borders, buttons, letters, numbers, text, logo, symbols, icons, objects, framing, gradient spotlights or bright areas. Do not reproduce the screenshot layout. Show only the fine dark charcoal surface; no sharp noise, no flat empty black. Opaque background.
 

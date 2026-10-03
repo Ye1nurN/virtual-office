@@ -1,20 +1,10 @@
 /* Measured against design/home-graphite-approved.png at 1485 x 1059.
-   Home owns this neutral palette; city and collection retain their materials. */
-.pf-app.pf-mode-home{--pf-ink:#fafafa;--pf-muted:#bdc0c3;--pf-accent:#fff;--pf-paper:#17191a;--pf-line:#3c3e40;font-family:'Roboto Variable',Arial,sans-serif;font-weight:350;background:#101112}
-.pf-mode-home :focus-visible{outline-color:#fff}
-.home-scroll{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:#101112 url('/portfolio/gallery/charcoal-wall-v2.webp') center top/cover;scrollbar-color:#55585b #101112}
-.pf-mode-home .gallery-header{max-width:1485px;padding-inline:72px 76px}
-.pf-mode-home .gallery-brand{gap:26px}
-.pf-mode-home .gallery-brand strong{font-family:'Times New Roman',Georgia,serif;font-size:34px;letter-spacing:-.8px}
-.pf-mode-home .gallery-header nav{gap:72px;left:50%}
-.pf-mode-home .gallery-header nav a{font-size:20px;font-weight:400}
-.pf-mode-home .gallery-header nav a[aria-current]:after{background:#fff}
-.pf-mode-home .gallery-telegram{font-size:23px!important}
-.pf-mode-home .gallery-monogram,.home-monogram{color:#070809;background:#fff;font-family:'Times New Roman',Georgia,serif;font-weight:700;box-shadow:inset 0 0 0 1px #fff,inset 0 -2px 5px #d0d2d455,0 3px 5px #0005}
+   Palette, navigation and detail panels are shared through gallery-theme.css. */
+.home-scroll{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:var(--gallery-wall);scrollbar-color:#55585b #101112}
 .home-main{max-width:1485px;margin:auto;padding:0 40px 24px}
 .home-grid{display:grid;grid-template-columns:minmax(0,547fr) minmax(0,245fr) minmax(0,587fr);gap:16px 14px}
 .home-card{min-width:0;border:1px solid #424446;border-radius:22px;background:#0c0e0f;position:relative;isolation:isolate;box-shadow:inset 0 1px 1px #ffffff0b,0 2px 5px #0002;animation:home-arrive 440ms cubic-bezier(.22,1,.36,1) both}
-.home-card:before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:url('/portfolio/gallery/charcoal-panel-v2.webp') center/cover;opacity:.35}
+.home-card:before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:var(--gallery-panel);opacity:.35}
 .home-intro{grid-column:span 2;min-height:424px;padding:41px 34px 24px}
 .home-projects{min-height:424px;padding:28px 33px 26px;display:flex;flex-direction:column;animation-delay:40ms}
 .home-skills{grid-column:span 2;min-height:248px;padding:24px 31px;animation-delay:65ms}
@@ -68,14 +58,6 @@
 .home-footer{padding:25px 18px 0;display:flex;align-items:center;justify-content:space-between;color:#c5c8ca;font-size:15px}
 .home-footer>span{display:flex;align-items:center;gap:17px}
 .home-footer time{white-space:nowrap}
-/* Details opened from home use the same neutral palette. */
-.pf-mode-home.pf-gallery .pf-drawer{--pf-accent:#fff;background:#191b1d}
-.pf-mode-home.pf-gallery .pf-drawer :is(.pf-case-symbol,.pf-scope,.pf-contact-link,.pf-award,.pf-metrics>div,.pf-skills article,.pf-project-card,.pf-search){background:#242628!important}
-.pf-mode-home.pf-gallery .pf-drawer .pf-tags span{background:#303235;color:#e2e4e6}
-.pf-mode-home.pf-gallery .pf-drawer :is(.pf-contact-link small,.pf-kicker,.pf-award-result,.pf-profile-stack,.pf-period-note,.pf-project-period,.pf-skills button){color:#c7cacf}
-.pf-mode-home.pf-gallery .pf-drawer .pf-primary{background:#fff;color:#111315}
-.pf-mode-home.pf-gallery .pf-drawer .pf-text-button{color:#e2e4e6}
-.pf-mode-home.pf-gallery .pf-drawer .pf-icon-button:hover{background:#303235}
 @keyframes home-arrive{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:1380px) and (min-width:1001px){
 .home-main{padding-inline:32px}.home-intro{padding-inline:30px}.home-projects,.home-education{padding-inline:26px}
@@ -90,10 +72,6 @@
 .home-contact{padding-inline:25px}.home-contact .home-section-heading p{font-size:17px}.home-contact-links{gap:20px}
 .home-contact-primary{font-size:18px!important;gap:12px}.home-email{font-size:14px!important;padding-left:18px;gap:12px}
 }
-@media(max-width:1100px){
-.pf-mode-home .gallery-header{padding-inline:40px}.pf-mode-home .gallery-header nav{gap:35px}.pf-mode-home .gallery-header nav a{font-size:17px}
-.pf-mode-home .gallery-telegram{font-size:17px!important}.pf-mode-home .gallery-brand{gap:18px}.pf-mode-home .gallery-brand strong{font-size:29px}
-}
 @media(max-width:1000px){
 .home-main{padding-inline:24px}.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .home-intro,.home-projects,.home-contact,.home-achievement{grid-column:1/-1;min-height:0}.home-skills{grid-column:auto}
@@ -105,8 +83,6 @@
 .home-education ol{margin:18px 0 14px 26px}.home-education li{font-size:18px;padding-left:24px}.home-contact-primary{flex:1}.home-email{font-size:16px!important}
 }
 @media(max-width:700px){
-.pf-mode-home .gallery-header{padding:20px 24px 0}.pf-mode-home .gallery-brand{gap:14px}.pf-mode-home .gallery-brand strong{font-size:28px}
-.pf-mode-home .gallery-telegram{gap:8px;font-size:16px!important}.pf-mode-home .gallery-header nav{gap:24px;border-color:#3c3e40}.pf-mode-home .gallery-header nav a{font-size:16px}
 .home-projects{display:flex;gap:0}.home-projects .home-project-count{padding:24px 12px;gap:25px}.home-project-count strong{font-size:112px}.home-project-count span{font-size:19px}
 .home-skills,.home-education{grid-column:1/-1}.home-tool-columns h3{font-size:18px}.home-tool-columns p{font-size:17px}
 .home-contact-links{flex-wrap:wrap}.home-contact-primary{flex:1 0 100%}.home-email{border:0;padding:0;margin:auto}
