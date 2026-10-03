@@ -1,5 +1,6 @@
-import React,{useEffect,useRef} from 'react';
-import {ArrowLeft,ArrowRight,ShieldCheck,Pause,Play,Eye,Hand,Robot,X,Check,DownloadSimple,ClockCounterClockwise} from '@phosphor-icons/react';
+import React,{useEffect,useRef,useState} from 'react';
+import {ArrowLeft,ArrowRight,ShieldCheck,Pause,Play,Eye,Hand,Robot,X,Check,DownloadSimple,ClockCounterClockwise,ChatCircleText,CaretDown,CaretUp} from '@phosphor-icons/react';
+import {guide} from '../guide/guideStore.js';
 import {ARGUS_SCENARIOS,ARGUS_PHASES,ARGUS_STEPS,ARGUS_ACTIONS,ARGUS_ROLES,argusReport} from './argusDemo.js';
 
 const manualHints={stream:'Соберите показания учебных счётчиков и передайте поток на стенд ARGUS.',detect:'Запросите заданный сценарием результат классификации потока.',analyze:'Сопоставьте частоту, номера последовательности и временные метки пакетов.',respond:'Выберите решение по собранным признакам. Ограничение применяется только к учебному узлу.',verify:'Проверьте поток после решения и сформируйте итоговый отчёт.'};
@@ -11,6 +12,7 @@ function Network({state}){
   </div>;
 }
 export function ArgusExperience({state,dispatch,view,onLeave,open,onOpen,onClose,viewControls}){
+  const [collapsed,setCollapsed]=useState(false);
   const panel=useRef(null),scenario=ARGUS_SCENARIOS[state.scenario],step=ARGUS_PHASES.indexOf(state.phase),started=step>0,complete=state.phase==='complete',a=state.automation,action=ARGUS_ACTIONS[state.phase];
   useEffect(()=>{if(open)panel.current?.focus();},[open]);
   const control=patch=>dispatch({type:'CONTROL',...patch});
@@ -20,11 +22,11 @@ export function ArgusExperience({state,dispatch,view,onLeave,open,onOpen,onClose
   const result=<><div className="argus-result-icon"><ShieldCheck size={26}/><span>Проверка завершена</span></div><h2>{scenario.risk?'Инцидент разобран':'Штатный поток подтверждён'}</h2><p>{scenario.result}</p><dl className="argus-facts"><div><dt>Узел</dt><dd>{scenario.node}</dd></div><div><dt>Учебная метка</dt><dd>{scenario.label}</dd></div></dl><div className="argus-evidence">{scenario.response}</div><button className="argus-primary" onClick={download}><DownloadSimple size={17}/>Скачать демо-отчёт</button></>;
   return <>
     <div className="argus-hud">
-      <div className="argus-topline"><header><button onClick={onLeave} aria-label="Вернуться в город"><ArrowLeft size={19}/><strong>ARGUS</strong></button><span>AMI LAB · ДЕМО</span></header><div className="argus-role"><Robot size={18}/>{a.mode==='auto'?'Команда ботов':'Вы — '+ARGUS_ROLES[state.role].toLowerCase()}</div>{viewControls}</div>
+      <div className="argus-topline"><header><button onClick={onLeave} aria-label="Вернуться в город"><ArrowLeft size={19}/><strong>ARGUS</strong></button><span>AMI LAB · ДЕМО</span></header><div className="argus-role"><Robot size={18}/>{a.mode==='auto'?'Команда ботов':'Вы — '+ARGUS_ROLES[state.role].toLowerCase()}</div>{viewControls}<button className="argus-guide-button" aria-label="Поговорить с гидом" title="Гид по городу" onClick={()=>guide.open()}><ChatCircleText size={21}/></button></div>
       <nav className="argus-steps" aria-label="Этапы расследования">{ARGUS_STEPS.map((label,i)=><span key={label} className={i===step?'current':i<step?'done':''} aria-current={i===step?'step':undefined}><b>{i<step?<Check size={13}/>:i+1}</b><span>{label}</span></span>)}</nav>
     </div>
-    <aside className="argus-card" aria-label="Сценарий ARGUS">
-      <div className="argus-kicker"><span>{complete?'ИТОГ СЦЕНАРИЯ':started?'ЭТАП '+step+' / 5':'ЦЕНТР МОНИТОРИНГА'}</span><ShieldCheck size={18}/></div>
+    {collapsed?<button className="argus-card-summary" aria-expanded={false} onClick={()=>setCollapsed(false)}><ShieldCheck size={18}/>Показать сценарий · {ARGUS_STEPS[step]}<CaretUp size={16}/></button>:<aside className="argus-card" aria-label="Сценарий ARGUS">
+      <div className="argus-kicker"><span>{complete?'ИТОГ СЦЕНАРИЯ':started?'ЭТАП '+step+' / 5':'ЦЕНТР МОНИТОРИНГА'}</span><button className="argus-card-toggle" aria-label="Свернуть панель сценария" aria-expanded={true} onClick={()=>setCollapsed(true)}><CaretDown size={18}/></button></div>
       {!started?<><h1>Проверьте сеть</h1><p>Запустите поток. Оператор, аналитик и инженер покажут каждый шаг разбора.</p><fieldset className="argus-scenarios"><legend>Учебный сценарий</legend>{Object.entries(ARGUS_SCENARIOS).map(([id,s])=><label key={id} className={state.scenario===id?'selected':''}><input type="radio" name="argus-scenario" value={id} checked={state.scenario===id} onChange={()=>dispatch({type:'SELECT',scenario:id})}/><span><strong>{s.name}</strong><small>{s.node}</small></span></label>)}</fieldset><Network state={state}/><button className="argus-primary" onClick={()=>dispatch({type:'START'})}>Запустить сценарий<ArrowRight size={18}/></button></>:complete?result:<>
         <h1>{a.mode==='manual'?'Ручное управление':view.name||'Команда ARGUS'}</h1><p className="argus-action" role="status">{a.paused?'Сценарий на паузе':view.text||'Готовим рабочую станцию'}</p>
         <div className="argus-progress" role="progressbar" aria-label="Текущий шаг" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((view.progress||0)*100)}><i style={{width:Math.round((view.progress||0)*100)+'%'}}/></div>
@@ -36,7 +38,7 @@ export function ArgusExperience({state,dispatch,view,onLeave,open,onOpen,onClose
       {started&&<button className="argus-text-button" onClick={onOpen}><ClockCounterClockwise size={17}/>{a.mode==='manual'&&!complete?'Рабочая станция и журнал':'Инцидент и журнал'}<ArrowRight size={16}/></button>}
       {complete&&<button className="argus-secondary" onClick={()=>{dispatch({type:'RESET'});onClose();}}>Другой сценарий</button>}
       <small className="argus-demo-note">Локальная симуляция. Метки заданы сценарием; ML и реальная сеть не подключены. Реакция инженера — учебная иллюстрация.</small>
-    </aside>
+    </aside>}
     <div className="argus-walk-hint">WASD · ходить <span>E · открыть консоль</span></div>
     {open&&<><button className="argus-backdrop" aria-label="Закрыть рабочую станцию" tabIndex={-1} onClick={onClose}/><section className="argus-details" ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Инцидент ARGUS" onKeyDown={e=>{if(e.key==='Tab'){const items=[...e.currentTarget.querySelectorAll('button:not(:disabled),select,a[href]')];if(!items.length)return;const first=items[0],last=items.at(-1);if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel.current)){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}}>
       <div className="argus-detail-heading"><div><small>РАБОЧАЯ СТАНЦИЯ</small><h2>{scenario.name}</h2></div><button aria-label="Закрыть инцидент" onClick={onClose}><X size={21}/></button></div>
