@@ -1,4 +1,4 @@
-import React,{useEffect,useRef,useState} from 'react';
+import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
 import '@fontsource-variable/lora/wght.css';
 import {ArrowRight,ArrowUpRight,ArrowCounterClockwise,PaperPlaneTilt,X} from '@phosphor-icons/react';
 import {PROFILE} from '../portfolio/content.js';
@@ -9,6 +9,7 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
   const [selected,setSelected]=useState(()=>readCollectionItem(location.href));
   const [status,setStatus]=useState('loading');
   const host=useRef(null),scroller=useRef(null),api=useRef(null),views=useRef(new Map()),drag=useRef(null),heading=useRef(null);
+  const selection=useRef(selected),focusRequested=useRef(false);
   const active=COLLECTION.find(p=>p.id===selected),others=COLLECTION.filter(p=>p.id!==selected);
   const update=()=>api.current?.update([...views.current].map(([id,element])=>({id,element,hero:element.dataset.hero==='true'})));
   useEffect(()=>{
@@ -16,12 +17,15 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
     import('./collectionRenderer.js').then(({createCollectionRenderer})=>{if(cancelled)return;api.current=createCollectionRenderer(host.current,scroller.current,setStatus);update();}).catch(()=>!cancelled&&setStatus('error'));
     return()=>{cancelled=true;api.current?.dispose();api.current=null;};
   },[]);
-  useEffect(()=>{update();},[selected,status]);
-  useEffect(()=>{const pop=()=>setSelected(readCollectionItem(location.href));window.addEventListener('popstate',pop);return()=>window.removeEventListener('popstate',pop);},[]);
-  function select(id){
-    setSelected(id);history.pushState({},'',collectionItemUrl(location.href,id));
+  useLayoutEffect(()=>{update();if(focusRequested.current){focusRequested.current=false;heading.current?.focus({preventScroll:true});}},[selected,status]);
+  useEffect(()=>{const pop=()=>select(readCollectionItem(location.href),false);window.addEventListener('popstate',pop);return()=>window.removeEventListener('popstate',pop);},[]);
+  function select(id,writeHistory=true){
+    if(id===selection.current)return;
+    drag.current=null;
     scroller.current.scrollTo({top:0,behavior:'instant'});
-    requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}));
+    api.current?.prepareTransition?.();
+    selection.current=id;focusRequested.current=true;setSelected(id);
+    if(writeHistory)history.pushState({},'',collectionItemUrl(location.href,id));
   }
   const slot=(id)=>element=>{if(element)views.current.set(id,element);else views.current.delete(id);};
   function pointerDown(e){if(status!=='ready'||e.button!==0)return;drag.current={x:e.clientX,id:e.pointerId};e.currentTarget.setPointerCapture(e.pointerId);}
@@ -54,7 +58,7 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
             <div className="collection-actions"><button className="collection-primary" onClick={()=>onOpenCase(active.id)}>Открыть кейс<ArrowUpRight size={22}/></button><button onClick={()=>onVisit(active.id)}>Попробовать демо<ArrowRight size={21}/></button></div>
             <div className="collection-secondary"><button onClick={()=>select(null)}>Все проекты</button><button onClick={()=>onMode('resume')}>Резюме<ArrowUpRight size={18}/></button></div>
           </article>
-        </section>:<section className="collection-intro"><span className="collection-eyebrow">Личная коллекция · 05 проектов</span><h1 ref={heading} tabIndex={-1}>Идеи, которым<br/>нашлось место.</h1><p>За каждым зданием — проект.<br/>Возьмите с полки тот, который хочется изучить.</p>{status==='error'&&<p role="status">3D-витрина недоступна. Выберите проект по названию.</p>}</section>}
+        </section>:<section className="collection-intro" key="overview"><span className="collection-eyebrow">Личная коллекция · 05 проектов</span><h1 ref={heading} tabIndex={-1}>Идеи, которым<br/>нашлось место.</h1><p>За каждым зданием — проект.<br/>Возьмите с полки тот, который хочется изучить.</p>{status==='error'&&<p role="status">3D-витрина недоступна. Выберите проект по названию.</p>}</section>}
         <section className="collection-bottom" aria-label="Проекты на полке">
           <div className="collection-miniatures">{others.map(p=><button key={p.id} className="collection-miniature" aria-label={'Рассмотреть '+p.label} onClick={()=>select(p.id)} onPointerEnter={()=>api.current?.rotate(p.id,.055)} onPointerLeave={()=>api.current?.rotate(p.id,-.055)}><span className="collection-mini-model" ref={slot(p.id)} data-hero="false"/><span className="collection-plaque">{p.plaque}</span></button>)}</div>
           <aside className="collection-quote">Большие проекты начинаются с идей, которым есть место.<span/></aside>

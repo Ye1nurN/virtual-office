@@ -31,12 +31,24 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   const environment=pmrem.fromScene(environmentScene,.04);environmentScene.dispose();pmrem.dispose();
   const copyMaterial=new T.ShaderMaterial({uniforms:T.UniformsUtils.clone(CopyShader.uniforms),vertexShader:CopyShader.vertexShader,fragmentShader:CopyShader.fragmentShader,depthTest:false,depthWrite:false,blending:T.NoBlending});
   const copyQuad=new FullScreenQuad(copyMaterial);
+  // Mix complete rendered frames, including alpha, so opaque shelves do not
+  // become translucent and shared GLB materials never need to be modified.
+  const blendMaterial=new T.ShaderMaterial({
+    uniforms:{before:{value:null},after:{value:null},progress:{value:0}},
+    vertexShader:CopyShader.vertexShader,
+    fragmentShader:'uniform sampler2D before; uniform sampler2D after; uniform float progress; varying vec2 vUv; void main(){gl_FragColor=mix(texture2D(before,vUv),texture2D(after,vUv),progress);}',
+    depthTest:false,depthWrite:false,blending:T.NoBlending,toneMapped:false,
+  });
+  const blendQuad=new FullScreenQuad(blendMaterial);
   const library=createAssetLibrary(),items=new Map(),textures=new Set(),stages=[];
   const motion=matchMedia('(prefers-reduced-motion: reduce)');
-  let disposed=false,frame=0,slots=[],lastTime=0,resize=true,wood,stone,heroId;
+  let disposed=false,frame=0,slots=[],lastTime=0,resize=true,wood,stone,heroId,transition=null;
+  const transitionDuration=460;
+  const ease=t=>t*t*(3-2*t);
+  function clearTransition(){if(!transition)return;transition.before.dispose();transition.after.dispose();transition=null;blendMaterial.uniforms.before.value=null;blendMaterial.uniforms.after.value=null;}
   const loadTexture=async path=>{const map=await new T.TextureLoader().loadAsync(path);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.RepeatWrapping;map.anisotropy=8;textures.add(map);return map;};
   function invalidate(){if(!frame&&!disposed&&!document.hidden)frame=requestAnimationFrame(draw);}
-  function contextLost(e){e.preventDefault();cancelAnimationFrame(frame);frame=0;onState('error');}
+  function contextLost(e){e.preventDefault();cancelAnimationFrame(frame);frame=0;clearTransition();onState('error');}
   renderer.domElement.addEventListener('webglcontextlost',contextLost);
   function surfaceGeometry(geometry,metres=6){
     // World-scale UVs avoid stretching stone pores into horizontal wood grain.
@@ -94,7 +106,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     }else for(const e of entries){const label=plaque(e.label,Math.min(15.5,e.cell*.72),2.05);label.position.set(e.x,1.02,front-5);label.rotation.x=-.1;stage.furniture.add(label);}
     const lightSpan=Math.max(17,width/2+3);Object.assign(stage.key.shadow.camera,{left:-lightSpan,right:lightSpan});stage.key.shadow.camera.updateProjectionMatrix();
   }
-  function renderStage(stage,rect,entries,hero,bounds){
+  function renderStage(stage,rect,entries,hero,bounds,progress=1){
     if(rect.bottom<=bounds.top||rect.top>=bounds.bottom||rect.width<1)return;
     const cellPx=hero?rect.width:Math.min(...entries.map(e=>e.rect.width));
     const angle=T.MathUtils.degToRad(hero?12:13);
@@ -106,7 +118,8 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     for(const e of entries){const item=items.get(e.id);if(!item)continue;stage.scene.add(item.pivot);item.pivot.position.set(e.x,hero?2.34:.47,.85);item.tray.visible=!hero;}
     const camera=stage.camera;camera.position.set(0,50*Math.sin(angle),50*Math.cos(angle));camera.lookAt(0,0,0);
     const front=hero?13:24,edge=hero?.9:1-rect.slotHeight*.24/rect.height;
-    camera.left=-width/2-(hero?.9:0);camera.right=width/2-(hero?.9:0);camera.top=height*edge-front*Math.sin(angle);camera.bottom=camera.top-height;camera.updateProjectionMatrix();
+    camera.left=-width/2-(hero?.9:0);camera.right=width/2-(hero?.9:0);camera.top=height*edge-front*Math.sin(angle);camera.bottom=camera.top-height;
+    camera.zoom=hero?1-.018*(1-ease(progress)):1;camera.updateProjectionMatrix();
     const x=rect.left-bounds.left,y=bounds.height-(rect.bottom-bounds.top);
     if(bounds.width>800){
       const size=Math.round(rect.width)+'/'+Math.round(rect.height);
@@ -121,19 +134,30 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     frame=0;if(disposed||!wood)return;
     const dt=Math.min((time-lastTime)/1000,.05);lastTime=time;
     const bounds=host.getBoundingClientRect();if(resize){renderer.setSize(bounds.width,bounds.height,false);resize=false;}
+    const progress=transition?.start!=null?Math.min(1,Math.max(0,(time-transition.start)/transitionDuration)):1;
     renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);let moving=false;
     for(const item of items.values()){const delta=item.target-item.pivot.rotation.y;if(Math.abs(delta)>.0005){item.pivot.rotation.y=motion.matches?item.target:item.pivot.rotation.y+delta*(1-Math.exp(-dt*13));moving=true;}else item.pivot.rotation.y=item.target;}
     const visible=slots.filter(s=>s.element?.isConnected).map(s=>({...s,rect:s.element.getBoundingClientRect()}));
     const hero=visible.find(s=>s.hero);let index=0;
-    if(hero){renderStage(stages[index]||createStage(),hero.rect,[hero],true,bounds);index++;}
+    if(hero){renderStage(stages[index]||createStage(),hero.rect,[hero],true,bounds,progress);index++;}
     const rows=[];
     for(const slot of visible.filter(s=>!s.hero)){let row=rows.find(r=>Math.abs(r[0].rect.top-slot.rect.top)<5);if(!row)rows.push(row=[]);row.push(slot);}
     for(const row of rows){const parent=row[0].element.closest('.collection-miniatures').getBoundingClientRect(),top=Math.min(...row.map(e=>e.rect.top)),bottom=Math.max(...row.map(e=>e.rect.bottom));const rect={left:parent.left,right:parent.right,top:top-28,bottom,width:parent.width,height:bottom-top+28,slotHeight:bottom-top};renderStage(stages[index]||createStage(),rect,row,false,bounds);index++;}
+    if(transition?.start!=null){
+      if(progress<1&&!motion.matches){
+        renderer.copyFramebufferToTexture(transition.after);
+        renderer.setScissorTest(false);renderer.setViewport(0,0,bounds.width,bounds.height);
+        blendMaterial.uniforms.before.value=transition.before;blendMaterial.uniforms.after.value=transition.after;blendMaterial.uniforms.progress.value=ease(progress);
+        blendQuad.render(renderer);moving=true;
+      }else clearTransition();
+    }
     if(moving)invalidate();
   }
-  const observer=new ResizeObserver(()=>{resize=true;invalidate();});observer.observe(host);observer.observe(scrollRoot);
+  const observer=new ResizeObserver(entries=>{if(entries.some(e=>e.target===host)){clearTransition();resize=true;}invalidate();});observer.observe(host);observer.observe(scrollRoot);
   scrollRoot.addEventListener('scroll',invalidate,{passive:true});
-  const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;}else invalidate();};document.addEventListener('visibilitychange',visibility);motion.addEventListener('change',invalidate);
+  const stopTransition=()=>{clearTransition();invalidate();};
+  scrollRoot.addEventListener('wheel',stopTransition,{passive:true});scrollRoot.addEventListener('touchmove',stopTransition,{passive:true});
+  const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;clearTransition();}else invalidate();};document.addEventListener('visibilitychange',visibility);motion.addEventListener('change',stopTransition);
   async function init(){
     const ids=['plant_floor',...PROJECTS.map(p=>p.exteriorAsset).filter(Boolean)];
     const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/travertine.png'),loadTexture('/collection/walnut.png')]);
@@ -159,9 +183,18 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   }
   init().catch(()=>{if(!disposed)onState('error');});
   return {
-    update(next){const nextHero=next.find(s=>s.hero)?.id;if(nextHero!==heroId){heroId=nextHero;for(const item of items.values()){item.target=.19;item.pivot.rotation.y=.19;}}slots=next;resize=true;invalidate();},
+    prepareTransition(){
+      if(disposed||!wood||motion.matches||document.hidden)return;
+      // Capture the currently blended frame on rapid clicks, before React swaps
+      // the DOM slots. No second WebGL context or persistent render loop is used.
+      cancelAnimationFrame(frame);frame=0;draw(performance.now());
+      const {width,height}=renderer.domElement;
+      const before=new T.FramebufferTexture(width,height);renderer.copyFramebufferToTexture(before);
+      clearTransition();transition={before,after:new T.FramebufferTexture(width,height),start:null};
+    },
+    update(next){const nextHero=next.find(s=>s.hero)?.id;if(nextHero!==heroId){heroId=nextHero;for(const item of items.values()){item.target=.19;item.pivot.rotation.y=.19;}}slots=next;if(transition?.start===null)transition.start=performance.now();invalidate();},
     rotate(id,amount=.65){const item=items.get(id);if(item){item.target+=amount;invalidate();}},
     drag(id,amount){const item=items.get(id);if(item){item.target+=amount;item.pivot.rotation.y=item.target;invalidate();}},
-    dispose(){disposed=true;cancelAnimationFrame(frame);observer.disconnect();scrollRoot.removeEventListener('scroll',invalidate);document.removeEventListener('visibilitychange',visibility);motion.removeEventListener('change',invalidate);renderer.domElement.removeEventListener('webglcontextlost',contextLost);for(const item of items.values()){item.assets.release();disposeScene(item.pivot);}for(const stage of stages){disposeScene(stage.scene);stage.ao.dispose();stage.output.dispose();stage.composer.dispose();}textures.forEach(t=>t.dispose());copyQuad.dispose();copyMaterial.dispose();environment.dispose();library.dispose();renderer.dispose();renderer.domElement.remove();},
+    dispose(){disposed=true;cancelAnimationFrame(frame);clearTransition();observer.disconnect();scrollRoot.removeEventListener('scroll',invalidate);scrollRoot.removeEventListener('wheel',stopTransition);scrollRoot.removeEventListener('touchmove',stopTransition);document.removeEventListener('visibilitychange',visibility);motion.removeEventListener('change',stopTransition);renderer.domElement.removeEventListener('webglcontextlost',contextLost);for(const item of items.values()){item.assets.release();disposeScene(item.pivot);}for(const stage of stages){disposeScene(stage.scene);stage.ao.dispose();stage.output.dispose();stage.composer.dispose();}textures.forEach(t=>t.dispose());copyQuad.dispose();copyMaterial.dispose();blendQuad.dispose();blendMaterial.dispose();environment.dispose();library.dispose();renderer.dispose();renderer.domElement.remove();},
   };
 }
