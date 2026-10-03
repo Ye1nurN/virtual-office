@@ -26,7 +26,7 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
   const slot=(id)=>element=>{if(element)views.current.set(id,element);else views.current.delete(id);};
   function pointerDown(e){if(status!=='ready'||e.button!==0)return;drag.current={x:e.clientX,id:e.pointerId};e.currentTarget.setPointerCapture(e.pointerId);}
   function pointerMove(e){if(!drag.current||drag.current.id!==e.pointerId)return;const dx=e.clientX-drag.current.x;drag.current.x=e.clientX;api.current?.drag(selected,dx*.009);}
-  return <div className="collection-shell">
+  return <div className={'collection-shell '+(status==='error'?'collection-unavailable':'')}>
     <div className="collection-canvas" ref={host}/>
     <div className="collection-scroll" ref={scroller}>
       <header className="collection-header">
@@ -41,7 +41,6 @@ export default function CollectionView({onMode,onAbout,onOpenCase,onVisit}) {
             <div className="collection-hero-model" ref={slot(active.id)} data-hero="true" role="group" aria-label={'3D-модель: '+active.title} tabIndex={0} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={()=>drag.current=null} onPointerCancel={()=>drag.current=null} onLostPointerCapture={()=>drag.current=null} onKeyDown={e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();api.current?.rotate(selected,e.key==='ArrowLeft'?-.3:.3);}}}>
               {status!=='ready'&&<div className="collection-loading" role="status">{status==='loading'?'Расставляем коллекцию…':'3D-витрина недоступна. Описания и демонстрации можно открыть справа.'}</div>}
             </div>
-            <div className="collection-main-shelf"><span className="collection-plaque">{active.plaque}</span></div>
             <button className="collection-rotate" disabled={status!=='ready'} onClick={()=>api.current?.rotate(selected)}><span><ArrowCounterClockwise size={23}/></span>Повернуть</button>
             <span className="collection-drag-hint">Можно вращать мышью или стрелками</span>
           </div>

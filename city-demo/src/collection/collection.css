@@ -70,3 +70,41 @@
 .collection-actions{margin-top:20px}
 .collection-secondary{margin-top:16px}
 @media(max-width:800px){.collection-story h1{font-size:clamp(36px,7vw,52px);letter-spacing:-1.5px}.collection-lead{font-size:19px}.collection-contribution ul{font-size:15px}.collection-stack{font-size:15px}}
+
+/* Timber, stone and brass belong to the shared 3D stage. */
+.collection-shell{background:#171815 url('/collection/gallery-backdrop-v2.png') center top/cover no-repeat}
+.collection-feature{grid-template-columns:minmax(0,1.95fr) minmax(0,1fr)}
+.collection-display{width:111.5%;margin-left:-7.8%;min-height:0;align-self:start}
+.collection-hero-model{height:clamp(460px,40.4vw,680px)}
+.collection-main-shelf{display:none}
+.collection-rotate{left:6.8%;bottom:68px}.collection-drag-hint{left:6.8%;bottom:49px}
+.collection-story h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(40px,4.3vw,67px);line-height:.93;letter-spacing:-1.7px;margin-bottom:23px}
+.collection-lead{font-family:Georgia,'Times New Roman',serif;font-size:22px;line-height:1.25;margin-bottom:28px!important}
+.collection-contribution ul,.collection-stack{font-family:Georgia,'Times New Roman',serif}
+.collection-contribution ul{font-size:16px;line-height:1.45}
+.collection-actions{margin-top:23px}.collection-secondary{margin-top:18px}
+.collection-bottom{gap:0;margin-top:20px}
+.collection-miniatures{padding:0 2.7%;gap:12px;flex-basis:86%;flex-grow:0;align-items:stretch}
+.collection-miniatures:before,.collection-miniature:after,.collection-mini-model:after{display:none}
+.collection-miniature{align-items:stretch}.collection-mini-model{height:clamp(220px,18.6vw,300px);width:100%}
+.collection-miniature .collection-plaque{position:absolute;bottom:44px;left:8%;right:8%;opacity:0;pointer-events:none}
+.collection-miniature:focus-visible{outline-offset:-8px}
+.collection-quote{width:11.4%;margin:2px 0 67px .5%;padding:25px 22px;font-size:10px;line-height:1.8}
+.collection-overview .collection-mini-model{height:clamp(250px,22vw,350px)}.collection-overview .collection-miniatures{flex-basis:100%}
+@media(max-width:1200px){.collection-feature{grid-template-columns:1.65fr 1fr}.collection-hero-model{height:510px}.collection-story h1{font-size:44px}.collection-lead{font-size:19px}.collection-quote{padding:12px 10px;font-size:9px}.collection-display{min-height:0}.collection-rotate{bottom:64px}}
+@media(max-width:800px){.collection-shell{background-position:35% top;background-size:auto 100%}.collection-feature{grid-template-columns:1fr;gap:24px}.collection-display{width:113.64%;margin-left:-6.82%}.collection-hero-model{height:clamp(300px,72vw,540px)}.collection-rotate{bottom:36px;left:6%;font-size:11px!important}.collection-rotate>span{width:32px;height:32px}.collection-story h1{font-size:clamp(36px,7vw,52px);line-height:1.03}.collection-lead{font-size:19px}.collection-contribution ul{font-size:15px}.collection-bottom{margin-top:25px}.collection-miniatures{background:none;padding:0 4%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px;flex-basis:100%}.collection-mini-model,.collection-overview .collection-mini-model{height:clamp(200px,46vw,300px)}.collection-overview .collection-miniatures{display:grid;gap:18px 12px}.collection-overview .collection-miniature:before{display:none}.collection-quote{display:none}}
+.collection-shell{background-color:#858780;background-blend-mode:multiply}
+.collection-story h1{font-family:'Times New Roman',Georgia,serif;font-size:clamp(40px,4.3vw,67px);font-weight:400;line-height:.93;letter-spacing:-1.7px;text-wrap:initial}
+.collection-lead,.collection-contribution ul,.collection-stack{font-family:'Times New Roman',Georgia,serif;font-weight:400}
+@media(max-width:1200px){.collection-story h1{font-size:44px}}
+@media(max-width:800px){.collection-story h1{font-size:clamp(36px,7vw,52px);line-height:1.03}}
+.collection-story h1{font-size:clamp(40px,4.17vw,65px);line-height:.94;margin-bottom:20px}
+.collection-lead{font-size:23px;margin-bottom:24px!important;max-width:428px}
+.collection-metrics{margin-top:18px}.collection-actions{margin-top:20px}
+@media(max-width:1200px){.collection-story h1{font-size:44px}.collection-lead{font-size:19px}}
+@media(max-width:800px){.collection-story h1{font-size:clamp(36px,7vw,52px);line-height:1.03}.collection-lead{font-size:19px}}
+.collection-unavailable .collection-miniature .collection-plaque{opacity:1;bottom:30px}
+.collection-lead,.collection-contribution ul,.collection-stack{font-family:'Lora Variable',Georgia,serif}
+.collection-lead{font-size:21px}.collection-contribution ul{font-size:16px;line-height:1.4}
+@media(min-width:1201px){.collection-actions{gap:28px;padding-left:8px}.collection-actions .collection-primary{flex:0 0 220px;padding-inline:15px}}
+@media(max-width:800px){.collection-lead{font-size:19px}.collection-contribution ul{font-size:15px}}

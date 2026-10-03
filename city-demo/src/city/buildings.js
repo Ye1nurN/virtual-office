@@ -142,16 +142,19 @@ export function buildProjectBuilding(k,p){
   for(const dx of [-w/2,w/2]){k.box(x+dx,roof+.54,z,.36,1.08,d+.45,stone);k.box(x+dx,roof+1.12,z,.55,.18,d+.62,edge);}
   for(const dz of [-d/2,d/2]){k.box(x,roof+.5,z+dz,w,.98,.35,stone);k.box(x,roof+1.04,z+dz,w+.55,.17,.53,edge);}
   const solarX=office?x:x+.7,solarZ=z-.1;
-  k.box(solarX,roof+.18,solarZ,4.45,.26,3.15,'#536672');
-  for(let ix=0;ix<4;ix++)for(let iz=0;iz<3;iz++)k.box(solarX-1.65+ix*1.1,roof+.33,solarZ-1+iz*.99,1.02,.055,.91,k.glow('#316486',.05));
-  for(let ix=0;ix<=4;ix++)k.box(solarX-2.2+ix*1.1,roof+.38,solarZ,.065,.08,3.15,'#bcc7bb');
-  for(let iz=0;iz<=3;iz++)k.box(solarX,roof+.38,solarZ-1.5+iz,4.45,.08,.065,'#bcc7bb');
+  const roofDisplay=p.galleryDisplay&&pharmacy;
+  const solarLift=roofDisplay?.75:0;
+  k.box(solarX,roof+.18+solarLift,solarZ,4.45,.26,3.15,'#536672');
+  for(let ix=0;ix<4;ix++)for(let iz=0;iz<3;iz++)k.box(solarX-1.65+ix*1.1,roof+.33+solarLift,solarZ-1+iz*.99,1.02,.055,.91,k.glow('#316486',.05));
+  for(let ix=0;ix<=4;ix++)k.box(solarX-2.2+ix*1.1,roof+.38+solarLift,solarZ,.065,.08,3.15,'#bcc7bb');
+  for(let iz=0;iz<=3;iz++)k.box(solarX,roof+.38+solarLift,solarZ-1.5+iz,4.45,.08,.065,'#bcc7bb');
   for(let i=0;i<2;i++){
-    const ax=x+(office?5:-5.3),az=z-d/2+1.6+i*1.8;
-    k.box(ax,roof+.48,az,1.28,.92,1.36,'#b7c2ba');k.box(ax,roof+.98,az,1.47,.12,1.53,'#d2d6c8');
-    k.box(ax,roof+1.06,az,.95,.05,.94,'#43545b');
-    for(let j=0;j<7;j++)k.box(ax-.48+j*.16,roof+1.1,az,.06,.04,.98,'#839295');
-    for(let j=0;j<5;j++)k.box(ax,roof+.24+j*.12,az+.7,1.08,.048,.03,'#677a7d');
+    const ax=roofDisplay?x-4.9+i*1.9:x+(office?5:-5.3),az=roofDisplay?z-1.4:z-d/2+1.6+i*1.8;
+    const unitHeight=roofDisplay?1.65:.92;
+    k.box(ax,roof+.02+unitHeight/2,az,1.28,unitHeight,1.36,'#b7c2ba');k.box(ax,roof+.06+unitHeight,az,1.47,.12,1.53,'#d2d6c8');
+    k.box(ax,roof+.14+unitHeight,az,.95,.05,.94,'#43545b');
+    for(let j=0;j<7;j++)k.box(ax-.48+j*.16,roof+.18+unitHeight,az,.06,.04,.98,'#839295');
+    for(let j=0;j<(roofDisplay?10:5);j++)k.box(ax,roof+.24+j*.12,az+.7,1.08,.048,.03,'#677a7d');
   }
   for(const [dx,dz] of [[-5,d/2-1.2],[5,d/2-1.2],[4,-d/2+1.3]]){
     k.box(x+dx,roof+.22,z+dz,1.8,.44,1.4,stone);k.bush(x+dx,z+dz,1.5,dx+dz,roof+.44);k.model('plant_floor',x+dx,z+dz,1.55,0,roof+.46);
