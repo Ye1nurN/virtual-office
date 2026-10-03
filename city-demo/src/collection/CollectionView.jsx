@@ -1,60 +1,77 @@
 import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
-import {ArrowRight,ArrowUpRight} from '@phosphor-icons/react';
+import {ArrowLeft,ArrowRight,ArrowUpRight,X} from '@phosphor-icons/react';
 import {GalleryHeader} from '../portfolio/GalleryHeader.jsx';
 import {COLLECTION,readCollectionItem,collectionItemUrl} from './collectionData.js';
+import {clampShelfStart,revealShelfItem,shelfWeight} from './shelfCarousel.js';
 import './collection.css';
 
+const initialCount=()=>window.matchMedia('(max-width:700px)').matches?2:4;
 export default function CollectionView({onMode,onOpenCase,onVisit}) {
-  const [selected,setSelected]=useState(()=>readCollectionItem(location.href));
+  const [count,setCount]=useState(initialCount);
+  const [view,setView]=useState(()=>{const selected=readCollectionItem(location.href);return {selected,start:revealShelfItem(0,COLLECTION.findIndex(p=>p.id===selected),initialCount(),COLLECTION.length)};});
   const [status,setStatus]=useState('loading');
-  const host=useRef(null),scroller=useRef(null),api=useRef(null),views=useRef(new Map()),drag=useRef(null),heading=useRef(null);
-  const selection=useRef(selected),focusRequested=useRef(false);
-  const active=COLLECTION.find(p=>p.id===selected),others=COLLECTION.filter(p=>p.id!==selected);
-  const update=()=>api.current?.update([...views.current].map(([id,element])=>({id,element,hero:element.dataset.hero==='true'})));
+  const host=useRef(null),scroller=useRef(null),track=useRef(null),api=useRef(null),buttons=useRef(new Map()),focusId=useRef(null);
+  const active=COLLECTION.find(p=>p.id===view.selected),visible=COLLECTION.slice(view.start,view.start+count);
   useEffect(()=>{
     let cancelled=false;
-    import('./collectionRenderer.js').then(({createCollectionRenderer})=>{if(cancelled)return;api.current=createCollectionRenderer(host.current,scroller.current,setStatus);update();}).catch(()=>!cancelled&&setStatus('error'));
+    import('./collectionRenderer.js').then(({createCollectionRenderer})=>{if(!cancelled)api.current=createCollectionRenderer(host.current,scroller.current,setStatus);}).catch(()=>!cancelled&&setStatus('error'));
     return()=>{cancelled=true;api.current?.dispose();api.current=null;};
   },[]);
-  useLayoutEffect(()=>{update();if(focusRequested.current){focusRequested.current=false;heading.current?.focus({preventScroll:true});}},[selected,status]);
-  useEffect(()=>{const pop=()=>select(readCollectionItem(location.href),false);window.addEventListener('popstate',pop);return()=>window.removeEventListener('popstate',pop);},[]);
-  function select(id,writeHistory=true){
-    if(id===selection.current)return;
-    drag.current=null;
-    scroller.current.scrollTo({top:0,behavior:'instant'});
-    api.current?.prepareTransition?.();
-    selection.current=id;focusRequested.current=true;setSelected(id);
-    if(writeHistory)history.pushState({},'',collectionItemUrl(location.href,id));
+  useLayoutEffect(()=>{api.current?.update(track.current,{...view,count});if(focusId.current){buttons.current.get(focusId.current)?.focus({preventScroll:true});focusId.current=null;}},[view,count,status]);
+  useEffect(()=>{
+    const query=window.matchMedia('(max-width:700px)');
+    const resize=()=>{const next=query.matches?2:4;setCount(next);setView(v=>({...v,start:revealShelfItem(v.start,COLLECTION.findIndex(p=>p.id===v.selected),next,COLLECTION.length)}));};
+    query.addEventListener('change',resize);return()=>query.removeEventListener('change',resize);
+  },[]);
+  useEffect(()=>{
+    const pop=()=>{const selected=readCollectionItem(location.href);setView(v=>({selected,start:revealShelfItem(v.start,COLLECTION.findIndex(p=>p.id===selected),count,COLLECTION.length)}));};
+    window.addEventListener('popstate',pop);return()=>window.removeEventListener('popstate',pop);
+  },[count]);
+  function select(id){
+    if(id===view.selected)return;
+    setView(v=>({selected:id,start:revealShelfItem(v.start,COLLECTION.findIndex(p=>p.id===id),count,COLLECTION.length)}));
+    history.pushState({},'',collectionItemUrl(location.href,id));
   }
-  const slot=(id)=>element=>{if(element)views.current.set(id,element);else views.current.delete(id);};
-  function pointerDown(e){if(status!=='ready'||e.button!==0)return;drag.current={x:e.clientX,id:e.pointerId};e.currentTarget.setPointerCapture(e.pointerId);}
-  function pointerMove(e){if(!drag.current||drag.current.id!==e.pointerId)return;const dx=e.clientX-drag.current.x;drag.current.x=e.clientX;api.current?.drag(selected,dx*.009);}
+  function page(direction){
+    const start=clampShelfStart(view.start+direction,count,COLLECTION.length);
+    if(start===view.start)return;
+    const selected=COLLECTION.slice(start,start+count).some(p=>p.id===view.selected)?view.selected:null;
+    setView({start,selected});
+    if(selected!==view.selected)history.pushState({},'',collectionItemUrl(location.href,selected));
+  }
+  function navigate(e,id){
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();select(null);return;}
+    if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+    e.preventDefault();const index=COLLECTION.findIndex(p=>p.id===id);
+    const next=e.key==='Home'?0:e.key==='End'?COLLECTION.length-1:Math.max(0,Math.min(COLLECTION.length-1,index+(e.key==='ArrowRight'?1:-1)));
+    const target=COLLECTION[next].id,start=revealShelfItem(view.start,next,count,COLLECTION.length);
+    if(start===view.start)buttons.current.get(target)?.focus({preventScroll:true});
+    else {focusId.current=target;const selected=COLLECTION.slice(start,start+count).some(p=>p.id===view.selected)?view.selected:null;setView({start,selected});if(selected!==view.selected)history.pushState({},'',collectionItemUrl(location.href,selected));}
+  }
   return <div className={'collection-shell '+(status==='error'?'collection-unavailable':'')}>
     <div className="collection-canvas" ref={host}/>
     <div className="collection-scroll" ref={scroller}>
       <GalleryHeader mode="collection" onMode={onMode} onProjects={()=>select(null)}/>
-      <main id="pf-main" className={'collection-main '+(!active?'collection-overview':'')} tabIndex={-1}>
-        <div className="collection-breadcrumb"><div><button onClick={()=>select(null)}>Проекты</button>{active&&<><span>/</span><span>{active.label}</span></>}</div>{active&&<button onClick={()=>select(null)}>Все проекты<ArrowUpRight size={19}/></button>}</div>
-        {active?<section className="collection-feature" aria-label="Выбранный проект">
-          <div className="collection-display">
-            <div className="collection-hero-model" ref={slot(active.id)} data-hero="true" role="group" aria-label={'3D-модель: '+active.title} tabIndex={0} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={()=>drag.current=null} onPointerCancel={()=>drag.current=null} onLostPointerCapture={()=>drag.current=null} onKeyDown={e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();api.current?.rotate(selected,e.key==='ArrowLeft'?-.3:.3);}}}>
-              {status!=='ready'&&<div className="collection-loading" role="status">{status==='loading'?'Расставляем коллекцию…':'3D-витрина недоступна. Описания и демонстрации можно открыть справа.'}</div>}
-            </div>
-            <span className="collection-drag-hint">Можно вращать мышью или стрелками</span>
+      <main id="pf-main" className={'collection-main '+(active?'collection-focused':'')} tabIndex={-1} onKeyDown={e=>{if(e.key==='Escape')select(null);}}>
+        <div className="collection-heading"><div><span className="collection-eyebrow">Коллекция / {String(COLLECTION.length).padStart(2,'0')}</span><h1>Проекты</h1></div><p>Выберите здание, чтобы рассмотреть проект.<br/><span>У каждого — своя история и демонстрация.</span></p></div>
+        <section className="collection-carousel" aria-label="Коллекция проектов" aria-roledescription="карусель">
+          <button className="collection-arrow collection-arrow-prev" aria-label="Предыдущие проекты" disabled={view.start===0} onClick={()=>page(-1)}><ArrowLeft size={24}/></button>
+          <div className="collection-track" ref={track} style={{gridTemplateColumns:visible.map(p=>shelfWeight(p.id,view.selected)+'fr').join(' ')}}>
+            {visible.map((p,index)=><button key={p.id} ref={element=>{if(element)buttons.current.set(p.id,element);else buttons.current.delete(p.id);}} className="collection-miniature" aria-label={'Рассмотреть '+p.label} aria-pressed={view.selected===p.id} onClick={()=>select(view.selected===p.id?null:p.id)} onKeyDown={e=>navigate(e,p.id)} onPointerEnter={e=>{if(e.pointerType!=='touch')api.current?.interest(p.id,'pointer',true);}} onPointerLeave={()=>api.current?.interest(p.id,'pointer',false)} onFocus={e=>{if(e.currentTarget.matches(':focus-visible'))api.current?.interest(p.id,'focus',true);}} onBlur={()=>api.current?.interest(p.id,'focus',false)}>
+              <span className="collection-slot-number" aria-hidden="true">{String(view.start+index+1).padStart(2,'0')}</span><span className="collection-plaque">{p.plaque}</span>
+            </button>)}
+            {status!=='ready'&&<div className="collection-loading" role="status">{status==='loading'?'Расставляем коллекцию…':'3D-витрина недоступна. Выберите проект по названию.'}</div>}
           </div>
-          <article className="collection-story" key={active.id}>
-            <span className="collection-eyebrow">{active.eyebrow}</span>
-            <h1 ref={heading} tabIndex={-1}>{active.title}</h1>
-            <p className="collection-lead">{active.lead}</p>
-            <div className="collection-contribution"><h2>Мой вклад</h2><ul>{active.contribution.map(line=><li key={line}>{line}</li>)}</ul></div>
-            {active.metrics&&<div className="collection-metrics"><div>{active.metrics.map(metric=><span key={metric.label}><strong>{metric.value}</strong> {metric.label.replace(' в каталоге','')}</span>)}</div><small>{active.id==='pharmacy'?'Данные каталога':'Архитектура дипломного прототипа'}</small></div>}
-            <p className="collection-stack">{active.stack.join(' · ')}</p>
-            <div className="collection-actions"><button className="collection-primary" onClick={()=>onOpenCase(active.id)}>Открыть кейс<ArrowUpRight size={22}/></button><button onClick={()=>onVisit(active.id)}>Попробовать демо<ArrowRight size={21}/></button></div>
-          </article>
-        </section>:<section className="collection-intro" key="overview"><span className="collection-eyebrow">{String(COLLECTION.length).padStart(2,'0')} проектов</span><h1 ref={heading} tabIndex={-1}>Проекты</h1><p>Кейсы, мой вклад и интерактивные демонстрации.<br/>Выберите здание, чтобы изучить проект.</p>{status==='error'&&<p role="status">3D-витрина недоступна. Выберите проект по названию.</p>}</section>}
-        <section className="collection-bottom" aria-label="Проекты на полке">
-          <div className="collection-miniatures">{others.map(p=><button key={p.id} className="collection-miniature" aria-label={'Рассмотреть '+p.label} onClick={()=>select(p.id)} onPointerEnter={e=>{if(e.pointerType!=='touch')api.current?.interest(p.id,'pointer',true);}} onPointerLeave={()=>api.current?.interest(p.id,'pointer',false)} onFocus={e=>{if(e.currentTarget.matches(':focus-visible'))api.current?.interest(p.id,'focus',true);}} onBlur={()=>api.current?.interest(p.id,'focus',false)}><span className="collection-mini-model" ref={slot(p.id)} data-hero="false"/><span className="collection-plaque">{p.plaque}</span></button>)}</div>
+          <button className="collection-arrow collection-arrow-next" aria-label="Следующие проекты" disabled={view.start+count>=COLLECTION.length} onClick={()=>page(1)}><ArrowRight size={24}/></button>
         </section>
+        <div className="collection-pagination"><span aria-live="polite">{String(view.start+1).padStart(2,'0')} — {String(Math.min(view.start+count,COLLECTION.length)).padStart(2,'0')} <span>/ {String(COLLECTION.length).padStart(2,'0')}</span></span><span>← → <span>Листайте коллекцию</span></span></div>
+        <div className="collection-details" aria-live="polite">
+          {active?<article className="collection-story" key={active.id} aria-label={'Проект: '+active.title}>
+            <div className="collection-story-title"><span className="collection-eyebrow">{active.eyebrow}</span><h2>{active.title}</h2><button className="collection-reset" onClick={()=>select(null)}><X size={14}/>Общий вид</button></div>
+            <div className="collection-story-copy"><p className="collection-lead">{active.lead}</p><p className="collection-stack">{active.stack.join(' · ')}</p>{active.metrics&&<p className="collection-metrics">{active.metrics.map(m=><span key={m.label}><strong>{m.value}</strong> {m.label.replace(' в каталоге','')}</span>)}</p>}</div>
+            <div className="collection-actions"><button className="collection-primary" onClick={()=>onOpenCase(active.id)}>Открыть кейс<ArrowUpRight size={21}/></button><button onClick={()=>onVisit(active.id)}>Попробовать демо<ArrowRight size={19}/></button></div>
+          </article>:<div className="collection-idle"><span>От замысла до работающего продукта.</span><p>Веб-приложения, машинное обучение и интерактивный 3D — в одной коллекции.</p></div>}
+        </div>
       </main>
     </div>
   </div>;
