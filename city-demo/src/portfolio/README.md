@@ -22,7 +22,7 @@ the entrance spawn back into the portfolio city.
 - `../collection/collection.css`: matching graphite project detail card, white
   and outlined actions, responsive shelf overview and keyboard focus states.
   `collectionRenderer.js` keeps shared 3D cameras/shadows and existing building
-  colours; the gallery furniture uses graphite shelves, white ceramic plinths
+  colours; the gallery furniture uses dark walnut shelves, white ceramic plinths
   and neutral lighting. Existing rotation and project crossfades are preserved.
 - `PortfolioCity.jsx`: home/city/resume/collection switch, navigation, accessible
   modal project details, search, contact panel and city controls.

@@ -92,7 +92,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     if(stage.signature===signature)return;stage.signature=signature;
     stage.furniture.traverse(o=>{const map=o.material?.map;if(map?.isCanvasTexture){map.dispose();textures.delete(map);}});
     disposeScene(stage.furniture);stage.furniture.clear();
-    const shelfMat=new T.MeshStandardMaterial({color:'#303438',roughness:.64,metalness:.08,bumpMap:shelfSurface,bumpScale:.015});
+    const shelfMat=new T.MeshStandardMaterial({map:shelfSurface,color:'#756b60',roughness:.65,metalness:0,bumpMap:shelfSurface,bumpScale:.045});
     const depth=hero?11:27,front=hero?13:24,thick=hero?1.4:4;
     const slab=new RoundedBoxGeometry(width,thick,depth,3,.09),positions=slab.attributes.position;
     // A gently receding side edge matches the shallow perspective of the shelf.
@@ -161,7 +161,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;clearTransition();}else invalidate();};document.addEventListener('visibilitychange',visibility);motion.addEventListener('change',stopTransition);
   async function init(){
     const ids=['plant_floor',...PROJECTS.map(p=>p.exteriorAsset).filter(Boolean)];
-    const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/travertine.png'),loadTexture('/portfolio/gallery/charcoal-panel-v2.webp')]);
+    const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/travertine.png'),loadTexture('/collection/walnut.png')]);
     const albedos=results[0].status==='fulfilled'?results[0].value:{};Object.values(albedos).forEach(t=>textures.add(t));
     if(disposed){textures.forEach(t=>t.dispose());return;}if(results.some(r=>r.status==='rejected')||library.missing.size){onState('error');return;}
     stone=results[2].value;shelfSurface=results[3].value;const templates=await library.getTemplates(ids);if(disposed)return;

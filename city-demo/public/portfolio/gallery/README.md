@@ -20,8 +20,9 @@ repository and WebP-encoded without programmatic recolouring. Typography and
 controls remain HTML; no screenshot is used as a substitute for live UI.
 
 As of 2026-10-04 these two neutral textures also serve the projects gallery:
-the same wall and detail-card surface are shared with home. The panel texture
-provides a restrained bump map for the real 3D graphite shelf. The existing
+the same wall and detail-card surface are shared with home. At the user's
+request, the real 3D shelves use the existing `collection/walnut.png` albedo
+and bump map, with a dark matte walnut material. The existing
 travertine texture contributes only surface relief to white ceramic plinths;
 its warm albedo is no longer used by the gallery furniture. No new generated
 assets or recoloured bitmap copies were needed. City building materials stay

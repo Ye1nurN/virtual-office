@@ -1,3 +1,15 @@
+# Dark walnut shelf revision — 2026-10-04
+
+User requested dark wooden shelves. Reused the existing walnut raster as albedo and bump, with a matte dark-walnut material and no metallic finish. The change applies to the hero shelf and every miniature shelf. White ceramic plinths, graphite page UI and building materials are preserved.
+
+Browser verification: inspected 1485 x 1240 desktop and 390 x 844 mobile renders, and switched pharmacy to ARGUS. Both shelf levels display dark wood and the project transition remains functional. Console errors: none. Evidence: `qa/collection-graphite/dark-walnut.jpg`.
+
+Validation: `npm test` 124/124 passed; `npm run build` passed, existing shared chunk-size advisory only; `git diff --check` passed.
+
+final result: passed
+
+---
+
 # Shared graphite projects theme — 2026-10-04
 
 Request: adapt the existing projects gallery to the approved homepage. The source of the visual language is `design/home-graphite-approved.png` and the working homepage. Preserve real 3D buildings, rotation, project changes and case/demo routes.
