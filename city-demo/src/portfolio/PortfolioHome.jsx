@@ -1,5 +1,6 @@
 import React from 'react';
-import {ArrowRight, ArrowUpRight, Code, EnvelopeSimple, FolderSimple, GraduationCap, PaperPlaneTilt, Trophy} from '@phosphor-icons/react';
+import '@fontsource-variable/roboto/wght.css';
+import {ArrowRight, ArrowUpRight, Code, EnvelopeSimple, Folder, GraduationCap, PaperPlaneTilt, Trophy} from '@phosphor-icons/react';
 import {CASES, PROFILE} from './content.js';
 import {ACHIEVEMENTS, EDUCATION} from './resume.js';
 import {GalleryHeader} from './GalleryHeader.jsx';
@@ -18,11 +19,11 @@ export default function PortfolioHome({onMode,onSection}) {
         <section className="home-card home-intro" aria-labelledby="home-name">
           <div className="home-identity"><span className="home-monogram" aria-hidden="true">Е.</span><div><h1 id="home-name">{PROFILE.name}</h1><p className="home-role">{PROFILE.title}</p></div></div>
           <p className="home-bio">{PROFILE.shortIntro}</p>
-          <p className="home-stack">{PROFILE.stack}</p>
+          <p className="home-stack">{PROFILE.stack.split(' · ').map((skill,index)=><React.Fragment key={skill}>{index>0&&<span aria-hidden="true">·</span>}<span>{skill}</span></React.Fragment>)}</p>
           <div className="home-links"><button onClick={()=>onSection('about')}>Подробнее обо мне<ArrowUpRight size={23}/></button><a href={PROFILE.github} target="_blank" rel="noreferrer">GitHub<ArrowUpRight size={23}/></a></div>
         </section>
         <section className="home-card home-projects" aria-labelledby="home-projects-title">
-          <div className="home-section-heading"><IconTile><FolderSimple size={40}/></IconTile><div><h2 id="home-projects-title">Проекты</h2><p>Кейсы, мой вклад и интерактивные демонстрации.</p></div></div>
+          <div className="home-section-heading"><IconTile><Folder size={46} weight="light"/></IconTile><div><h2 id="home-projects-title">Проекты</h2><p>Кейсы, мой вклад и интерактивные демонстрации.</p></div></div>
           <div className="home-project-count"><strong>{String(CASES.length).padStart(2,'0')}</strong><span>проектов</span></div>
           <button className="home-project-link" onClick={()=>onMode('collection')}>Перейти к проектам<ArrowRight size={25}/></button>
         </section>
@@ -43,7 +44,7 @@ export default function PortfolioHome({onMode,onSection}) {
           <div className="home-contact-links"><a className="home-contact-primary" href={PROFILE.telegram} target="_blank" rel="noreferrer">Написать в Telegram<ArrowUpRight size={24}/></a><a className="home-email" href={'mailto:'+PROFILE.email}><EnvelopeSimple size={26}/><span>{PROFILE.email}</span></a></div>
         </section>
       </div>
-      <footer className="home-footer"><span>{PROFILE.name} · Портфолио проектов</span><button onClick={()=>onMode('resume')}>Полное резюме<ArrowUpRight size={16}/></button></footer>
+      <footer className="home-footer"><span>{PROFILE.name}<span aria-hidden="true">·</span>Портфолио проектов</span><time dateTime="2026-10-03" title="Обновлено 3 октября 2026">2026–10–03</time></footer>
     </main>
   </div>;
 }

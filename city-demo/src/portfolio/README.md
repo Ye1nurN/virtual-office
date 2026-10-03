@@ -11,9 +11,13 @@ the entrance spawn back into the portfolio city.
 - `ResumeSections.jsx` / `resume.css`: shared profile, project results and
   education/achievement sections for the document and city panels.
 - `PortfolioHome.jsx` / `home.css`: the approved six-section homepage, with a
-  separate projects entrance instead of embedded project cards.
+  separate projects entrance instead of embedded project cards. The latest
+  visual target is `design/home-graphite-approved.png`: neutral black/graphite,
+  white accents, locally packaged Roboto and a measured three-track grid.
+  The full resume is reachable from About; the footer matches the reference date.
 - `GalleryHeader.jsx` / `gallery-theme.css`: shared home/projects navigation,
-  warm charcoal/white theme, drawer colours and reduced-motion support.
+  warm charcoal/white gallery theme, drawer colours and reduced-motion support.
+  Home's neutral tokens are scoped in `home.css`, including its detail panels.
 - `PortfolioCity.jsx`: home/city/resume/collection switch, navigation, accessible
   modal project details, search, contact panel and city controls.
 - `portfolio.css`: styles scoped to `.pf-*`; no redesign of interior demo UIs.
