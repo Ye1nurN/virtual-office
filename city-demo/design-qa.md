@@ -1,3 +1,37 @@
+# Shelf fidelity correction — 2026-10-04
+
+User requested a closer match to the exact shelf in `design/collection/charcoal-reference.png`.
+Reference and implementation were compared at 1485 × 1059, CRM selected, using the
+full browser screenshot `qa/collection-charcoal/shelf-revision.jpg` and two native-size
+stacked crop comparisons: `hero-revision-comparison.jpg` and `lower-revision-comparison.jpg`
+(reference above, implementation below). The corresponding before comparisons show
+what was changed.
+
+- P1 fixed: lower-stage transparent pixels erased the overlapping bottom edge of the
+  upper shelf. Normal alpha compositing now preserves the complete shelf and rounded
+  lower edge; desktop/crossfade/mobile captures were inspected.
+- P2 fixed: thin labels had square corners because RoundedBoxGeometry limited the
+  radius to the plate thickness. Extruded rounded outlines now retain the intended
+  corners, four visible screws, edge thickness and legible bold lettering.
+- P2 fixed: flat straight grain and smooth stone diverged from the reference. New
+  reference-guided albedos provide aged flowing oak grain and legible tan stone pores.
+  Separate timber top/front response reproduces the brighter top and dark fascia.
+- Shelf depth, thickness, bevel, hero scale, rounded stone rim, label position and
+  miniature stone-footing thickness adjusted from the same-size comparison.
+- Retained native 3D rotation, transitions and city model data. Building silhouettes
+  and foliage are still the original interactive models; this does not claim that
+  those buildings or stochastic raster pores are pixel-identical to the illustration.
+
+Verification: 124 tests passed; production build passed (existing large shared chunk
+advisory only); browser console errors none. CRM fits 1485 × 1059 and 1280 × 680;
+ARGUS switch and ArrowRight rotation work. Mobile 390 × 844 shows two complete shelf
+rows with readable plaques; selecting the office returns to the top correctly.
+No P0/P1/P2 findings remain for the revised shelves. Exact illustration/model parity
+remains outside this shelf correction; remaining small material variations are P3.
+
+final result: passed
+
+---
 # Charcoal projects gallery — 2026-10-04
 
 Reference: `design/collection/charcoal-reference.png`, user's exact selected image
