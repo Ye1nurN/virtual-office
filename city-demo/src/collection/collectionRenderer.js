@@ -62,21 +62,21 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   }
   function mesh(geometry,material,x=0,y=0,z=0){const m=new T.Mesh(geometry,material);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;return m;}
   function plaque(text,width,height){
-    const group=new T.Group(),ceramic=new T.MeshStandardMaterial({color:'#f4eee3',metalness:0,roughness:.72});
+    const group=new T.Group(),ceramic=new T.MeshStandardMaterial({color:'#ffffff',metalness:0,roughness:.72});
     group.add(mesh(new RoundedBoxGeometry(width+.12,height+.1,.07,3,.04),new T.MeshStandardMaterial({color:'#49423a',roughness:.7}),0,0,-.025));
     group.add(mesh(new RoundedBoxGeometry(width,height,.095,3,.045),ceramic));
     const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=Math.round(1536*height/width);
     const c=canvas.getContext('2d');c.fillStyle='#171710';c.textAlign='center';c.textBaseline='middle';c.font=`600 ${canvas.height*.49}px Arial`;c.fillText(text,768,canvas.height*.52,1370);
     const map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;textures.add(map);
     const face=new T.Mesh(new T.PlaneGeometry(width,height),new T.MeshBasicMaterial({map,transparent:true,toneMapped:false}));face.position.z=.053;group.add(face);
-    const fastener=new T.MeshStandardMaterial({color:'#51473b',metalness:.15,roughness:.6});
-    for(const x of [-width/2+.16,width/2-.16])group.add(mesh(new T.SphereGeometry(.052,8,6),fastener,x,0,.065));
+    const fastener=new T.MeshStandardMaterial({color:'#44413b',metalness:.15,roughness:.6});
+    for(const x of [-width/2+.18,width/2-.18])for(const y of [-height/2+.16,height/2-.16])group.add(mesh(new T.SphereGeometry(.052,8,6),fastener,x,y,.065));
     return group;
   }
   function createStage(){
     const scene=new T.Scene(),furniture=new T.Group();scene.add(furniture);scene.environment=environment.texture;scene.environmentIntensity=.035;
-    scene.add(new T.HemisphereLight('#fff6e6','#433a2d',.85));
-    const key=new T.DirectionalLight('#fff0da',3.15);key.position.set(-16,28,18);key.castShadow=true;
+    scene.add(new T.HemisphereLight('#f6f7f9','#363538',.85));
+    const key=new T.DirectionalLight('#fff7ed',3.15);key.position.set(-16,28,18);key.castShadow=true;
     key.shadow.mapSize.set(2048,2048);key.shadow.normalBias=.015;key.shadow.bias=-.000025;key.shadow.radius=3;
     Object.assign(key.shadow.camera,{left:-65,right:65,top:35,bottom:-20,near:1,far:120});scene.add(key);
     const fill=new T.DirectionalLight('#ced8de',.45);fill.position.set(20,12,2);scene.add(fill);
@@ -92,8 +92,8 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     if(stage.signature===signature)return;stage.signature=signature;
     stage.furniture.traverse(o=>{const map=o.material?.map;if(map?.isCanvasTexture){map.dispose();textures.delete(map);}});
     disposeScene(stage.furniture);stage.furniture.clear();
-    const woodMat=new T.MeshStandardMaterial({map:wood,color:'#756b60',roughness:.65,bumpMap:wood,bumpScale:.045});
-    const depth=hero?11:27,front=hero?13:24,thick=hero?1.4:4;
+    const woodMat=new T.MeshStandardMaterial({map:wood,color:'#eeeeec',roughness:.73,bumpMap:wood,bumpScale:.1});
+    const depth=hero?11:24,front=hero?13:15,thick=hero?1.4:4;
     const slab=new RoundedBoxGeometry(width,thick,depth,3,.09),positions=slab.attributes.position;
     // A gently receding side edge matches the shallow perspective of the shelf.
     for(let i=0;i<positions.count;i++)if(positions.getX(i)>0)positions.setX(i,positions.getX(i)-(depth/2-positions.getZ(i))/depth*(hero?.7:1.8));
@@ -101,10 +101,15 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     stage.furniture.add(mesh(surfaceGeometry(slab,12),woodMat,hero?-.9:0,-thick/2,front-depth/2));
     stage.furniture.add(mesh(surfaceGeometry(new RoundedBoxGeometry(width,.12,.17,3,.05),12),woodMat,hero?-.9:0,-.06,front+.025));
     if(hero){
-      const stoneMat=new T.MeshPhysicalMaterial({map:stone,bumpMap:stone,bumpScale:.11,color:'#fff4df',roughness:.4,clearcoat:.22,clearcoatRoughness:.3});
+      const stoneMat=new T.MeshPhysicalMaterial({map:stone,bumpMap:stone,bumpScale:.07,color:'#fffaf3',roughness:.45,clearcoat:.16,clearcoatRoughness:.3});
       stage.furniture.add(mesh(surfaceGeometry(new T.CylinderGeometry(11.7,11.74,2.25,128),8),stoneMat,0,1.125,.85));
-      const label=plaque(entries[0].label.toUpperCase(),8.3,1.05);label.position.set(2.05,.98,12.7);stage.furniture.add(label);
-    }else for(const e of entries){const label=plaque(e.label,Math.min(15.5,e.cell*.72),2.05);label.position.set(e.x,1.02,front-5);label.rotation.x=-.1;stage.furniture.add(label);}
+      const label=plaque(entries[0].label.toUpperCase(),9.7,1.3);label.position.set(1.15,1.02,12.7);stage.furniture.add(label);
+    }else for(const e of entries){
+      const label=plaque(e.label,Math.min(16.4,e.cell*.72),2.3);
+      // The plaque straddles the shelf edge, so its lower half stays in front
+      // of the timber rather than intersecting the shelf's top surface.
+      label.position.set(e.x,.9,front+.25);stage.furniture.add(label);
+    }
     const lightSpan=Math.max(17,width/2+3);Object.assign(stage.key.shadow.camera,{left:-lightSpan,right:lightSpan});stage.key.shadow.camera.updateProjectionMatrix();
   }
   function renderStage(stage,rect,entries,hero,bounds,progress=1){
@@ -113,16 +118,16 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     const angle=T.MathUtils.degToRad(hero?12:13);
     const modelHeight=hero?items.get(entries[0].id)?.height||10:0;
     // A short desktop shelf must fit its tallest building as well as its width.
-    // The front edge is 24 units from the origin; allow for the rotating model's
+    // The front edge is 15 units from the origin; allow for the rotating model's
     // 14-unit horizontal radius when projecting its roof into the shelf camera.
-    const rowTop=Math.max(...entries.map(e=>((items.get(e.id)?.height||10)+.47)*Math.cos(angle)+38*Math.sin(angle)));
+    const rowTop=Math.max(...entries.map(e=>((items.get(e.id)?.height||10)+.47)*Math.cos(angle)+29*Math.sin(angle)));
     const unit=hero?Math.min(rect.width/27,(rect.height-24)*.9/((modelHeight+2.34)*Math.cos(angle)+3.2)):Math.min(cellPx/25,(rect.height-rect.slotHeight*.24-8)/rowTop);
     const width=rect.width/unit,height=rect.height/unit;
     for(const e of entries){e.x=hero?0:((e.rect.left+e.rect.width/2)-(rect.left+rect.width/2))/unit;e.cell=e.rect.width/unit;e.label=COLLECTION.find(p=>p.id===e.id).plaque;}
     buildFurniture(stage,width,hero,entries);
     for(const e of entries){const item=items.get(e.id);if(!item)continue;stage.scene.add(item.pivot);item.pivot.position.set(e.x,hero?2.34:.47,.85);item.tray.visible=!hero;}
     const camera=stage.camera;camera.position.set(0,50*Math.sin(angle),50*Math.cos(angle));camera.lookAt(0,0,0);
-    const front=hero?13:24,edge=hero?.9:1-rect.slotHeight*.24/rect.height;
+    const front=hero?13:15,edge=hero?.9:1-rect.slotHeight*.24/rect.height;
     camera.left=-width/2-(hero?.9:0);camera.right=width/2-(hero?.9:0);camera.top=height*edge-front*Math.sin(angle);camera.bottom=camera.top-height;
     camera.zoom=hero?1-.018*(1-ease(progress)):1;camera.updateProjectionMatrix();
     const x=rect.left-bounds.left,y=bounds.height-(rect.bottom-bounds.top);
@@ -165,10 +170,10 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
   const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;clearTransition();}else invalidate();};document.addEventListener('visibilitychange',visibility);motion.addEventListener('change',stopTransition);
   async function init(){
     const ids=['plant_floor',...PROJECTS.map(p=>p.exteriorAsset).filter(Boolean)];
-    const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/travertine.png'),loadTexture('/collection/walnut.png')]);
+    const results=await Promise.allSettled([loadExteriorSurfaces(),library.prepare(ids),loadTexture('/collection/ivory-travertine-v1.webp'),loadTexture('/collection/charcoal-wood-v1.webp')]);
     const albedos=results[0].status==='fulfilled'?results[0].value:{};Object.values(albedos).forEach(t=>textures.add(t));
     if(disposed){textures.forEach(t=>t.dispose());return;}if(results.some(r=>r.status==='rejected')||library.missing.size){onState('error');return;}
-    stone=results[2].value;wood=results[3].value;const templates=await library.getTemplates(ids);if(disposed)return;
+    stone=results[2].value;wood=results[3].value;wood.wrapS=wood.wrapT=T.MirroredRepeatWrapping;const templates=await library.getTemplates(ids);if(disposed)return;
     for(const project of PROJECTS){
       const kit=createSceneKit(templates,albedos);buildProjectBuilding(kit,{...project,x:0,z:0,yaw:0,galleryDisplay:true});
       kit.box(0,.03,.85,19,.24,13.2,'#b5aa94');kit.plane(0,.16,.85,18.8,13,kit.surface('paving',18.8,13,5,'#e3d4b9'));kit.lamp(-8.4,5.6,1.3);

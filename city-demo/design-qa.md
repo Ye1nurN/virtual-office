@@ -1,3 +1,50 @@
+# Charcoal projects gallery — 2026-10-04
+
+Reference: `design/collection/charcoal-reference.png`, user's exact selected image
+(1485 × 1059). Compared at the same viewport and CRM selected state with the actual
+browser capture `qa/collection-charcoal/desktop.jpg`. Both full frames were inspected
+together; `type-comparison.jpg` compares source (left) and implementation (right) at
+native resolution for the copy and primary actions.
+
+Implemented: neutral black embossed wall, restrained under-shelf light, charcoal timber,
+ivory porous stone, white four-screw plaques, white actions, bold Times heading with
+Roboto copy, two physical shelf rows and the reference's narrower bottom shelf.
+Removed duplicate secondary links/footer; equivalent navigation remains in the header
+and breadcrumb. Consolidated historical collection CSS instead of stacking overrides.
+Homepage theme and city/office geometry remain unchanged.
+
+Fixed during QA:
+- P1: heading wrapping to three lines pushed the lower row out of the viewport.
+  Matched the reference's bold two-line title and adjusted the height-based type scale.
+- P1: miniature plaques intersected timber and clipped their lettering. Positioned the
+  complete plaque in front of the shelf edge, retaining physical contact and shadows.
+- P2: low-height desktop had 1 px of overflow; reduced its thumbnail row within the
+  viewport grid. No overflow masking was used.
+- P2: first wall generation had broad plaster marks; replaced it with an edit of the
+  existing fine embossed texture. Rejected texture is not shipped.
+
+Browser verification:
+- CRM 1485 × 1059, 1880 × 927 and 1280 × 680: scrollHeight equals viewport height;
+  both shelves and both actions visible, no inspected text/control overflow.
+- 1024 × 768: all-project overview and taller office model fit, no copy overflow.
+- ARGUS selection, smooth model transition, ArrowRight rotation, case open and Escape
+  close verified. A mobile Tynysh demo launch reached the actual local banquet scene.
+- 390 × 844: readable single-column layout, two-column shelf, natural scrolling;
+  Tynysh copy and controls have no horizontal overflow.
+- Browser console errors: none. Reduced-motion handling retained in CSS and renderer.
+- Final code: npm test (124 passed), npm run build passed; existing large shared chunk
+  advisory only. No runtime dependency added.
+
+Scope/visual limit: buildings remain the existing interactive Three.js city models as
+required, with their original silhouettes, voxel foliage and window details. They are
+not pixel-identical to the illustrated buildings in the reference. UI composition,
+palette, materials and interaction checks pass. Further model-detail parity is a
+separate art iteration; no blocking UI or functional findings remain.
+
+final result: passed
+
+---
+
 # Collection fits the desktop viewport — 2026-10-04
 
 Request: keep the selected project, description/actions and lower shelf visible without
