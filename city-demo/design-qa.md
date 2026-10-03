@@ -1,3 +1,30 @@
+# Warm home and shelf restoration — 2026-10-04
+
+Request: return to the user's warm homepage reference and earlier shelf design.
+Visual source: `design/home-warm-restored-reference.png` (1485 × 1059).
+
+- Home retains the measured responsive grid and typography, with warm charcoal surfaces,
+  restrained bronze borders, cream stone monograms/contact action and a walnut projects card.
+- Collection presentation and materials restored from `a06d8e2`: open copy beside the model,
+  illuminated warm wall, physical walnut shelves, textured travertine plinths and cream labels.
+- Existing project crossfades, direct model rotation, case content and routes retained.
+  The removed rotate button remains removed. Shared drawers use the warm palette.
+- `qa/warm-restored/home.jpg` and `projects.jpg`: actual browser captures at 1485 × 1059.
+  The real-time 3D buildings are the existing implementation, not a pixel-identical reproduction
+  of the generated souvenir artwork.
+- Browser: Home → Projects → ARGUS → case → Escape → Home, ArrowRight model control,
+  collection overview with all five models, and mobile Uniqs → CRM selection verified.
+- Checked home and collection at 390 × 844, and collection at 320 × 844. Found and fixed
+  overflowing CRM metrics at 320 px by wrapping them. No overflow in the inspected text,
+  controls, headings or breadcrumbs after the fix. Browser console errors: none.
+- Reduced-motion rules preserved in styles and renderer; reviewed, not OS-emulated.
+- Validation: `npm test` (124 passed), `npm run build`, and `git diff --check`.
+  Existing shared bundle size advisory remains. No dependencies or generated art added.
+
+final result: passed
+
+---
+
 # Dark walnut shelf revision — 2026-10-04
 
 User requested dark wooden shelves. Reused the existing walnut raster as albedo and bump, with a matte dark-walnut material and no metallic finish. The change applies to the hero shelf and every miniature shelf. White ceramic plinths, graphite page UI and building materials are preserved.

@@ -12,18 +12,19 @@ the entrance spawn back into the portfolio city.
   education/achievement sections for the document and city panels.
 - `PortfolioHome.jsx` / `home.css`: the approved six-section homepage, with a
   separate projects entrance instead of embedded project cards. The latest
-  visual target is `design/home-graphite-approved.png`: neutral black/graphite,
-  white accents, locally packaged Roboto and a measured three-track grid.
+  visual target is `design/home-warm-restored-reference.png`: warm charcoal,
+  cream stone accents, locally packaged Roboto and a measured three-track grid.
   The full resume is reachable from About; the footer matches the reference date.
 - `GalleryHeader.jsx` / `gallery-theme.css`: shared home/projects navigation,
-  neutral graphite/white tokens, Roboto body type, Times display headings,
+  warm charcoal/cream tokens, Roboto body type, Times display headings,
   common material rasters, drawer colours and reduced-motion support. Both routes
-  use this single theme rather than separate palette/header overrides.
-- `../collection/collection.css`: matching graphite project detail card, white
-  and outlined actions, responsive shelf overview and keyboard focus states.
+  share navigation, palette and detail panels.
+- `../collection/collection.css`: restored open project presentation beside
+  the model, cream actions, responsive shelf overview and keyboard focus states.
   `collectionRenderer.js` keeps shared 3D cameras/shadows and existing building
-  colours; the gallery furniture uses dark walnut shelves, white ceramic plinths
-  and neutral lighting. Existing rotation and project crossfades are preserved.
+  colours; the gallery furniture uses walnut shelves, textured travertine plinths
+  and warm lighting restored from `a06d8e2`. Existing rotation and project
+  crossfades are preserved. The explicit rotate button remains removed.
 - `PortfolioCity.jsx`: home/city/resume/collection switch, navigation, accessible
   modal project details, search, contact panel and city controls.
 - `portfolio.css`: styles scoped to `.pf-*`; no redesign of interior demo UIs.

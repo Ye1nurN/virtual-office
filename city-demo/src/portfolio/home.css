@@ -1,10 +1,11 @@
-/* Measured against design/home-graphite-approved.png at 1485 x 1059.
+/* Measured against design/home-warm-restored-reference.png at 1485 x 1059.
    Palette, navigation and detail panels are shared through gallery-theme.css. */
-.home-scroll{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:var(--gallery-wall);scrollbar-color:#55585b #101112}
+.home-scroll{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:var(--gallery-wall);scrollbar-color:#62584b #151411}
 .home-main{max-width:1485px;margin:auto;padding:0 40px 24px}
 .home-grid{display:grid;grid-template-columns:minmax(0,547fr) minmax(0,245fr) minmax(0,587fr);gap:16px 14px}
-.home-card{min-width:0;border:1px solid #424446;border-radius:22px;background:#0c0e0f;position:relative;isolation:isolate;box-shadow:inset 0 1px 1px #ffffff0b,0 2px 5px #0002;animation:home-arrive 440ms cubic-bezier(.22,1,.36,1) both}
-.home-card:before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:var(--gallery-panel);opacity:.35}
+.home-card{min-width:0;border:1px solid #615648;border-radius:22px;background:#12110e;position:relative;isolation:isolate;box-shadow:inset 0 1px 1px #ffffff0b,0 2px 5px #0002;animation:home-arrive 440ms cubic-bezier(.22,1,.36,1) both}
+.home-card:before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:var(--gallery-panel);opacity:.65}
+.home-projects:before{background:linear-gradient(#14110dd9,#14110dd9),url('/portfolio/gallery/walnut.webp') center/cover;opacity:1}
 .home-intro{grid-column:span 2;min-height:424px;padding:41px 34px 24px}
 .home-projects{min-height:424px;padding:28px 33px 26px;display:flex;flex-direction:column;animation-delay:40ms}
 .home-skills{grid-column:span 2;min-height:248px;padding:24px 31px;animation-delay:65ms}
@@ -18,11 +19,11 @@
 .home-bio{font-size:23.4px;line-height:1.4;margin:27px 0 0 4px!important;max-width:620px}
 .home-stack{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 24px;font-size:23px;line-height:1.5;margin:23px 0 0 4px!important}
 .home-links{display:flex;gap:77px;margin:19px 0 0 4px}
-.home-links>*{display:inline-flex;align-items:center;gap:13px;min-height:37px;border-bottom:3px solid #f8f9fa!important;font-size:20px!important;padding:0!important;line-height:1.35}
+.home-links>*{display:inline-flex;align-items:center;gap:13px;min-height:37px;border-bottom:3px solid #f4eee3!important;font-size:20px!important;padding:0!important;line-height:1.35}
 .home-section-heading{display:flex;align-items:center;gap:30px;min-width:0}
 .home-section-heading h2{font:700 34px/1.15 'Times New Roman',Georgia,serif;letter-spacing:-.5px}
 .home-section-heading p{font-size:17px;line-height:1.5;margin-top:8px!important}
-.home-icon{width:62px;height:60px;display:grid;place-items:center;border:1px solid #393b3d;background:#222426;border-radius:14px;flex-shrink:0;box-shadow:inset 0 1px 1px #ffffff08}
+.home-icon{width:62px;height:60px;display:grid;place-items:center;border:1px solid #4d453a;background:#2e2821;border-radius:14px;flex-shrink:0;box-shadow:inset 0 1px 1px #ffffff08}
 .home-projects .home-icon{width:78px;height:77px;border-radius:18px}
 .home-projects h2{font-size:52px;line-height:1.1}
 .home-projects .home-section-heading{align-items:flex-start;gap:34px}
@@ -30,32 +31,32 @@
 .home-projects .home-section-heading p{font-size:17px;line-height:1.5;margin-top:8px!important;white-space:nowrap}
 .home-project-count{display:flex;align-items:center;gap:26px;margin:auto 0 auto 40px;padding:8px 0}
 .home-project-count strong{font:700 168px/.98 'Times New Roman',Georgia,serif;letter-spacing:6px;transform:translateY(4px)}
-.home-project-count span{font-size:23px;color:#bfc2c5;border-left:1px solid #424446;padding:23px 0 23px 28px;transform:translateY(13px)}
-.home-project-link{width:100%;display:flex;align-items:center;justify-content:flex-start;padding:0 33px!important;gap:18px;border:1px solid #d3d5d7!important;border-radius:16px;min-height:64px;font-size:22px!important;box-shadow:inset 0 0 0 1px #ffffff0b;transition:background .2s ease,transform .2s ease!important}
-.home-project-link:hover{background:#ffffff09!important;transform:translateY(-2px)}
+.home-project-count span{font-size:23px;color:#c9c2b8;border-left:1px solid #615648;padding:23px 0 23px 28px;transform:translateY(13px)}
+.home-project-link{width:100%;display:flex;align-items:center;justify-content:flex-start;padding:0 33px!important;gap:18px;border:1px solid #c4b8a6!important;border-radius:16px;min-height:64px;font-size:22px!important;box-shadow:inset 0 0 0 1px #ffffff0b;transition:background .2s ease,transform .2s ease!important}
+.home-project-link:hover{background:#393027!important;transform:translateY(-2px)}
 .home-tool-columns{display:grid;grid-template-columns:.91fr 1.15fr 1.03fr;margin:24px 7px 0 8px;gap:24px}
-.home-tool-columns>div+div{border-left:1px solid #444648;padding-left:42px}
+.home-tool-columns>div+div{border-left:1px solid #51483d;padding-left:42px}
 .home-tool-columns h3{font-size:20px;line-height:1.4;font-weight:600;margin-bottom:7px}
-.home-tool-columns p{color:#c6c9cc;font-size:20px;font-weight:350;line-height:1.55;white-space:nowrap}
+.home-tool-columns p{color:#c8c0b4;font-size:20px;font-weight:350;line-height:1.55;white-space:nowrap}
 .home-education .home-section-heading{gap:30px}
 .home-education ol{list-style:none;margin:0 0 4px 98px;padding:0}
 .home-education li{display:flex;align-items:center;gap:11px;position:relative;padding:5px 0 5px 31px;font-size:20px;line-height:1.35;white-space:nowrap}
-.home-education li:before{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:#fafbfc;left:-6px}
-.home-education li+li:after{content:'';position:absolute;width:1px;background:#8c8f92;left:0;bottom:calc(50% + 6px);height:24px}
-.home-detail-link{display:inline-flex;align-items:center;gap:18px;min-height:33px;font-size:20px!important;border-bottom:3px solid #f8f9fa!important;padding:0!important;line-height:1.35}
+.home-education li:before{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:#f4eee3;left:-6px}
+.home-education li+li:after{content:'';position:absolute;width:1px;background:#847766;left:0;bottom:calc(50% + 6px);height:24px}
+.home-detail-link{display:inline-flex;align-items:center;gap:18px;min-height:33px;font-size:20px!important;border-bottom:3px solid #f4eee3!important;padding:0!important;line-height:1.35}
 .home-achievement .home-icon{width:74px;height:70px;border-radius:17px}
 .home-achievement h2{font:700 52px/1 'Times New Roman',Georgia,serif;letter-spacing:-1px;margin-bottom:9px}
 .home-achievement p{font-size:20px;line-height:1.4;white-space:nowrap}
-.home-achievement div>span{font-size:19px;color:#c6c9cc;word-spacing:8px}
+.home-achievement div>span{font-size:19px;color:#c8c0b4;word-spacing:8px}
 .home-contact .home-section-heading{gap:27px}
 .home-contact h2{font-size:29px;line-height:1.05}
-.home-contact .home-section-heading p{font-size:20px;line-height:1.3;margin-top:2px!important;color:#c6c9cc}
+.home-contact .home-section-heading p{font-size:20px;line-height:1.3;margin-top:2px!important;color:#c8c0b4}
 .home-contact-links{display:flex;align-items:center;gap:32px;margin-top:17px}
-.home-contact-primary{display:flex;justify-content:center;align-items:center;gap:20px;min-height:54px;flex:1;white-space:nowrap;border-radius:13px;background:#fff;color:#111315!important;font-size:20px!important;font-weight:500!important;box-shadow:inset 0 0 0 1px #fff,inset 0 -2px 5px #cdd0d355}
-.home-contact-primary:hover{background:#e8e9eb}
-.home-email{display:flex;gap:18px;align-items:center;font-size:18px!important;border-left:1px solid #484a4c;padding-left:26px;min-height:50px;white-space:nowrap}
+.home-contact-primary{display:flex;justify-content:center;align-items:center;gap:20px;min-height:54px;flex:1;white-space:nowrap;border-radius:13px;background:#f4eee3 url('/portfolio/gallery/stone.webp') center/640px;background-blend-mode:screen;color:#201d19!important;font-size:20px!important;font-weight:500!important;box-shadow:inset 0 0 0 1px #fff8}
+.home-contact-primary:hover{background-color:#fff9ed}
+.home-email{display:flex;gap:18px;align-items:center;font-size:18px!important;border-left:1px solid #625749;padding-left:26px;min-height:50px;white-space:nowrap}
 .home-email svg{width:24px;flex-shrink:0}
-.home-footer{padding:25px 18px 0;display:flex;align-items:center;justify-content:space-between;color:#c5c8ca;font-size:15px}
+.home-footer{padding:25px 18px 0;display:flex;align-items:center;justify-content:space-between;color:#c8c0b4;font-size:15px}
 .home-footer>span{display:flex;align-items:center;gap:17px}
 .home-footer time{white-space:nowrap}
 @keyframes home-arrive{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -100,7 +101,7 @@
 .home-icon svg{width:29px;height:29px}.home-projects .home-icon svg{width:36px;height:36px}.home-tool-columns{margin-top:24px}
 .home-tool-columns h3{font-size:16px}.home-tool-columns p{font-size:15px;line-height:1.75}
 .home-education li{display:grid;grid-template-columns:1fr;gap:3px;font-size:19px;padding-block:8px}
-.home-education li>span:nth-child(2){display:none}.home-education li>span:last-child{font-size:15px;color:#bdc0c3}
+.home-education li>span:nth-child(2){display:none}.home-education li>span:last-child{font-size:15px;color:#bdb4a7}
 .home-education li+li:after{height:49px}.home-detail-link{min-height:44px;font-size:18px!important;border-bottom-width:2px!important}
 .home-achievement{gap:18px}.home-achievement .home-icon{width:56px;height:56px;border-radius:14px}.home-achievement h2{font-size:39px}
 .home-achievement p{font-size:17px;white-space:normal}.home-achievement div>span{font-size:16px}

@@ -1,4 +1,5 @@
 import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
+import '@fontsource-variable/lora/wght.css';
 import {ArrowRight,ArrowUpRight} from '@phosphor-icons/react';
 import {GalleryHeader} from '../portfolio/GalleryHeader.jsx';
 import {COLLECTION,readCollectionItem,collectionItemUrl} from './collectionData.js';
