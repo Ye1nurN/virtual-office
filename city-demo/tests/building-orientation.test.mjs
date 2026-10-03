@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {Euler,Quaternion,Vector3} from 'three';
+import {BoxGeometry,Euler,Mesh,MeshBasicMaterial,Quaternion,Raycaster,Vector3} from 'three';
 import {PROJECTS,spawnOutside,exteriorPortals} from '../src/city/catalog.js';
 import {buildingPoint,buildingFootprint,buildingBackGarden} from '../src/city/buildingFrame.js';
 import {buildProjectBuilding} from '../src/city/buildings.js';
@@ -73,4 +73,27 @@ test('A replacement GLB combines building direction with its model calibration',
   const calls=recordBuilding(p);
   assert.equal(calls.box.length,0);assert.equal(calls.model.length,1);
   assert.deepEqual(calls.model[0],[p.exteriorAsset,p.x,p.z,p.exteriorScale,p.yaw+.25]);
+});
+
+test('Office lettering stays clear of facade trim in the overview and from the plaza at eye level',()=>{
+  const p=PROJECTS.find(p=>p.id==='office'),calls=recordBuilding(p);
+  const [,x,y,z,w,h]=calls.sign.find(s=>s[0]==='МОЙ ОФИС');
+  const geometry=new BoxGeometry(1,1,1),material=new MeshBasicMaterial();
+  const pieces=calls.box.map(([bx,by,bz,bw,bh,bd,,yaw=0,rx=0,rz=0])=>{
+    const mesh=new Mesh(geometry,material);mesh.position.set(bx,by,bz);mesh.scale.set(bw,bh,bd);mesh.rotation.set(rx,yaw,rz);mesh.updateMatrixWorld(true);return mesh;
+  });
+  const ray=new Raycaster(),point=new Vector3(),direction=new Vector3();
+  try{
+    for(const angle of [-30,0,30]){
+      const yaw=angle*Math.PI/180;
+      for(const view of ['overview','eye-level'])for(const u of [-.42,-.32,-.2,0,.2,.32,.42])for(const v of [-.45,-.3,-.15,0,.15,.3,.45]){
+        point.set(x+u*w,y+v*h,z);
+        const origin=view==='overview'
+          ?point.clone().add(new Vector3(Math.sin(yaw)*18,18*61/75,Math.cos(yaw)*18))
+          :new Vector3(x+Math.sin(yaw)*16,1.8,z+Math.cos(yaw)*16);
+        ray.set(origin,direction.subVectors(point,origin).normalize());ray.far=origin.distanceTo(point)-.001;
+        assert.equal(ray.intersectObjects(pieces,false).length,0,`${view} at ${angle}°: facade covers sign at ${u}, ${v}`);
+      }
+    }
+  }finally{geometry.dispose();material.dispose();}
 });

@@ -43,9 +43,16 @@ export function createSceneKit(templates,albedos={}){
     const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=Math.max(96,Math.round(1024*h/w));
     const ch=canvas.height,c=canvas.getContext('2d');c.fillStyle=bg;c.fillRect(0,0,1024,ch);
     if(border){c.strokeStyle=border;c.lineWidth=8;c.strokeRect(6,6,1012,ch-12);}
-    c.fillStyle=fg;c.textAlign='center';c.textBaseline='middle';
-    const fontSize=ch*(sub?.63:1.04);c.font=`700 ${fontSize}px Inter, Arial`;
-    c.fillText(text,512,ch*(sub?.37:.52),940);if(sub){c.font=`500 ${ch*.22}px Inter, Arial`;c.fillText(sub,512,ch*.8,940);}
+    c.fillStyle=fg;c.textAlign='center';c.textBaseline='alphabetic';
+    let fontSize=ch*(sub?.63:1.04);c.font=`700 ${fontSize}px Inter, Arial`;
+    let metrics=c.measureText(text);
+    // Centre the visible glyphs, including accents, inside the physical panel.
+    const glyphHeight=metrics.actualBoundingBoxAscent+metrics.actualBoundingBoxDescent;
+    if(glyphHeight>ch*(sub?.58:.84)){
+      fontSize*=ch*(sub?.58:.84)/glyphHeight;c.font=`700 ${fontSize}px Inter, Arial`;metrics=c.measureText(text);
+    }
+    c.fillText(text,512,ch*(sub?.37:.52)+(metrics.actualBoundingBoxAscent-metrics.actualBoundingBoxDescent)/2,940);
+    if(sub){c.textBaseline='middle';c.font=`500 ${ch*.22}px Inter, Arial`;c.fillText(sub,512,ch*.8,940);}
     const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;textures.push(texture);
     const panel=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:texture,side:T.DoubleSide,toneMapped:false}));
     panel.position.set(x,y,z);panel.rotation.y=yaw;root.add(panel);

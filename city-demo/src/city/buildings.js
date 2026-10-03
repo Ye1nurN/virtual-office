@@ -86,7 +86,8 @@ export function buildProjectBuilding(k,p){
   }
   if(office){
     for(const u of [-5.15,5.15])window(0,u,1.95,2.3,2.5,true);
-    for(const u of [-5.35,-2.7,0,2.7,5.35])window(0,u,5.9,1.37,2.47,u!==0);
+    // Keep the window tops aligned while reserving a clear band for the sign.
+    for(const u of [-5.35,-2.7,0,2.7,5.35])window(0,u,6.23,1.37,1.81,u!==0);
     for(const side of [-1,1])for(const u of [-3.8,0,3.8])for(const y of [1.95,5.9])window(side,u,y,1.85,2.5,true);
     for(const u of [-3.55,3.55])face(0,u,5.7,.17,.29,3.75,.26,'#935b36');
   }else{
@@ -117,9 +118,9 @@ export function buildProjectBuilding(k,p){
       k.box(xx,2.75,front+1.77,.555,.42,.12,col);
     }
   }
-  const signY=office?4.05:4.14,signW=office?8.3:10.4;
-  k.box(x,signY,front+.37,signW+.38,1.44,.45,office?'#232e3b':pharmacy?'#21795c':'#172f46');
-  k.sign(office?'МОЙ ОФИС':pharmacy?'АПТЕКА':'ARGUS',x+(pharmacy?1.05:!office?.7:0),signY,front+.62,pharmacy?7.2:office?8:7,1.3,{bg:office?'#28323c':pharmacy?'#247a60':'#183a52',size:240});
+  const signY=office?4.34:4.14,signW=office?8.3:10.4;
+  k.box(x,signY,front+.37,signW+.38,office?1.3:1.44,.45,office?'#232e3b':pharmacy?'#21795c':'#172f46');
+  k.sign(office?'МОЙ ОФИС':pharmacy?'АПТЕКА':'ARGUS',x+(pharmacy?1.05:!office?.7:0),signY,front+.62,pharmacy?7.2:office?8:7,office?1.12:1.3,{bg:office?'#28323c':pharmacy?'#247a60':'#183a52',size:240});
   if(pharmacy){
     k.box(x-4.22,signY,front+.74,1.72,1.86,.27,'#1b7458');
     k.box(x-4.22,signY,front+.94,.32,1.25,.15,k.glow('#efffe1',.38));k.box(x-4.22,signY,front+.95,1.21,.34,.15,k.glow('#efffe1',.38));
