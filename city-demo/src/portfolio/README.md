@@ -25,6 +25,10 @@ the entrance spawn back into the portfolio city.
   colours; the gallery furniture uses walnut shelves, textured travertine plinths
   and warm lighting restored from `a06d8e2`. Existing rotation and project
   crossfades are preserved. The explicit rotate button remains removed.
+  At desktop sizes (at least 1000 × 680), the complete gallery is fitted to the
+  viewport height, including both shelves and footer navigation. Miniature framing
+  respects the tallest model and observes slot resizing. Narrow/short windows keep
+  natural scrolling for readable content.
 - `PortfolioCity.jsx`: home/city/resume/collection switch, navigation, accessible
   modal project details, search, contact panel and city controls.
 - `portfolio.css`: styles scoped to `.pf-*`; no redesign of interior demo UIs.

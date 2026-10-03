@@ -112,7 +112,11 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
     const cellPx=hero?rect.width:Math.min(...entries.map(e=>e.rect.width));
     const angle=T.MathUtils.degToRad(hero?12:13);
     const modelHeight=hero?items.get(entries[0].id)?.height||10:0;
-    const unit=hero?Math.min(rect.width/27,(rect.height-24)*.9/((modelHeight+2.34)*Math.cos(angle)+3.2)):cellPx/25;
+    // A short desktop shelf must fit its tallest building as well as its width.
+    // The front edge is 24 units from the origin; allow for the rotating model's
+    // 14-unit horizontal radius when projecting its roof into the shelf camera.
+    const rowTop=Math.max(...entries.map(e=>((items.get(e.id)?.height||10)+.47)*Math.cos(angle)+38*Math.sin(angle)));
+    const unit=hero?Math.min(rect.width/27,(rect.height-24)*.9/((modelHeight+2.34)*Math.cos(angle)+3.2)):Math.min(cellPx/25,(rect.height-rect.slotHeight*.24-8)/rowTop);
     const width=rect.width/unit,height=rect.height/unit;
     for(const e of entries){e.x=hero?0:((e.rect.left+e.rect.width/2)-(rect.left+rect.width/2))/unit;e.cell=e.rect.width/unit;e.label=COLLECTION.find(p=>p.id===e.id).plaque;}
     buildFurniture(stage,width,hero,entries);
@@ -193,7 +197,7 @@ export function createCollectionRenderer(host, scrollRoot, onState) {
       const before=new T.FramebufferTexture(width,height);renderer.copyFramebufferToTexture(before);
       clearTransition();transition={before,after:new T.FramebufferTexture(width,height),start:null};
     },
-    update(next){const nextHero=next.find(s=>s.hero)?.id;if(nextHero!==heroId){heroId=nextHero;for(const item of items.values()){item.target=.19;item.pivot.rotation.y=.19;}}slots=next;if(transition?.start===null)transition.start=performance.now();invalidate();},
+    update(next){const nextHero=next.find(s=>s.hero)?.id;if(nextHero!==heroId){heroId=nextHero;for(const item of items.values()){item.target=.19;item.pivot.rotation.y=.19;}}for(const slot of slots)observer.unobserve(slot.element);slots=next;for(const slot of slots)observer.observe(slot.element);if(transition?.start===null)transition.start=performance.now();invalidate();},
     rotate(id,amount=.65){const item=items.get(id);if(item){item.target+=amount;invalidate();}},
     drag(id,amount){const item=items.get(id);if(item){item.target+=amount;item.pivot.rotation.y=item.target;invalidate();}},
     dispose(){disposed=true;cancelAnimationFrame(frame);clearTransition();observer.disconnect();scrollRoot.removeEventListener('scroll',invalidate);scrollRoot.removeEventListener('wheel',stopTransition);scrollRoot.removeEventListener('touchmove',stopTransition);document.removeEventListener('visibilitychange',visibility);motion.removeEventListener('change',stopTransition);renderer.domElement.removeEventListener('webglcontextlost',contextLost);for(const item of items.values()){item.assets.release();disposeScene(item.pivot);}for(const stage of stages){disposeScene(stage.scene);stage.ao.dispose();stage.output.dispose();stage.composer.dispose();}textures.forEach(t=>t.dispose());copyQuad.dispose();copyMaterial.dispose();blendQuad.dispose();blendMaterial.dispose();environment.dispose();library.dispose();renderer.dispose();renderer.domElement.remove();},

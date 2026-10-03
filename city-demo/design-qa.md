@@ -1,3 +1,35 @@
+# Collection fits the desktop viewport — 2026-10-04
+
+Request: keep the selected project, description/actions and lower shelf visible without
+scrolling. User screenshot: 1880 × 927, with the lower shelf cut off.
+
+- Desktop grid now allocates height to header, breadcrumb, featured project, lower shelf
+  and footer using dynamic viewport units. Model and type sizes respond to window height.
+- Secondary project/resume navigation occupies the footer on desktop. No project facts,
+  buttons or models were removed; scrolling remains available when content requires it.
+- Miniature camera scale now fits the tallest building in a row as well as the cell width.
+  Slot ResizeObserver notifications keep WebGL framing aligned after layout changes.
+- Natural readable mobile/short-window layout remains. Desktop fitting applies at widths
+  >= 1000 px and heights >= 680 px; it does not hide overflowing content or defeat zoom.
+
+Browser checks:
+- CRM at 1880 × 927, 1280 × 720, 1024 × 768 and 1280 × 680: scrollHeight equals
+  clientHeight exactly; both shelves, all actions and footer are visible.
+- ARGUS at 1366 × 768: no page overflow, ArrowRight rotates model, case opens and
+  Escape closes it. Office at 1280 × 720: the taller building fits on its plinth.
+- All-project overview fits at 1366 × 768, with all five models visible.
+- 390 × 844: Tynysh copy/actions and two-row lower shelves remain readable and reachable;
+  selecting Uniqs returns to the top with the correct model and heading.
+- Window resize, animated project switches and footer navigation positions inspected.
+  No inspected text/control overflow; no browser console errors.
+- Evidence: `qa/collection-fit/desktop.jpg`, actual browser at 1880 × 927.
+- Validation: 124 tests passed; production build passed; git diff --check passed.
+  Existing shared bundle size advisory remains.
+
+final result: passed
+
+---
+
 # Warm home and shelf restoration — 2026-10-04
 
 Request: return to the user's warm homepage reference and earlier shelf design.
