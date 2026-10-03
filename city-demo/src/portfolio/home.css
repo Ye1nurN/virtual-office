@@ -83,7 +83,7 @@
 .home-bio{font-size:22px}.home-stack{gap:0 14px;font-size:21px}.home-projects .home-section-heading{gap:24px}.home-projects h2{font-size:46px}
 .home-projects .home-section-heading p{font-size:16px;white-space:normal}.home-projects .home-icon{width:66px;height:66px}
 .home-project-count{margin-left:20px}.home-project-count strong{font-size:144px}.home-project-count span{font-size:21px}
-.home-tool-columns{gap:16px;margin-inline:0}.home-tool-columns>div+div{padding-left:24px}.home-tool-columns p{font-size:18px}.home-section-heading h2{font-size:30px}
+.home-tool-columns{gap:16px;margin-inline:0}.home-tool-columns>div+div{padding-left:24px}.home-tool-columns p{font-size:18px}.home-skills h2,.home-education h2{font-size:30px}
 .home-education ol{margin-left:73px}.home-education li{font-size:18px;padding-left:24px}.home-achievement{padding-inline:25px;gap:24px}
 .home-achievement h2{font-size:46px}.home-achievement p{font-size:16px}.home-achievement div>span{font-size:17px}
 .home-achievement>div{min-width:0}.home-achievement p{white-space:normal}
@@ -100,7 +100,7 @@
 .home-projects{display:grid;grid-template-columns:1fr auto;gap:24px}.home-projects .home-project-count{grid-column:2;grid-row:1/3;margin:0;gap:20px}
 .home-project-link{grid-column:1;font-size:18px!important}.home-projects h2{font-size:42px}.home-projects .home-section-heading{gap:24px;align-items:center}
 .home-projects .home-section-heading p{font-size:16px;white-space:normal}.home-project-count strong{font-size:120px}.home-project-count span{font-size:18px;padding-left:18px}
-.home-section-heading{gap:20px}.home-section-heading h2{font-size:28px}.home-tool-columns{gap:12px;margin-inline:0}.home-tool-columns>div+div{padding-left:12px}
+.home-section-heading{gap:20px}.home-skills h2,.home-education h2{font-size:28px}.home-tool-columns{gap:12px;margin-inline:0}.home-tool-columns>div+div{padding-left:12px}
 .home-tool-columns h3{font-size:16px}.home-tool-columns p{font-size:14px;white-space:normal}.home-education .home-section-heading{gap:20px}
 .home-education ol{margin:18px 0 14px 26px}.home-education li{font-size:18px;padding-left:24px}.home-contact-primary{flex:1}.home-email{font-size:16px!important}
 }
@@ -120,7 +120,7 @@
 .home-links svg{width:20px}.home-projects .home-section-heading{align-items:flex-start;gap:18px}.home-projects h2{font-size:38px}
 .home-projects .home-section-heading p{font-size:16px;line-height:1.5}.home-projects .home-icon{width:60px;height:60px;border-radius:14px}
 .home-project-link{font-size:18px!important;min-height:56px;border-radius:12px;padding-inline:22px!important}
-.home-section-heading{gap:20px}.home-section-heading h2{font-size:27px}.home-icon{width:52px;height:52px;border-radius:12px}
+.home-section-heading{gap:20px}.home-skills h2,.home-education h2{font-size:27px}.home-icon{width:52px;height:52px;border-radius:12px}
 .home-icon svg{width:29px;height:29px}.home-projects .home-icon svg{width:36px;height:36px}.home-tool-columns{margin-top:24px}
 .home-tool-columns h3{font-size:16px}.home-tool-columns p{font-size:15px;line-height:1.75}
 .home-education li{display:grid;grid-template-columns:1fr;gap:3px;font-size:19px;padding-block:8px}
@@ -136,7 +136,7 @@
 }
 @media(max-width:360px){
 .home-card{padding:21px}.home-links{gap:8px}.home-links>*{font-size:14px!important}.home-role{font-size:15px}
-.home-tool-columns h3{font-size:14px}.home-tool-columns p{font-size:13px}.home-contact h2,.home-section-heading h2{font-size:24px}
+.home-tool-columns h3{font-size:14px}.home-tool-columns p{font-size:13px}.home-contact h2,.home-skills h2,.home-education h2{font-size:24px}
 .home-education .home-section-heading{gap:12px}.home-icon{width:44px;height:44px}.home-projects .home-section-heading{gap:14px}
 .home-projects .home-icon{width:48px;height:48px}.home-projects h2{font-size:34px}.home-email{font-size:13px!important}.home-footer{font-size:10px}
 .home-projects .home-project-count{gap:14px;padding-inline:8px}.home-project-count strong{font-size:96px;letter-spacing:2px}.home-project-count span{font-size:16px;padding-left:14px}
